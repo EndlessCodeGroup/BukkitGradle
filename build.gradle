@@ -1,0 +1,35 @@
+plugins {
+    id 'groovy'
+    id 'idea'
+    id 'com.gradle.plugin-publish' version '0.9.7'
+}
+
+group 'ru.endlesscode.gradle'
+version '0.1.0-SNAPSHOT'
+
+sourceCompatibility = targetCompatibility = JavaVersion.VERSION_1_7
+
+repositories {
+    mavenCentral()
+}
+
+dependencies {
+    compile gradleApi()
+    compile localGroovy()
+}
+
+pluginBundle {
+    website = 'https://github.com/EndlessCodeGroup/BukkitGradle'
+    vcsUrl = website
+    description = 'Bukkit Gradle integration plugins'
+    tags = ['minecraft', 'bukkit', 'plugin']
+
+    plugins {
+        bukkitPlugin {
+            id = 'ru.endlesscode.gradle.bukkit'
+            displayName = 'Bukkit Plugin Gradle integration'
+            description = 'Gradle plugin providing integration for plugins made for the Bukkit platform'
+            version = '0.1'
+        }
+    }
+}
