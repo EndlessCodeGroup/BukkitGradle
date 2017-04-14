@@ -5,7 +5,7 @@ plugins {
 }
 
 group 'ru.endlesscode.gradle'
-version '0.1.0-SNAPSHOT'
+version '0.2.0'
 
 sourceCompatibility = targetCompatibility = JavaVersion.VERSION_1_7
 
@@ -30,7 +30,6 @@ pluginBundle {
             id = 'ru.endlesscode.gradle.bukkit'
             displayName = 'Bukkit Plugin Gradle integration'
             description = 'Gradle plugin providing integration for plugins made for the Bukkit platform'
-            version = '0.1'
         }
     }
 }
