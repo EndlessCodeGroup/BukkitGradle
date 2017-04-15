@@ -42,7 +42,7 @@ class BukkitPlugin implements Plugin<Project> {
     }
 
     def configureEncoding() {
-        properties.tasks.withType(JavaCompile) {
+        project.tasks.withType(JavaCompile) {
             options.encoding = 'UTF-8'
         }
     }

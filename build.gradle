@@ -7,7 +7,8 @@ plugins {
 }
 
 group 'ru.endlesscode.gradle'
-version '0.3.0'
+description 'Bukkit Gradle integration plugins'
+version '0.3.1'
 
 sourceCompatibility = targetCompatibility = JavaVersion.VERSION_1_7
 
@@ -24,7 +25,7 @@ dependencies {
 pluginBundle {
     website = 'https://github.com/EndlessCodeGroup/BukkitGradle'
     vcsUrl = website
-    description = 'Bukkit Gradle integration plugins'
+    description = this.description
     tags = ['minecraft', 'bukkit', 'plugin']
 
     plugins {
