@@ -54,6 +54,11 @@ class BukkitPlugin implements Plugin<Project> {
                 mavenCentral()
 
                 maven {
+                    name = 'sk89q'
+                    url = 'http://maven.sk89q.com/repo/org/sk89q/'
+                }
+
+                maven {
                     name = 'spigot'
                     url = 'https://hub.spigotmc.org/nexus/content/repositories/snapshots/'
                 }
