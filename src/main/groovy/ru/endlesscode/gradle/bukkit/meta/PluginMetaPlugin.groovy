@@ -19,7 +19,7 @@ class PluginMetaPlugin implements Plugin<Project> {
             extensions.create(BukkitPluginExtension.NAME, BukkitPluginExtension, project)
             processMetaFile(project)
 
-            GenerateMeta genMeta = task('generatePluginMeta', type: GenerateMeta) {
+            GenerateMeta genMeta = task("generatePluginMeta", type: GenerateMeta) {
                 meta = bukkit.meta
             } as GenerateMeta
 

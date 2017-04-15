@@ -29,9 +29,9 @@ class BukkitPlugin implements Plugin<Project> {
     def addPlugins() {
         project.with {
             plugins.with {
-                apply('java')
-                apply('eclipse')
-                apply('idea')
+                apply("java")
+                apply("eclipse")
+                apply("idea")
                 apply(PluginMetaPlugin)
             }
 
@@ -43,7 +43,7 @@ class BukkitPlugin implements Plugin<Project> {
 
     def configureEncoding() {
         project.tasks.withType(JavaCompile) {
-            options.encoding = 'UTF-8'
+            options.encoding = "UTF-8"
         }
     }
 
@@ -54,13 +54,13 @@ class BukkitPlugin implements Plugin<Project> {
                 mavenCentral()
 
                 maven {
-                    name = 'sk89q'
-                    url = 'http://maven.sk89q.com/repo/org/sk89q/'
+                    name = "sk89q"
+                    url = "http://maven.sk89q.com/repo/org/sk89q/"
                 }
 
                 maven {
-                    name = 'spigot'
-                    url = 'https://hub.spigotmc.org/nexus/content/repositories/snapshots/'
+                    name = "spigot"
+                    url = "https://hub.spigotmc.org/nexus/content/repositories/snapshots/"
                 }
             }
         }

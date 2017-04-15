@@ -6,7 +6,7 @@ import org.gradle.testfixtures.ProjectBuilder
 import org.junit.Before
 import org.junit.Test
 
-import static org.junit.Assert.*
+import static org.junit.Assert.assertTrue
 
 class BukkitPluginTest {
     private Project project
@@ -19,30 +19,30 @@ class BukkitPluginTest {
 
     @Test
     void testPluginAddsRequiredPlugins() throws Exception {
-        assertTrue project.pluginManager.hasPlugin('java')
-        assertTrue project.pluginManager.hasPlugin('idea')
-        assertTrue project.pluginManager.hasPlugin('eclipse')
+        assertTrue project.pluginManager.hasPlugin("java")
+        assertTrue project.pluginManager.hasPlugin("idea")
+        assertTrue project.pluginManager.hasPlugin("eclipse")
     }
 
     @Test
     void testPluginAddsRequiredRepos() throws Exception {
-        project.repositories.getByName('spigot')
+        project.repositories.getByName("spigot")
     }
 
     @Test
     void testPluginAddsLatestBukkitVersion() throws Exception {
         BukkitPlugin.addBukkitApi(project)
         def dependencies = getDependencies()
-        assertTrue dependencies.contains('org.bukkit:bukkit:+')
+        assertTrue dependencies.contains("org.bukkit:bukkit:+")
     }
 
     @Test
     void testPluginAddsCustomBukkit() throws Exception {
-        project.bukkit.version = '1.7.10'
+        project.bukkit.version = "1.7.10"
         BukkitPlugin.addBukkitApi(project)
 
         def dependencies = getDependencies()
-        assertTrue dependencies.contains('org.bukkit:bukkit:1.7.10-R0.1-SNAPSHOT')
+        assertTrue dependencies.contains("org.bukkit:bukkit:1.7.10-R0.1-SNAPSHOT")
     }
 
     private String[] getDependencies() {

@@ -13,12 +13,12 @@ class PluginMeta {
     private final List<MetaItem> metaItems = []
 
     PluginMeta(Project project) {
-        this.name = new MetaItem('name', true, { project.name })
-        this.description = new MetaItem('description', { project.description })
-        this.main = new MetaItem('main', true)
-        this.version = new MetaItem('version', true, { project.version })
-        this.url = new MetaItem('website', { project.findProperty('url') })
-        this.authors = new MetaItem('authors')
+        this.name = new MetaItem("name", true, { project.name })
+        this.description = new MetaItem("description", { project.description })
+        this.main = new MetaItem("main", true)
+        this.version = new MetaItem("version", true, { project.version })
+        this.url = new MetaItem("website", { project.findProperty("url") })
+        this.authors = new MetaItem("authors")
 
         metaItems.addAll(name, description, main, version, url, authors)
     }

@@ -32,7 +32,7 @@ class GenerateMetaTest {
 
     @Test
     void testCanAddTaskToProject() throws Exception {
-        def task = project.tasks.getByName('generatePluginMeta')
+        def task = project.tasks.getByName("generatePluginMeta")
         assertTrue(task instanceof GenerateMeta)
     }
 }

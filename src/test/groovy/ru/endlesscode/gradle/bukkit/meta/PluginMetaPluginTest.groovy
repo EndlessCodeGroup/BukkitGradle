@@ -21,7 +21,7 @@ class PluginMetaPluginTest {
             metaFile.delete()
         }
 
-        metaFile << '''name: Default Name
+        metaFile << """name: Default Name
 description: Default description
 version: 1.0
 
@@ -29,7 +29,7 @@ main: com.example.Plugin
 author: OsipXD
 website: www.example.com
 
-prefix: ChosenOne'''
+prefix: ChosenOne"""
 
         return metaFile
     }

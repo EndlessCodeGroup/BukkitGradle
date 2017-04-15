@@ -4,10 +4,10 @@ import org.gradle.api.Project
 import ru.endlesscode.gradle.bukkit.meta.PluginMeta
 
 class BukkitPluginExtension {
-    public static final String NAME = 'bukkit'
+    public static final String NAME = "bukkit"
 
-    private static final String LATEST_VERSION = '+'
-    private static final String VERSION_SUFFIX = '-R0.1-SNAPSHOT'
+    private static final String LATEST_VERSION = "+"
+    private static final String VERSION_SUFFIX = "-R0.1-SNAPSHOT"
 
     private final project
 
