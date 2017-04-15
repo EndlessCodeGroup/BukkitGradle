@@ -6,6 +6,7 @@ import org.gradle.api.Project
 import org.gradle.api.artifacts.DependencyResolutionListener
 import org.gradle.api.artifacts.ResolvableDependencies
 import org.gradle.api.plugins.JavaPluginConvention
+import ru.endlesscode.gradle.bukkit.meta.PluginMetaPlugin
 
 class BukkitPlugin implements Plugin<Project> {
     Project project
@@ -13,6 +14,7 @@ class BukkitPlugin implements Plugin<Project> {
     @Override
     void apply(Project project) {
         this.project = project
+
         configureProject()
     }
 
@@ -28,6 +30,7 @@ class BukkitPlugin implements Plugin<Project> {
                 apply('java')
                 apply('eclipse')
                 apply('idea')
+                apply(PluginMetaPlugin)
             }
 
             convention.getPlugin(JavaPluginConvention).with {
@@ -52,7 +55,6 @@ class BukkitPlugin implements Plugin<Project> {
 
     def addDependencies() {
         project.with {
-            extensions.create(BukkitPluginExtension.NAME, BukkitPluginExtension)
 
             gradle.addListener(new DependencyResolutionListener() {
                 @Override
