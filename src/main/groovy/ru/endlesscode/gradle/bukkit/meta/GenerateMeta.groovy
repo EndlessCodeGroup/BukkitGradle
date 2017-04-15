@@ -2,25 +2,34 @@ package ru.endlesscode.gradle.bukkit.meta
 
 import org.gradle.api.DefaultTask
 import org.gradle.api.GradleException
+import org.gradle.api.tasks.Input
 import org.gradle.api.tasks.TaskAction
 
+import java.nio.file.Path
+
 class GenerateMeta extends DefaultTask {
+    @Input
     PluginMeta meta
+    @Input
+    Path target
+
+    Path getTarget() {
+        return this.target ?: temporaryDir.toPath().resolve(PluginMetaPlugin.META_FILE)
+    }
 
     @TaskAction
     def generateMeta() {
-        List<String> lines = []
-        File file = PluginMetaPlugin.createMetaFileMaybe(project)
-        PluginMetaPlugin.removeAllMeta(file)
-        print file.path
-
         def metaItems = meta.items
         validateMeta(metaItems)
 
-        lines.addAll(convertToYaml(metaItems))
-        lines.addAll(file.readLines())
+        List<String> lines = convertToYaml(metaItems)
+        File file = PluginMetaPlugin.getMetaFile(project)
+        if (file.exists()) {
+            PluginMetaPlugin.removeAllMeta(file)
+            lines.addAll(file.readLines())
+        }
 
-        file.withWriter { Writer writer ->
+        getTarget().withWriter { Writer writer ->
             lines.each { String line ->
                 writer.write("$line\n")
             }

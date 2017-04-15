@@ -2,6 +2,7 @@ package ru.endlesscode.gradle.bukkit.meta
 
 import org.gradle.api.Plugin
 import org.gradle.api.Project
+import org.gradle.api.file.CopySpec
 import org.gradle.api.plugins.JavaPluginConvention
 import ru.endlesscode.gradle.bukkit.BukkitPluginExtension
 
@@ -23,22 +24,22 @@ class PluginMetaPlugin implements Plugin<Project> {
             } as GenerateMeta
 
             tasks.processResources.dependsOn genMeta
+            ((CopySpec) tasks.processResources).from genMeta.target.toFile()
         }
     }
 
     static def processMetaFile(Project project) {
-        File metaFile = createMetaFileMaybe(project)
-        removeAllMeta(metaFile)
+        File metaFile = getMetaFile(project)
+
+        if (metaFile.exists()) {
+            removeAllMeta(metaFile)
+        }
     }
 
-    static File createMetaFileMaybe(Project project) {
+    static File getMetaFile(Project project) {
         def java = project.convention.getPlugin(JavaPluginConvention)
         def resourceDir = java.sourceSets.main.resources.srcDirs[0]
         def metaFile = new File(resourceDir, META_FILE)
-        if (!metaFile.exists()) {
-            resourceDir.mkdirs()
-            metaFile.createNewFile()
-        }
 
         return metaFile
     }
