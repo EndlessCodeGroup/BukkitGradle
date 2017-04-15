@@ -7,7 +7,7 @@ plugins {
 }
 
 group 'ru.endlesscode.gradle'
-version '0.2.0'
+version '0.3.0'
 
 sourceCompatibility = targetCompatibility = JavaVersion.VERSION_1_7
 

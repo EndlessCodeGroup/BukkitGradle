@@ -25,7 +25,7 @@ class GenerateMetaTest {
             }
 
             bukkit.meta {
-                main = ru.endlesscode.gradle.bukkit.BukkitPlugin
+                main = BukkitPlugin
             }
         }
     }
