@@ -62,19 +62,16 @@ class BukkitPlugin implements Plugin<Project> {
     }
 
     def addDependencies() {
-        project.with {
+        project.gradle.addListener(new DependencyResolutionListener() {
+            @Override
+            void beforeResolve(ResolvableDependencies resolvableDependencies) {
+                addBukkitApi(project)
+                project.gradle.removeListener(this)
+            }
 
-            gradle.addListener(new DependencyResolutionListener() {
-                @Override
-                void beforeResolve(ResolvableDependencies resolvableDependencies) {
-                    addBukkitApi(project)
-                    gradle.removeListener(this)
-                }
-
-                @Override
-                void afterResolve(ResolvableDependencies resolvableDependencies) {}
-            })
-        }
+            @Override
+            void afterResolve(ResolvableDependencies resolvableDependencies) {}
+        })
     }
 
     static def addBukkitApi(Project project) {
