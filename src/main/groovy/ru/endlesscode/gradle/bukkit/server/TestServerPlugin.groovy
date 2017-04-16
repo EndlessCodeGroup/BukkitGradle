@@ -7,6 +7,6 @@ class TestServerPlugin implements Plugin<Project> {
 
     @Override
     void apply(Project project) {
-
+        new BuildTools(project)
     }
 }
