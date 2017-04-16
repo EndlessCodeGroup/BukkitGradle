@@ -7,20 +7,16 @@ import org.gradle.api.plugins.JavaPluginConvention
 import ru.endlesscode.gradle.bukkit.BukkitPluginExtension
 
 class PluginMetaPlugin implements Plugin<Project> {
-    public static final String META_FILE = "plugin.yml"
 
-    private static final String[] META_ATTRIBUTES = [
-            "name", "description", "version", "author", "authors", "website", "main"
-    ]
 
     @Override
     void apply(Project project) {
         project.with {
             extensions.create(BukkitPluginExtension.NAME, BukkitPluginExtension, project)
-            processMetaFile(project)
+            MetaFile meta = new MetaFile(project)
 
             GenerateMeta genMeta = task("generatePluginMeta", type: GenerateMeta) {
-                meta = bukkit.meta
+                metaFile meta
             } as GenerateMeta
 
             tasks.processResources.dependsOn genMeta
@@ -28,7 +24,13 @@ class PluginMetaPlugin implements Plugin<Project> {
         }
     }
 
-    static def processMetaFile(Project project) {
+    /**
+     * Removes meta information from project meta if meta file
+     * exists for project
+     *
+     * @param project The project
+     */
+    static void processMetaFile(Project project) {
         File metaFile = getMetaFile(project)
 
         if (metaFile.exists()) {
@@ -36,18 +38,31 @@ class PluginMetaPlugin implements Plugin<Project> {
         }
     }
 
+    /**
+     * Gets project meta file even if it doesn't exist
+     *
+     * @param project The project
+     * @return The meta file of project
+     */
     static File getMetaFile(Project project) {
         def java = project.convention.getPlugin(JavaPluginConvention)
         def resourceDir = java.sourceSets.main.resources.srcDirs[0]
-        def metaFile = new File(resourceDir, META_FILE)
+        def metaFile = new File(resourceDir, MetaFile.META_FILE)
 
         return metaFile
     }
 
-    static def removeAllMeta(File file) {
-        StringWriter noMetaWriter = new StringWriter()
+    /**
+     * Removes all meta lines from file, also removes all lead
+     * empty lines
+     *
+     * @param file The file with meta
+     */
+    static void removeAllMeta(File file) {
+        StringWriter tempWriter = new StringWriter()
         boolean firstLine = true
-        file.filterLine(noMetaWriter) { String line ->
+        file.filterLine(tempWriter) { String line ->
+            line = line.trim()
             if (!isMetaLine(line) && (!line.isEmpty() || !firstLine)) {
                 firstLine = false
                 return true
@@ -57,12 +72,18 @@ class PluginMetaPlugin implements Plugin<Project> {
         }
 
         file.withWriter {
-            it.write(noMetaWriter.toString())
+            it.write(tempWriter.toString())
         }
     }
 
+    /**
+     * Checks if line contains meta attributes
+     *
+     * @param line The line to check
+     * @return true if line is meta attribute, otherwise false
+     */
     static boolean isMetaLine(String line) {
-        for (String attribute in META_ATTRIBUTES) {
+        for (String attribute in MetaFile.META_ATTRIBUTES) {
             if (line.startsWith("$attribute:")) {
                 return true
             }

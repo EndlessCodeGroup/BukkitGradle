@@ -19,6 +19,13 @@ class BukkitPluginExtension {
         this.meta = new PluginMeta(project)
     }
 
+    /**
+     * Returns chosen Bukkit version in format:
+     * "<version>-R0.1-SNAPSHOT"
+     * If version not assigned returns latest version
+     *
+     * @return Chosen Bukkit version
+     */
     String getVersion() {
         return version ? "$version$VERSION_SUFFIX" : LATEST_VERSION
     }

@@ -13,7 +13,7 @@ class PluginMeta {
     private final List<MetaItem> metaItems = []
 
     PluginMeta(Project project) {
-        this.name = new MetaItem("name", true, { project.name })
+        this.name = new MetaItem("name", true, project.name)
         this.description = new MetaItem("description", { project.description })
         this.main = new MetaItem("main", true)
         this.version = new MetaItem("version", true, { project.version })
@@ -73,25 +73,5 @@ class PluginMeta {
 
     List<MetaItem> getItems() {
         return metaItems
-    }
-
-    static String resolve(Object obj) {
-        if (obj == null) {
-            return null
-        }
-
-        if (obj instanceof String) {
-            return obj
-        }
-
-        if (obj instanceof Closure) {
-            return resolve(obj.call())
-        }
-
-        if (obj instanceof Class) {
-            return obj.name
-        }
-
-        return obj as String
     }
 }

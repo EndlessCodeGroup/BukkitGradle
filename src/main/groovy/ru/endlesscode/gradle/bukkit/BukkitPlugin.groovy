@@ -8,6 +8,7 @@ import org.gradle.api.artifacts.ResolvableDependencies
 import org.gradle.api.plugins.JavaPluginConvention
 import org.gradle.api.tasks.compile.JavaCompile
 import ru.endlesscode.gradle.bukkit.meta.PluginMetaPlugin
+import ru.endlesscode.gradle.bukkit.server.TestServerPlugin
 
 class BukkitPlugin implements Plugin<Project> {
     Project project
@@ -15,10 +16,12 @@ class BukkitPlugin implements Plugin<Project> {
     @Override
     void apply(Project project) {
         this.project = project
-
         configureProject()
     }
 
+    /**
+     * Configures project
+     */
     def configureProject() {
         addPlugins()
         configureEncoding()
@@ -26,6 +29,9 @@ class BukkitPlugin implements Plugin<Project> {
         addDependencies()
     }
 
+    /**
+     * Adds all needed plugins
+     */
     def addPlugins() {
         project.with {
             plugins.with {
@@ -33,6 +39,7 @@ class BukkitPlugin implements Plugin<Project> {
                 apply("eclipse")
                 apply("idea")
                 apply(PluginMetaPlugin)
+                apply(TestServerPlugin)
             }
 
             convention.getPlugin(JavaPluginConvention).with {
@@ -41,12 +48,18 @@ class BukkitPlugin implements Plugin<Project> {
         }
     }
 
+    /**
+     * Sets force encoding on compile to UTF-8
+     */
     def configureEncoding() {
         project.tasks.withType(JavaCompile) {
             options.encoding = "UTF-8"
         }
     }
 
+    /**
+     * Adds needed repositories
+     */
     def addRepositories() {
         project.with {
             repositories {
@@ -66,6 +79,9 @@ class BukkitPlugin implements Plugin<Project> {
         }
     }
 
+    /**
+     * Adds needed dependencies
+     */
     def addDependencies() {
         project.gradle.addListener(new DependencyResolutionListener() {
             @Override
@@ -79,6 +95,10 @@ class BukkitPlugin implements Plugin<Project> {
         })
     }
 
+    /**
+     * Adds Bukkit API to project dependencies
+     * @param project The project
+     */
     static def addBukkitApi(Project project) {
         project.with {
             def compileDeps = configurations.compile.dependencies

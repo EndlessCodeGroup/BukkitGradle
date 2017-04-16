@@ -14,9 +14,13 @@ class GenerateMeta extends DefaultTask {
     Path target
 
     Path getTarget() {
-        return this.target ?: temporaryDir.toPath().resolve(PluginMetaPlugin.META_FILE)
+        return this.target ?: temporaryDir.toPath().resolve(MetaFile.META_FILE)
     }
 
+    /**
+     * Generates YAML from meta and writes it to target file
+     * @return
+     */
     @TaskAction
     def generateMeta() {
         def metaItems = meta.items
@@ -36,7 +40,13 @@ class GenerateMeta extends DefaultTask {
         }
     }
 
-    private static def validateMeta(List<MetaItem> metaItems) {
+    /**
+     * Validates that meta contains all required attributes
+     * If it isn't throw GradleException
+     *
+     * @param metaItems List of MetaItem
+     */
+    private static validateMeta(List<MetaItem> metaItems) {
         for (MetaItem item in metaItems) {
             if (item.required && !metaItems.value) {
                 throw new GradleException("Plugin metadata parse error: '$item.id' must not be null")
@@ -44,6 +54,12 @@ class GenerateMeta extends DefaultTask {
         }
     }
 
+    /**
+     * Converts given meta items to YAML format
+     *
+     * @param metaItems List of MetaItem
+     * @return List of YAML lines
+     */
     private static List<String> convertToYaml(List<MetaItem> metaItems) {
         List<String> yaml = []
         metaItems.each { MetaItem item ->
