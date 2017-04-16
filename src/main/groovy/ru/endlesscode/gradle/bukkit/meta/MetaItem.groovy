@@ -24,7 +24,17 @@ class MetaItem {
         return resolve(this.value)
     }
 
-    private static String resolve(Object obj) {
+    boolean isValid() {
+        return !this.required || getValue() != null
+    }
+
+    /**
+     * Resolves all objects to String
+     *
+     * @param obj The object to resolve
+     * @return Resolved string
+     */
+    private static String resolve(def obj) {
         if (obj == null) {
             return null
         }

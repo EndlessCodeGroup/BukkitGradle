@@ -2,6 +2,7 @@ package ru.endlesscode.gradle.bukkit.meta
 
 import org.gradle.api.Project
 
+@SuppressWarnings("GroovyUnusedDeclaration")
 class PluginMeta {
     final MetaItem name
     final MetaItem description

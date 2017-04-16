@@ -7,7 +7,7 @@ class BukkitPluginExtension {
     public static final String NAME = "bukkit"
 
     private static final String LATEST_VERSION = "+"
-    private static final String VERSION_SUFFIX = "-R0.1-SNAPSHOT"
+    private static final String REVISION_SUFFIX = "-R0.1-SNAPSHOT"
 
     private final project
 
@@ -27,7 +27,7 @@ class BukkitPluginExtension {
      * @return Chosen Bukkit version
      */
     String getVersion() {
-        return version ? "$version$VERSION_SUFFIX" : LATEST_VERSION
+        return version ? "$version$REVISION_SUFFIX" : LATEST_VERSION
     }
 
     void meta(@DelegatesTo(PluginMeta) Closure<?> closure) {
