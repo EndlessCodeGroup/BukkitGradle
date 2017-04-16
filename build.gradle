@@ -10,7 +10,7 @@ plugins {
 
 group "ru.endlesscode.gradle"
 description "Bukkit Gradle integration plugins"
-version "0.3.4"
+version "0.3.5"
 
 sourceCompatibility = targetCompatibility = JavaVersion.VERSION_1_7
 
