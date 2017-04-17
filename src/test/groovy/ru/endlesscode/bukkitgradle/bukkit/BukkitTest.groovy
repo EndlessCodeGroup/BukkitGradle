@@ -1,7 +1,7 @@
-package ru.endlesscode.gradle.bukkit
+package ru.endlesscode.bukkitgradle.bukkit
 
 import org.junit.Test
-import ru.endlesscode.gradle.bukkit.meta.PluginMeta
+import ru.endlesscode.bukkitgradle.bukkit.meta.PluginMeta
 
 import static org.junit.Assert.*
 

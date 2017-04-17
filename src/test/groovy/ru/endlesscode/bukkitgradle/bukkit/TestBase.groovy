@@ -1,9 +1,9 @@
-package ru.endlesscode.gradle.bukkit
+package ru.endlesscode.bukkitgradle.bukkit
 
 import org.gradle.api.Project
 import org.gradle.testfixtures.ProjectBuilder
 import org.junit.Before
-import ru.endlesscode.gradle.bukkit.meta.MetaFile
+import ru.endlesscode.bukkitgradle.bukkit.meta.MetaFile
 
 import java.nio.file.Files
 import java.nio.file.Path

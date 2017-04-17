@@ -1,4 +1,4 @@
-package ru.endlesscode.gradle.bukkit
+package ru.endlesscode.bukkitgradle
 
 import org.gradle.api.JavaVersion
 import org.gradle.api.Plugin
@@ -7,8 +7,8 @@ import org.gradle.api.artifacts.DependencyResolutionListener
 import org.gradle.api.artifacts.ResolvableDependencies
 import org.gradle.api.plugins.JavaPluginConvention
 import org.gradle.api.tasks.compile.JavaCompile
-import ru.endlesscode.gradle.bukkit.meta.PluginMetaPlugin
-import ru.endlesscode.gradle.bukkit.server.TestServerPlugin
+import ru.endlesscode.bukkitgradle.meta.PluginMetaPlugin
+import ru.endlesscode.bukkitgradle.server.TestServerPlugin
 
 class BukkitGradlePlugin implements Plugin<Project> {
     Project project

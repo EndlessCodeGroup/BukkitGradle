@@ -1,9 +1,9 @@
-package ru.endlesscode.gradle.bukkit.meta
+package ru.endlesscode.bukkitgradle.meta
 
 import org.gradle.api.Plugin
 import org.gradle.api.Project
 import org.gradle.api.file.CopySpec
-import ru.endlesscode.gradle.bukkit.extension.Bukkit
+import ru.endlesscode.bukkitgradle.extension.Bukkit
 
 class PluginMetaPlugin implements Plugin<Project> {
     @Override

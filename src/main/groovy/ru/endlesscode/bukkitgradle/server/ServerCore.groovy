@@ -1,8 +1,8 @@
-package ru.endlesscode.gradle.bukkit.server
+package ru.endlesscode.bukkitgradle.server
 
 import de.undercouch.gradle.tasks.download.Download
 import org.gradle.api.Project
-import ru.endlesscode.gradle.bukkit.extension.Bukkit
+import ru.endlesscode.bukkitgradle.extension.Bukkit
 
 import java.nio.file.Files
 import java.nio.file.Path

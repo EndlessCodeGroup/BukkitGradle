@@ -1,4 +1,4 @@
-package ru.endlesscode.gradle.bukkit.server
+package ru.endlesscode.bukkitgradle.server
 
 import org.gradle.api.Plugin
 import org.gradle.api.Project

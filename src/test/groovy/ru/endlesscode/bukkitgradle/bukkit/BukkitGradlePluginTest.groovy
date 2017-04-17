@@ -1,4 +1,4 @@
-package ru.endlesscode.gradle.bukkit
+package ru.endlesscode.bukkitgradle.bukkit
 
 import org.gradle.api.artifacts.Dependency
 import org.junit.Test

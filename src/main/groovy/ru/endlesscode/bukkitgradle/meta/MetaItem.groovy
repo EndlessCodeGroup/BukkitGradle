@@ -1,4 +1,4 @@
-package ru.endlesscode.gradle.bukkit.meta
+package ru.endlesscode.bukkitgradle.meta
 
 class MetaItem {
     final String id

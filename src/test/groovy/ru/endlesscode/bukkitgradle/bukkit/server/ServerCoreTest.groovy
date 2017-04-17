@@ -1,8 +1,8 @@
-package ru.endlesscode.gradle.bukkit.server
+package ru.endlesscode.bukkitgradle.bukkit.server
 
 import de.undercouch.gradle.tasks.download.Download
 import org.junit.Test
-import ru.endlesscode.gradle.bukkit.TestBase
+import ru.endlesscode.bukkitgradle.bukkit.TestBase
 
 import static org.junit.Assert.assertTrue
 

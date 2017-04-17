@@ -1,4 +1,4 @@
-package ru.endlesscode.gradle.bukkit.meta
+package ru.endlesscode.bukkitgradle.meta
 
 import org.gradle.api.Project
 
