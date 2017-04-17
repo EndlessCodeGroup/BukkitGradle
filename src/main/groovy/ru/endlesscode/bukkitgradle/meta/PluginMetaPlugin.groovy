@@ -11,7 +11,7 @@ class PluginMetaPlugin implements Plugin<Project> {
         project.with {
             extensions.create(Bukkit.NAME, Bukkit, project)
 
-            GenerateMeta genMeta = task("generatePluginMeta", type: GenerateMeta) {
+            def genMeta = task("generatePluginMeta", type: GenerateMeta) {
                 metaFile new MetaFile(project)
             } as GenerateMeta
 

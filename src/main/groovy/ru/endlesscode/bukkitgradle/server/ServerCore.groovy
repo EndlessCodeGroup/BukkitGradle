@@ -37,7 +37,6 @@ class ServerCore {
         task.extensions.create("download", DownloadExtension, project)
 
         task.doLast {
-            println "Meta"
             download {
                 src "https://hub.spigotmc.org/nexus/content/repositories/snapshots/org/bukkit/bukkit/$MAVEN_METADATA"
                 dest downloadDir.toFile()
@@ -52,7 +51,6 @@ class ServerCore {
 
         task.doLast {
             download {
-                println "Download"
                 src { "https://yivesmirror.com/files/spigot/${getCoreName()}" }
                 dest downloadDir.toFile()
                 onlyIfNewer true

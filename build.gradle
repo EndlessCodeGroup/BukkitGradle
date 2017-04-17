@@ -6,6 +6,8 @@ plugins {
     id "com.gradle.plugin-publish" version "0.9.7"
 }
 
+apply from: 'jacoco.gradle'
+
 group "ru.endlesscode"
 description "Bukkit Gradle integration plugins"
 version "0.3.5"

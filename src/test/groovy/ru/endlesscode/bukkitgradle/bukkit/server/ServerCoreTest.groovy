@@ -6,7 +6,7 @@ import org.junit.Test
 import ru.endlesscode.bukkitgradle.bukkit.TestBase
 
 import static org.junit.Assert.assertTrue
-import static org.junit.Assume.assumeFalse
+import static org.junit.Assume.assumeTrue
 
 class ServerCoreTest extends TestBase {
     @Test
@@ -16,7 +16,7 @@ class ServerCoreTest extends TestBase {
 
     @Test
     void downloadingServerCoreMustBeSuccessful() throws Exception {
-        assumeFalse(project.gradle.startParameter.isOffline())
+        assumeTrue(project.gradle.startParameter.isOffline())
         executeTask(project.downloadServerCore as Task)
     }
 }
