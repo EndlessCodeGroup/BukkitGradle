@@ -2,7 +2,6 @@ package ru.endlesscode.bukkitgradle.server
 
 import de.undercouch.gradle.tasks.download.DownloadExtension
 import org.gradle.api.Project
-import org.gradle.api.Task
 import ru.endlesscode.bukkitgradle.extension.Bukkit
 
 import java.nio.file.Files
@@ -22,17 +21,26 @@ class ServerCore {
         this.registerTasks()
     }
 
+    /**
+     * Initializes downloading dir
+     */
     void initDownloadDir() {
         this.downloadDir = project.buildDir.toPath().resolve("server")
         Files.createDirectories(downloadDir)
     }
 
+    /**
+     * Registers needed tasks
+     */
     void registerTasks() {
         registerUpdateMetaTask()
         registerDownloadingTask()
     }
 
-    Task registerUpdateMetaTask() {
+    /**
+     * Registers updating server core metadata task
+     */
+    void registerUpdateMetaTask() {
         def task = project.task("updateServerCoreMetadata")
         task.extensions.create("download", DownloadExtension, project)
 
@@ -45,7 +53,10 @@ class ServerCore {
         }
     }
 
-    Task registerDownloadingTask() {
+    /**
+     * Registers core downloading task
+     */
+    void registerDownloadingTask() {
         def task = project.task("downloadServerCore", dependsOn: "updateServerCoreMetadata")
         task.extensions.create("download", DownloadExtension, project)
 
@@ -58,10 +69,20 @@ class ServerCore {
         }
     }
 
+    /**
+     * Returns core file name
+     *
+     * @return Name of file
+     */
     String getCoreName() {
         return "spigot-${getRealVersion()}.jar"
     }
 
+    /**
+     * Resolves and returns dynamic version
+     *
+     * @return Real Bukkit version
+     */
     private String getRealVersion() {
         String version = project.bukkit.version
         if (version != Bukkit.DYNAMIC_LATEST) {
