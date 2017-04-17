@@ -9,6 +9,7 @@ import java.nio.file.Path
 
 class ServerCore {
     private static final String MAVEN_METADATA = "maven-metadata.xml"
+    private static final String CORE_NAME = "core.jar"
 
     private final Project project
 
@@ -35,6 +36,7 @@ class ServerCore {
     void registerTasks() {
         registerUpdateMetaTask()
         registerDownloadingTask()
+        registerCoreCopyTask()
     }
 
     /**
@@ -42,6 +44,7 @@ class ServerCore {
      */
     void registerUpdateMetaTask() {
         def task = project.task("updateServerCoreMetadata")
+        task.onlyIf { !project.gradle.startParameter.isOffline() }
         task.extensions.create("download", DownloadExtension, project)
 
         task.doLast {
@@ -58,6 +61,7 @@ class ServerCore {
      */
     void registerDownloadingTask() {
         def task = project.task("downloadServerCore", dependsOn: "updateServerCoreMetadata")
+        task.onlyIf { !project.gradle.startParameter.isOffline() }
         task.extensions.create("download", DownloadExtension, project)
 
         task.doLast {
@@ -65,6 +69,25 @@ class ServerCore {
                 src { "https://yivesmirror.com/files/spigot/${getCoreName()}" }
                 dest downloadDir.toFile()
                 onlyIfNewer true
+            }
+        }
+    }
+
+    /**
+     * Registers core copying task
+     */
+    void registerCoreCopyTask() {
+        project.with {
+            task("copyServerCore", dependsOn: "downloadServerCore") {
+                doLast {
+                    Path source = downloadDir.resolve(getCoreName())
+                    Path destination = buildDir.toPath().resolve(CORE_NAME)
+
+                    copy {
+                        from source
+                        into destination
+                    }
+                }
             }
         }
     }
