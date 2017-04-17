@@ -18,7 +18,7 @@ class TestBase {
                 .withProjectDir(new File("build/testProject"))
                 .build()
         this.project.with {
-            apply plugin: BukkitPlugin
+            apply plugin: BukkitGradlePlugin
 
             group = "com.example.plugin"
             description = "Test project description"

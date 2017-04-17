@@ -3,7 +3,7 @@ package ru.endlesscode.gradle.bukkit
 import org.gradle.api.Project
 import ru.endlesscode.gradle.bukkit.meta.PluginMeta
 
-class BukkitPluginExtension {
+class BukkitGradlePluginExtension {
     public static final String NAME = "bukkit"
 
     private static final String LATEST_VERSION = "+"
@@ -14,7 +14,7 @@ class BukkitPluginExtension {
     String version
     final PluginMeta meta
 
-    BukkitPluginExtension(Project project) {
+    BukkitGradlePluginExtension(Project project) {
         this.project = project
         this.meta = new PluginMeta(project)
     }

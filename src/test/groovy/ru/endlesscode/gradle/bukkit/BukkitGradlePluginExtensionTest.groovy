@@ -5,7 +5,7 @@ import ru.endlesscode.gradle.bukkit.meta.PluginMeta
 
 import static org.junit.Assert.*
 
-class BukkitPluginExtensionTest extends TestBase {
+class BukkitGradlePluginExtensionTest extends TestBase {
     @Test
     void testDefaultVersionMustBeLatest() throws Exception {
         assertEquals "+", project.bukkit.version

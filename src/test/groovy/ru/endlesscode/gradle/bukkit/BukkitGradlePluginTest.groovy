@@ -5,7 +5,7 @@ import org.junit.Test
 
 import static org.junit.Assert.assertTrue
 
-class BukkitPluginTest extends TestBase {
+class BukkitGradlePluginTest extends TestBase {
     @Test
     void testPluginAddsRequiredPlugins() throws Exception {
         assertTrue project.pluginManager.hasPlugin("java")
@@ -20,7 +20,7 @@ class BukkitPluginTest extends TestBase {
 
     @Test
     void testPluginAddsLatestBukkitVersion() throws Exception {
-        BukkitPlugin.addBukkitApi(project)
+        BukkitGradlePlugin.addBukkitApi(project)
         def dependencies = getDependencies()
         assertTrue dependencies.contains("org.bukkit:bukkit:+")
     }
@@ -28,7 +28,7 @@ class BukkitPluginTest extends TestBase {
     @Test
     void testPluginAddsCustomBukkit() throws Exception {
         project.bukkit.version = "1.7.10"
-        BukkitPlugin.addBukkitApi(project)
+        BukkitGradlePlugin.addBukkitApi(project)
 
         def dependencies = getDependencies()
         assertTrue dependencies.contains("org.bukkit:bukkit:1.7.10-R0.1-SNAPSHOT")

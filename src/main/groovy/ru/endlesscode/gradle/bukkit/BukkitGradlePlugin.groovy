@@ -10,7 +10,7 @@ import org.gradle.api.tasks.compile.JavaCompile
 import ru.endlesscode.gradle.bukkit.meta.PluginMetaPlugin
 import ru.endlesscode.gradle.bukkit.server.TestServerPlugin
 
-class BukkitPlugin implements Plugin<Project> {
+class BukkitGradlePlugin implements Plugin<Project> {
     Project project
 
     @Override
