@@ -21,7 +21,7 @@ class BuildToolsTest extends TestBase {
         def task = project.tasks.getByName("downloadBuildTools")
         task.execute()
 
-        Path buildTools = project.buildDir.toPath().resolve("server/BuildTools.jar")
+        Path buildTools = project.buildDir.toPath().resolve("buildTools/BuildTools.jar")
         Files.exists(buildTools)
     }
 }

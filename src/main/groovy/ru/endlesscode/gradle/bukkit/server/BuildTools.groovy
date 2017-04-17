@@ -6,7 +6,7 @@ import org.gradle.api.Project
 class BuildTools {
     BuildTools(Project project) {
         project.with {
-            File buildToolsDir = new File(buildDir, "/server")
+            File buildToolsDir = new File(buildDir, "/buildTools")
             buildToolsDir.mkdirs()
 
             task("downloadBuildTools", type: Download) {
