@@ -46,6 +46,10 @@ class MetaFileTest extends TestBase {
 
     @Test(expected = GradleException)
     void testMissingRequiredMetaMustThrowException() throws Exception {
+        project.bukkit {
+            meta.main = null
+        }
+
         this.metaFile.writeTo(target)
     }
 }
