@@ -1,7 +1,8 @@
 package ru.endlesscode.bukkitgradle.server
 
-import de.undercouch.gradle.tasks.download.Download
+import de.undercouch.gradle.tasks.download.DownloadExtension
 import org.gradle.api.Project
+import org.gradle.api.Task
 import ru.endlesscode.bukkitgradle.extension.Bukkit
 
 import java.nio.file.Files
@@ -27,24 +28,35 @@ class ServerCore {
     }
 
     void registerTasks() {
-        registerAndExecuteUpdateMetaTask()
+        registerUpdateMetaTask()
         registerDownloadingTask()
     }
 
-    void registerAndExecuteUpdateMetaTask() {
-        project.task("updateServerCoreMetadata", type: Download) {
-            src "https://hub.spigotmc.org/nexus/content/repositories/snapshots/org/bukkit/bukkit/$MAVEN_METADATA"
-            dest downloadDir.toFile()
-            quiet true
-            onlyIfNewer true
-        }.execute()
+    Task registerUpdateMetaTask() {
+        def task = project.task("updateServerCoreMetadata")
+        task.extensions.create("download", DownloadExtension, project)
+
+        task.doLast {
+            println "Meta"
+            download {
+                src "https://hub.spigotmc.org/nexus/content/repositories/snapshots/org/bukkit/bukkit/$MAVEN_METADATA"
+                dest downloadDir.toFile()
+                quiet true
+            }
+        }
     }
 
-    void registerDownloadingTask() {
-        project.task("downloadServerCore", type: Download) {
-            src "https://yivesmirror.com/files/spigot/${getCoreName()}"
-            dest downloadDir.toFile()
-            onlyIfNewer true
+    Task registerDownloadingTask() {
+        def task = project.task("downloadServerCore", dependsOn: "updateServerCoreMetadata")
+        task.extensions.create("download", DownloadExtension, project)
+
+        task.doLast {
+            download {
+                println "Download"
+                src { "https://yivesmirror.com/files/spigot/${getCoreName()}" }
+                dest downloadDir.toFile()
+                onlyIfNewer true
+            }
         }
     }
 

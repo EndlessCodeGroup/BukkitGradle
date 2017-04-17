@@ -1,9 +1,11 @@
 package ru.endlesscode.bukkitgradle.bukkit
 
 import org.gradle.api.Project
+import org.gradle.api.Task
 import org.gradle.testfixtures.ProjectBuilder
 import org.junit.Before
-import ru.endlesscode.bukkitgradle.bukkit.meta.MetaFile
+import ru.endlesscode.bukkitgradle.BukkitGradlePlugin
+import ru.endlesscode.bukkitgradle.meta.MetaFile
 
 import java.nio.file.Files
 import java.nio.file.Path
@@ -75,5 +77,13 @@ author: OsipXD
 website: www.example_s.com
 
 depend: [Vault, ProtocolLib]'''
+    }
+
+    protected void executeTask(Task task) {
+        task.taskDependencies.getDependencies(task).each {
+            subTask -> executeTask(subTask)
+        }
+
+        task.execute()
     }
 }

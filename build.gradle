@@ -10,7 +10,7 @@ group "ru.endlesscode"
 description "Bukkit Gradle integration plugins"
 version "0.3.5"
 
-sourceCompatibility = targetCompatibility = JavaVersion.VERSION_1_7
+sourceCompatibility = targetCompatibility = JavaVersion.VERSION_1_8
 
 repositories {
     mavenCentral()

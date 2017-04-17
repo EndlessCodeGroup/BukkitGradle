@@ -22,7 +22,7 @@ class BukkitGradlePlugin implements Plugin<Project> {
     /**
      * Configures project
      */
-    def configureProject() {
+    void configureProject() {
         addPlugins()
         configureEncoding()
         addRepositories()
@@ -32,7 +32,7 @@ class BukkitGradlePlugin implements Plugin<Project> {
     /**
      * Adds all needed plugins
      */
-    def addPlugins() {
+    void addPlugins() {
         project.with {
             plugins.with {
                 apply("java")
@@ -51,7 +51,7 @@ class BukkitGradlePlugin implements Plugin<Project> {
     /**
      * Sets force encoding on compile to UTF-8
      */
-    def configureEncoding() {
+    void configureEncoding() {
         project.tasks.withType(JavaCompile) {
             options.encoding = "UTF-8"
         }
@@ -60,7 +60,7 @@ class BukkitGradlePlugin implements Plugin<Project> {
     /**
      * Adds needed repositories
      */
-    def addRepositories() {
+    void addRepositories() {
         project.with {
             repositories {
                 mavenLocal()
@@ -82,7 +82,7 @@ class BukkitGradlePlugin implements Plugin<Project> {
     /**
      * Adds needed dependencies
      */
-    def addDependencies() {
+    void addDependencies() {
         project.gradle.addListener(new DependencyResolutionListener() {
             @Override
             void beforeResolve(ResolvableDependencies resolvableDependencies) {
@@ -99,7 +99,7 @@ class BukkitGradlePlugin implements Plugin<Project> {
      * Adds Bukkit API to project dependencies
      * @param project The project
      */
-    static def addBukkitApi(Project project) {
+    static void addBukkitApi(Project project) {
         project.with {
             def compileDeps = configurations.compile.dependencies
             compileDeps.add(dependencies.create("org.bukkit:bukkit:$bukkit.version"))

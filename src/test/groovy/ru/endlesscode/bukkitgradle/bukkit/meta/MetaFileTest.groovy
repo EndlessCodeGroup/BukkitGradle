@@ -4,6 +4,7 @@ import org.gradle.api.GradleException
 import org.junit.Before
 import org.junit.Test
 import ru.endlesscode.bukkitgradle.bukkit.TestBase
+import ru.endlesscode.bukkitgradle.meta.MetaFile
 
 import java.nio.file.Path
 
