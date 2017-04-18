@@ -7,6 +7,8 @@ class TestServerPlugin implements Plugin<Project> {
 
     @Override
     void apply(Project project) {
-        new ServerCore(project)
+        project.task("runServer", type: RunServer, dependsOn: "prepareServerCore") {
+            core new ServerCore(project)
+        }
     }
 }

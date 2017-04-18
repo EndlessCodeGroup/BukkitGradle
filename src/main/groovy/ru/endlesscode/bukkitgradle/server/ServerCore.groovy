@@ -6,6 +6,7 @@ import ru.endlesscode.bukkitgradle.extension.Bukkit
 
 import java.nio.file.Files
 import java.nio.file.Path
+import java.nio.file.StandardCopyOption
 
 class ServerCore {
     private static final String MAVEN_METADATA = "maven-metadata.xml"
@@ -44,7 +45,6 @@ class ServerCore {
      */
     void registerUpdateMetaTask() {
         def task = project.task("updateServerCoreMetadata")
-        task.onlyIf { !project.gradle.startParameter.isOffline() }
         task.extensions.create("download", DownloadExtension, project)
 
         task.doLast {
@@ -61,7 +61,6 @@ class ServerCore {
      */
     void registerDownloadingTask() {
         def task = project.task("downloadServerCore", dependsOn: "updateServerCoreMetadata")
-        task.onlyIf { !project.gradle.startParameter.isOffline() }
         task.extensions.create("download", DownloadExtension, project)
 
         task.doLast {
@@ -78,16 +77,12 @@ class ServerCore {
      */
     void registerCoreCopyTask() {
         project.with {
-            task("copyServerCore", dependsOn: "downloadServerCore") {
-                doLast {
-                    Path source = downloadDir.resolve(getCoreName())
-                    Path destination = buildDir.toPath().resolve(CORE_NAME)
+            task("prepareServerCore", dependsOn: "downloadServerCore").doLast {
+                Path source = downloadDir.resolve(getCoreName())
+                Path destinationDir = buildDir.toPath().resolve(getShortVersion())
+                Files.createDirectories(destinationDir)
 
-                    copy {
-                        from source
-                        into destination
-                    }
-                }
+                Files.copy(source, destinationDir.resolve(CORE_NAME), StandardCopyOption.REPLACE_EXISTING)
             }
         }
     }
@@ -99,6 +94,15 @@ class ServerCore {
      */
     String getCoreName() {
         return "spigot-${getRealVersion()}.jar"
+    }
+
+    /**
+     * Returns version without revision suffix
+     *
+     * @return Short version
+     */
+    String getShortVersion() {
+        getRealVersion().replace(Bukkit.REVISION_SUFFIX, "")
     }
 
     /**
@@ -114,7 +118,6 @@ class ServerCore {
 
         Path metaFile = downloadDir.resolve(MAVEN_METADATA)
         def metadata = new XmlSlurper().parse(metaFile.toFile())
-
-        return metadata.versioning.latest.toString()
+        metadata.versioning.latest.toString()
     }
 }

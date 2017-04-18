@@ -1,10 +1,9 @@
-package ru.endlesscode.bukkitgradle.bukkit.meta
+package ru.endlesscode.bukkitgradle.meta
 
 import org.gradle.api.GradleException
 import org.junit.Before
 import org.junit.Test
-import ru.endlesscode.bukkitgradle.bukkit.TestBase
-import ru.endlesscode.bukkitgradle.meta.MetaFile
+import ru.endlesscode.bukkitgradle.TestBase
 
 import java.nio.file.Path
 

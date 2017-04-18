@@ -1,8 +1,7 @@
-package ru.endlesscode.bukkitgradle.bukkit.meta
+package ru.endlesscode.bukkitgradle.meta
 
 import org.junit.Test
-import ru.endlesscode.bukkitgradle.bukkit.TestBase
-import ru.endlesscode.bukkitgradle.meta.GenerateMeta
+import ru.endlesscode.bukkitgradle.TestBase
 
 import static org.junit.Assert.assertTrue
 

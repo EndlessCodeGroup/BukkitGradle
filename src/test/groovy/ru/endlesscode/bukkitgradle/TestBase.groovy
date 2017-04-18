@@ -1,20 +1,20 @@
-package ru.endlesscode.bukkitgradle.bukkit
+package ru.endlesscode.bukkitgradle
 
 import org.gradle.api.Project
 import org.gradle.api.Task
 import org.gradle.testfixtures.ProjectBuilder
 import org.junit.Before
-import ru.endlesscode.bukkitgradle.BukkitGradlePlugin
 import ru.endlesscode.bukkitgradle.meta.MetaFile
 
 import java.nio.file.Files
 import java.nio.file.Path
-import java.util.logging.ConsoleHandler
-import java.util.logging.Logger
-import java.util.logging.SimpleFormatter
 
 class TestBase {
     protected Project project
+
+    TestBase() {
+        setUp()
+    }
 
     @Before
     void setUp() throws Exception {
@@ -29,25 +29,7 @@ class TestBase {
             description = "Test project description"
             version = "1.0"
             ext.url = "https://www.example.ru/"
-
-            test {
-                testLogging.showStandardStreams = true
-            }
         }
-    }
-
-    void configureLogger() {
-        Logger logger = Logger.getLogger("TestLogger")
-        ConsoleHandler consoleHandler = new ConsoleHandler()
-        consoleHandler.setFormatter(new SimpleFormatter())
-        logger.useParentHandlers = false
-        logger.handlers.each { handler ->
-            logger.removeHandler(handler)
-        }
-
-        logger.addHandler(consoleHandler)
-
-        project.logger = logger
     }
 
     protected void initBukkitMeta() {

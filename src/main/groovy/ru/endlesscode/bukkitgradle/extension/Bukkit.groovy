@@ -6,17 +6,18 @@ import ru.endlesscode.bukkitgradle.meta.PluginMeta
 class Bukkit {
     public static final String NAME = "bukkit"
     public static final String DYNAMIC_LATEST = "+"
-
-    private static final String REVISION_SUFFIX = "-R0.1-SNAPSHOT"
+    public static final String REVISION_SUFFIX = "-R0.1-SNAPSHOT"
 
     private final Project project
 
     String version
     final PluginMeta meta
+    final RunConfiguration run
 
     Bukkit(Project project) {
         this.project = project
         this.meta = new PluginMeta(project)
+        this.run = new RunConfiguration(project)
     }
 
     /**
@@ -32,5 +33,9 @@ class Bukkit {
 
     void meta(@DelegatesTo(PluginMeta) Closure<?> closure) {
         project.configure(meta, closure)
+    }
+
+    void run(@DelegatesTo(RunConfiguration) Closure<?> closure) {
+        project.configure(run, closure)
     }
 }

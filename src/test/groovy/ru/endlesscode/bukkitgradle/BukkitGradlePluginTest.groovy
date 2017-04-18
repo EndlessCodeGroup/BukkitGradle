@@ -1,8 +1,7 @@
-package ru.endlesscode.bukkitgradle.bukkit
+package ru.endlesscode.bukkitgradle
 
 import org.gradle.api.artifacts.Dependency
 import org.junit.Test
-import ru.endlesscode.bukkitgradle.BukkitGradlePlugin
 
 import static org.junit.Assert.assertTrue
 

@@ -1,4 +1,4 @@
-package ru.endlesscode.bukkitgradle.bukkit
+package ru.endlesscode.bukkitgradle
 
 import org.junit.Test
 import ru.endlesscode.bukkitgradle.meta.PluginMeta

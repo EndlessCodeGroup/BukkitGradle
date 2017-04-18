@@ -1,9 +1,8 @@
-package ru.endlesscode.bukkitgradle.bukkit.server
+package ru.endlesscode.bukkitgradle.server
 
 import org.gradle.api.DefaultTask
-import org.gradle.api.Task
 import org.junit.Test
-import ru.endlesscode.bukkitgradle.bukkit.TestBase
+import ru.endlesscode.bukkitgradle.TestBase
 
 import static org.junit.Assert.assertTrue
 
@@ -14,7 +13,7 @@ class ServerCoreTest extends TestBase {
     }
 
     @Test
-    void downloadingServerCoreMustBeSuccessful() throws Exception {
-        executeTask(project.downloadServerCore as Task)
+    void testAllTasks() throws Exception {
+        project.prepareServerCore.execute()
     }
 }
