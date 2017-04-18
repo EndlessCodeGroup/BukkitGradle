@@ -12,10 +12,6 @@ import java.nio.file.Path
 class TestBase {
     protected Project project
 
-    TestBase() {
-        setUp()
-    }
-
     @Before
     void setUp() throws Exception {
         this.project = ProjectBuilder.builder()

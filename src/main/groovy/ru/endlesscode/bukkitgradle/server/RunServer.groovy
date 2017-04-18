@@ -10,16 +10,12 @@ class RunServer extends DefaultTask {
 
     @TaskAction
     void launchServer() {
-        final ProcessBuilder processBuilder = new ProcessBuilder("java", "-Xmx1G", "-jar", "core.jar")
+        final ProcessBuilder processBuilder = new ProcessBuilder("cmd", "/c", "start", "java", "-Xmx1G", "-jar", "core.jar")
         processBuilder.redirectErrorStream(true)
         processBuilder.directory(new File(project.buildDir, core.getShortVersion()))
 
         logger.lifecycle("Starting Server...")
-        final Process serverProcess = processBuilder.start()
-        StreamSpy.spy(serverProcess.in, logger)
-        StreamSpy.spy(System.in, serverProcess.out)
-
-        serverProcess.waitFor()
-        logger.lifecycle("Server stopped")
+        processBuilder.start()
+        logger.lifecycle("Server started successfully!")
     }
 }
