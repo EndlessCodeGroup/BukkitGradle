@@ -1,4 +1,4 @@
-package ru.endlesscode.gradle.bukkit.meta
+package ru.endlesscode.bukkitgradle.meta
 
 import org.gradle.api.Project
 
@@ -16,7 +16,7 @@ class PluginMeta {
     PluginMeta(Project project) {
         this.name = new MetaItem("name", true, project.name)
         this.description = new MetaItem("description", { project.description })
-        this.main = new MetaItem("main", true)
+        this.main = new MetaItem("main", true, { "${project.group}.${getName().toLowerCase()}.${getName()}" })
         this.version = new MetaItem("version", true, { project.version })
         this.url = new MetaItem("website", { project.findProperty("url") })
         this.authors = new MetaItem("authors")

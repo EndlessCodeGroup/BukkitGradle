@@ -1,4 +1,4 @@
-package ru.endlesscode.gradle.bukkit.meta
+package ru.endlesscode.bukkitgradle.meta
 
 class MetaItem {
     final String id
@@ -16,14 +16,24 @@ class MetaItem {
         this.value = value
     }
 
-    String getEntry() {
-        return "$id: ${getValue()}"
-    }
-
     String getValue() {
         return resolve(this.value)
     }
 
+    /**
+     * Converts and returns meta item to YAML format
+     *
+     * @return Converted item
+     */
+    String getEntry() {
+        return "$id: ${getValue()}"
+    }
+
+    /**
+     * Validates meta item
+     *
+     * @return true if meta item valid, otherwise false
+     */
     boolean isValid() {
         return !this.required || getValue() != null
     }

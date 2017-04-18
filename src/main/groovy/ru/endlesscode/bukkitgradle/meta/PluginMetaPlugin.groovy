@@ -1,17 +1,17 @@
-package ru.endlesscode.gradle.bukkit.meta
+package ru.endlesscode.bukkitgradle.meta
 
 import org.gradle.api.Plugin
 import org.gradle.api.Project
 import org.gradle.api.file.CopySpec
-import ru.endlesscode.gradle.bukkit.BukkitPluginExtension
+import ru.endlesscode.bukkitgradle.extension.Bukkit
 
 class PluginMetaPlugin implements Plugin<Project> {
     @Override
     void apply(Project project) {
         project.with {
-            extensions.create(BukkitPluginExtension.NAME, BukkitPluginExtension, project)
+            extensions.create(Bukkit.NAME, Bukkit, project)
 
-            GenerateMeta genMeta = task("generatePluginMeta", type: GenerateMeta) {
+            def genMeta = task("generatePluginMeta", type: GenerateMeta) {
                 metaFile new MetaFile(project)
             } as GenerateMeta
 
