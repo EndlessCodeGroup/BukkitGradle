@@ -8,12 +8,9 @@ import static org.junit.Assert.assertTrue
 
 class ServerCoreTest extends TestBase {
     @Test
-    void canAddTaskToProject() throws Exception {
+    void canAddTasksToProject() throws Exception {
+        assertTrue(project.updateServerCoreMetadata instanceof DefaultTask)
         assertTrue(project.downloadServerCore instanceof DefaultTask)
-    }
-
-    @Test
-    void testAllTasks() throws Exception {
-        project.prepareServerCore.execute()
+        assertTrue(project.prepareServerCore instanceof DefaultTask)
     }
 }
