@@ -10,10 +10,14 @@ import java.nio.file.StandardCopyOption
 
 class PrepareServer extends DefaultTask {
     @Input
-    Path serverDir
+    ServerCore core
+
+    private Path serverDir
 
     @TaskAction
     void prepareServer() {
+        this.serverDir = core.serverDir
+
         resolveEula()
         copyPluginToServerDir()
     }
