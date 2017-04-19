@@ -12,7 +12,7 @@ class RunServer extends DefaultTask {
     void runServer() {
         final ProcessBuilder processBuilder = new ProcessBuilder("cmd", "/c", "start", "java", "-Xmx1G", "-jar", "core.jar")
         processBuilder.redirectErrorStream(true)
-        processBuilder.directory(new File(project.buildDir, core.getSimpleVersion()))
+        processBuilder.directory(core.serverDir.toFile())
 
         logger.lifecycle("Starting Server...")
         processBuilder.start()

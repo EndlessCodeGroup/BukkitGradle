@@ -27,7 +27,7 @@ class ServerCore {
      * Initializes downloading dir
      */
     void initDownloadDir() {
-        this.downloadDir = project.buildDir.toPath().resolve("server")
+        this.downloadDir = project.buildDir.toPath().resolve("serverCore")
         Files.createDirectories(downloadDir)
     }
 
@@ -79,10 +79,9 @@ class ServerCore {
         project.with {
             task("copyServerCore", dependsOn: "downloadServerCore").doLast {
                 Path source = downloadDir.resolve(getCoreName())
-                Path destinationDir = project.bukkit.run.dir.resolve(getSimpleVersion())
-                Files.createDirectories(destinationDir)
+                Path destination = getServerDir().resolve(CORE_NAME)
 
-                Files.copy(source, destinationDir.resolve(CORE_NAME), StandardCopyOption.REPLACE_EXISTING)
+                Files.copy(source, destination, StandardCopyOption.REPLACE_EXISTING)
             }
         }
     }
@@ -119,5 +118,12 @@ class ServerCore {
         Path metaFile = downloadDir.resolve(MAVEN_METADATA)
         def metadata = new XmlSlurper().parse(metaFile.toFile())
         metadata.versioning.latest.toString()
+    }
+
+    Path getServerDir() {
+        Path serverDir = this.project.bukkit.run.dir.resolve(getSimpleVersion())
+        Files.createDirectories(serverDir)
+
+        return serverDir
     }
 }
