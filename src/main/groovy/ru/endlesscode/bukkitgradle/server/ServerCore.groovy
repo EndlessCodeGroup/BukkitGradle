@@ -9,8 +9,9 @@ import java.nio.file.Path
 import java.nio.file.StandardCopyOption
 
 class ServerCore {
+    public static final String CORE_NAME = "core.jar"
+
     private static final String MAVEN_METADATA = "maven-metadata.xml"
-    private static final String CORE_NAME = "core.jar"
 
     private final Project project
 
@@ -27,7 +28,7 @@ class ServerCore {
      * Initializes downloading dir
      */
     void initDownloadDir() {
-        this.downloadDir = project.buildDir.toPath().resolve("server")
+        this.downloadDir = project.buildDir.toPath().resolve("serverCore")
         Files.createDirectories(downloadDir)
     }
 
@@ -77,12 +78,11 @@ class ServerCore {
      */
     void registerCoreCopyTask() {
         project.with {
-            task("prepareServerCore", dependsOn: "downloadServerCore").doLast {
+            task("copyServerCore", dependsOn: "downloadServerCore").doLast {
                 Path source = downloadDir.resolve(getCoreName())
-                Path destinationDir = buildDir.toPath().resolve(getShortVersion())
-                Files.createDirectories(destinationDir)
+                Path destination = getServerDir().resolve(CORE_NAME)
 
-                Files.copy(source, destinationDir.resolve(CORE_NAME), StandardCopyOption.REPLACE_EXISTING)
+                Files.copy(source, destination, StandardCopyOption.REPLACE_EXISTING)
             }
         }
     }
@@ -99,9 +99,9 @@ class ServerCore {
     /**
      * Returns version without revision suffix
      *
-     * @return Short version
+     * @return Simple version
      */
-    String getShortVersion() {
+    String getSimpleVersion() {
         getRealVersion().replace(Bukkit.REVISION_SUFFIX, "")
     }
 
@@ -119,5 +119,17 @@ class ServerCore {
         Path metaFile = downloadDir.resolve(MAVEN_METADATA)
         def metadata = new XmlSlurper().parse(metaFile.toFile())
         metadata.versioning.latest.toString()
+    }
+
+    /**
+     * Returns server directory
+     *
+     * @return Server directory
+     */
+    Path getServerDir() {
+        Path serverDir = this.project.bukkit.run.dir.resolve(getSimpleVersion())
+        Files.createDirectories(serverDir)
+
+        return serverDir
     }
 }

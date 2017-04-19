@@ -3,23 +3,34 @@ package ru.endlesscode.bukkitgradle.server
 import org.gradle.api.DefaultTask
 import org.gradle.api.tasks.Input
 import org.gradle.api.tasks.TaskAction
+import ru.endlesscode.bukkitgradle.extension.RunConfiguration
+import ru.endlesscode.bukkitgradle.server.script.SystemScript
 
 class RunServer extends DefaultTask {
     @Input
     ServerCore core
 
     @TaskAction
-    void launchServer() {
-        final ProcessBuilder processBuilder = new ProcessBuilder("java", "-Xmx1G", "-jar", "core.jar")
-        processBuilder.redirectErrorStream(true)
-        processBuilder.directory(new File(project.buildDir, core.getShortVersion()))
-
+    void runServer() {
+        SystemScript script = this.createStartScript()
+        logger.lifecycle("Running script built!")
         logger.lifecycle("Starting Server...")
-        final Process serverProcess = processBuilder.start()
-        StreamSpy.spy(serverProcess.in, logger)
-        StreamSpy.spy(System.in, serverProcess.out)
+        this.runScript(script)
+        logger.lifecycle("Server started successfully!")
+    }
 
-        serverProcess.waitFor()
-        logger.lifecycle("Server stopped")
+    SystemScript createStartScript() {
+        RunConfiguration configuration = project.bukkit.run
+        SystemScript script = SystemScript.getScript(configuration, core.simpleVersion)
+        script.buildOn(this.core.serverDir)
+
+        return script
+    }
+
+    void runScript(SystemScript script) {
+        new ProcessBuilder(script.command)
+                .redirectErrorStream(true)
+                .directory(core.serverDir.toFile())
+                .start()
     }
 }
