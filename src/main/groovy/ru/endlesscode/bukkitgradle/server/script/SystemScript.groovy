@@ -1,6 +1,6 @@
 package ru.endlesscode.bukkitgradle.server.script
 
-import org.gradle.internal.impldep.org.apache.commons.lang.SystemUtils
+import org.gradle.internal.os.OperatingSystem
 import ru.endlesscode.bukkitgradle.extension.RunConfiguration
 import ru.endlesscode.bukkitgradle.server.ServerCore
 
@@ -87,11 +87,11 @@ abstract class SystemScript {
      * @return The script
      */
     static SystemScript getScript(RunConfiguration configuration, String version) {
-        if (SystemUtils.IS_OS_WINDOWS) {
+        if (OperatingSystem.current().isWindows()) {
             return new WindowsScript(configuration, version)
         }
 
-        if (SystemUtils.IS_OS_MAC) {
+        if (OperatingSystem.current().isMacOsX()) {
             return new MacScript(configuration, version)
         }
 
