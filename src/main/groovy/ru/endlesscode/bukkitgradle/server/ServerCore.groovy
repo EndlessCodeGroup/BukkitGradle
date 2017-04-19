@@ -77,9 +77,9 @@ class ServerCore {
      */
     void registerCoreCopyTask() {
         project.with {
-            task("prepareServerCore", dependsOn: "downloadServerCore").doLast {
+            task("copyServerCore", dependsOn: "downloadServerCore").doLast {
                 Path source = downloadDir.resolve(getCoreName())
-                Path destinationDir = buildDir.toPath().resolve(getShortVersion())
+                Path destinationDir = project.bukkit.run.dir.resolve(getSimpleVersion())
                 Files.createDirectories(destinationDir)
 
                 Files.copy(source, destinationDir.resolve(CORE_NAME), StandardCopyOption.REPLACE_EXISTING)
@@ -99,9 +99,9 @@ class ServerCore {
     /**
      * Returns version without revision suffix
      *
-     * @return Short version
+     * @return Simple version
      */
-    String getShortVersion() {
+    String getSimpleVersion() {
         getRealVersion().replace(Bukkit.REVISION_SUFFIX, "")
     }
 

@@ -2,6 +2,8 @@ package ru.endlesscode.bukkitgradle.extension
 
 import org.gradle.api.Project
 
+import java.nio.file.Path
+
 class RunConfiguration {
     private static final String DEBUG_ARGS = "-agentlib:jdwp=transport=dt_socket,server=y,suspend=n,address=5005"
 
@@ -11,6 +13,7 @@ class RunConfiguration {
     boolean onlineMode
     boolean debug
     String encoding
+    String dir
 
     final List<String> javaArgs
     final List<String> bukkitArgs
@@ -22,6 +25,7 @@ class RunConfiguration {
         this.onlineMode = false
         this.debug = true
         this.encoding = "UTF-8"
+        this.dir = "server"
 
         this.javaArgs = ["-Xmx1G"]
         this.bukkitArgs = []
@@ -63,5 +67,9 @@ class RunConfiguration {
     void setBukkitArgs(String args) {
         bukkitArgs.clear()
         bukkitArgs.addAll(args.split(" "))
+    }
+
+    Path getDir() {
+        project.projectDir.toPath().resolve(this.dir)
     }
 }
