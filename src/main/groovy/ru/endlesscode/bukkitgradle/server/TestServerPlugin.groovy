@@ -7,8 +7,13 @@ class TestServerPlugin implements Plugin<Project> {
 
     @Override
     void apply(Project project) {
-        project.task("runServer", type: RunServer, dependsOn: "copyServerCore") {
-            core new ServerCore(project)
+        ServerCore serverCore = new ServerCore(project)
+        project.task("prepareServer", type: PrepareServer, dependsOn: ["build", "copyServerCore"]) {
+            serverDir = serverCore.serverDir
+        }
+
+        project.task("runServer", type: RunServer, dependsOn: "prepareServer") {
+            core serverCore
         }
     }
 }
