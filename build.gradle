@@ -10,7 +10,7 @@ apply from: 'jacoco.gradle'
 
 group "ru.endlesscode"
 description "Bukkit Gradle integration plugins"
-version "0.5.2"
+version "0.5.3"
 
 sourceCompatibility = targetCompatibility = JavaVersion.VERSION_1_8
 

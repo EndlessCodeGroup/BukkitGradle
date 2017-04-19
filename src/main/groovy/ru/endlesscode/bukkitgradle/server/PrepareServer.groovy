@@ -30,7 +30,7 @@ class PrepareServer extends DefaultTask {
     }
 
     void copyPluginToServerDir() {
-        String pluginName = "plugins/${project.bukkit.meta.name}.jar"
+        String pluginName = "${project.bukkit.meta.name}.jar"
         Path jar = project.jar.archivePath.toPath()
         Path pluginsDir = serverDir.resolve("plugins").toRealPath()
         Files.createDirectories(pluginsDir)
