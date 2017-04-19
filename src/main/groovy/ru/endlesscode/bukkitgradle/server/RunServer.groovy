@@ -3,6 +3,8 @@ package ru.endlesscode.bukkitgradle.server
 import org.gradle.api.DefaultTask
 import org.gradle.api.tasks.Input
 import org.gradle.api.tasks.TaskAction
+import ru.endlesscode.bukkitgradle.extension.RunConfiguration
+import ru.endlesscode.bukkitgradle.server.script.SystemScript
 
 class RunServer extends DefaultTask {
     @Input
@@ -10,12 +12,25 @@ class RunServer extends DefaultTask {
 
     @TaskAction
     void runServer() {
-        final ProcessBuilder processBuilder = new ProcessBuilder("cmd", "/c", "start", "java", "-Xmx1G", "-jar", "core.jar")
-        processBuilder.redirectErrorStream(true)
-        processBuilder.directory(core.serverDir.toFile())
-
+        SystemScript script = this.createStartScript()
+        logger.lifecycle("Running script built!")
         logger.lifecycle("Starting Server...")
-        processBuilder.start()
+        this.runScript(script)
         logger.lifecycle("Server started successfully!")
+    }
+
+    SystemScript createStartScript() {
+        RunConfiguration configuration = project.bukkit.run
+        SystemScript script = SystemScript.getScript(configuration, core.simpleVersion)
+        script.buildOn(this.core.serverDir)
+
+        return script
+    }
+
+    void runScript(SystemScript script) {
+        new ProcessBuilder(script.command)
+                .redirectErrorStream(true)
+                .directory(core.serverDir.toFile())
+                .start()
     }
 }

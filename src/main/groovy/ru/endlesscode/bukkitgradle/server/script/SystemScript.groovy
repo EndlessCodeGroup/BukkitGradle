@@ -1,0 +1,100 @@
+package ru.endlesscode.bukkitgradle.server.script
+
+import org.gradle.internal.impldep.org.apache.commons.lang.SystemUtils
+import ru.endlesscode.bukkitgradle.extension.RunConfiguration
+import ru.endlesscode.bukkitgradle.server.ServerCore
+
+import java.nio.file.Files
+import java.nio.file.Path
+
+abstract class SystemScript {
+    protected RunConfiguration configuration
+    private String version
+
+    SystemScript(RunConfiguration configuration, String version) {
+        this.configuration = configuration
+        this.version = version
+    }
+
+    /**
+     * Generates script file on given directory
+     *
+     * @param dir The directory
+     */
+    void buildOn(Path dir) {
+        Path scriptFile = dir.resolve(getFileName())
+        if (!Files.exists(scriptFile)) {
+            Files.createFile(scriptFile)
+        }
+
+        scriptFile.text = this.getScriptText()
+    }
+
+    /**
+     * Returns script file name
+     *
+     * @return Script name
+     */
+    protected String getFileName() {
+        return "start.${getExt()}"
+    }
+
+    /**
+     * Returns script file extension
+     *
+     * @return File extension
+     */
+    protected abstract String getExt()
+
+    /**
+     * Returns script file content as multiline string
+     *
+     * @return Script text
+     */
+    protected abstract String getScriptText()
+
+    /**
+     * Builds and returns server run command
+     * It is same for any OS
+     *
+     * @return Server run command
+     */
+    protected String buildRunCommand() {
+        "java ${configuration.javaArgs} -jar ${ServerCore.CORE_NAME} ${configuration.bukkitArgs}"
+    }
+
+    /**
+     * Returns command for ProcessBuilder
+     *
+     * @return Command
+     */
+    abstract List<String> getCommand()
+
+    /**
+     * Gets title for console window
+     *
+     * @return The title
+     */
+    protected String getTitle() {
+        return "Dev Server (v$version)"
+    }
+
+    /**
+     * Returns start script for current system
+     *
+     * @param configuration Run configuration
+     * @param version Server version
+     * @return The script
+     */
+    static SystemScript getScript(RunConfiguration configuration, String version) {
+        if (SystemUtils.IS_OS_WINDOWS) {
+            return new WindowsScript(configuration, version)
+        }
+
+        if (SystemUtils.IS_OS_MAC) {
+            return new MacScript(configuration, version)
+        }
+
+        return new LinuxScript(configuration, version)
+    }
+}

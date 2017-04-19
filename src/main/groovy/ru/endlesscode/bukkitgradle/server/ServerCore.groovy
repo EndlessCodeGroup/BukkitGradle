@@ -9,8 +9,9 @@ import java.nio.file.Path
 import java.nio.file.StandardCopyOption
 
 class ServerCore {
+    public static final String CORE_NAME = "core.jar"
+
     private static final String MAVEN_METADATA = "maven-metadata.xml"
-    private static final String CORE_NAME = "core.jar"
 
     private final Project project
 
@@ -120,6 +121,11 @@ class ServerCore {
         metadata.versioning.latest.toString()
     }
 
+    /**
+     * Returns server directory
+     *
+     * @return Server directory
+     */
     Path getServerDir() {
         Path serverDir = this.project.bukkit.run.dir.resolve(getSimpleVersion())
         Files.createDirectories(serverDir)

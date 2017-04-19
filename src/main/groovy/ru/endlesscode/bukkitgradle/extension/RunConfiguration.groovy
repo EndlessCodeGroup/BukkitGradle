@@ -14,9 +14,8 @@ class RunConfiguration {
     boolean debug
     String encoding
     String dir
-
-    final List<String> javaArgs
-    final List<String> bukkitArgs
+    String javaArgs
+    String bukkitArgs
 
     RunConfiguration(Project project) {
         this.project = project
@@ -27,8 +26,8 @@ class RunConfiguration {
         this.encoding = "UTF-8"
         this.dir = "server"
 
-        this.javaArgs = ["-Xmx1G"]
-        this.bukkitArgs = []
+        this.javaArgs = "-Xmx1G"
+        this.bukkitArgs = ""
     }
 
     /**
@@ -36,20 +35,8 @@ class RunConfiguration {
      *
      * @return Java arguments
      */
-    List<String> getJavaArgs() {
-        def javaArgs = []
-        if (this.debug) {
-            javaArgs << DEBUG_ARGS
-        }
-        javaArgs << "-Dfile.encoding=$encoding"
-        javaArgs.addAll(this.javaArgs)
-
-        return javaArgs
-    }
-
-    void setJavaArgs(String args) {
-        javaArgs.clear()
-        javaArgs.addAll(args.split(" "))
+    String getJavaArgs() {
+        return "${this.debug ? "$DEBUG_ARGS " : ""}-Dfile.encoding=$encoding ${this.javaArgs}"
     }
 
     /**
@@ -57,16 +44,8 @@ class RunConfiguration {
      *
      * @return Bukkit arguments
      */
-    List<String> getBukkitArgs() {
-        def bukkitArgs = [] << "-o" << "$onlineMode"
-        bukkitArgs.addAll(this.bukkitArgs)
-
-        return bukkitArgs
-    }
-
-    void setBukkitArgs(String args) {
-        bukkitArgs.clear()
-        bukkitArgs.addAll(args.split(" "))
+    String getBukkitArgs() {
+        return "-o $onlineMode${bukkitArgs ? " $bukkitArgs" : ""}"
     }
 
     Path getDir() {
