@@ -48,6 +48,11 @@ class RunConfiguration {
         return "-o $onlineMode${bukkitArgs ? " $bukkitArgs" : ""}"
     }
 
+    /**
+     * Returns servers dir
+     *
+     * @return The directory
+     */
     Path getDir() {
         project.projectDir.toPath().resolve(this.dir)
     }
