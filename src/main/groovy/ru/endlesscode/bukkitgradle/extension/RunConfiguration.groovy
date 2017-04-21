@@ -45,7 +45,7 @@ class RunConfiguration {
      * @return Bukkit arguments
      */
     String getBukkitArgs() {
-        return bukkitArgs ? " $bukkitArgs" : ""
+        return bukkitArgs ?: ""
     }
 
     /**

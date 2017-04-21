@@ -13,7 +13,7 @@ class RunConfigurationTest extends TestBase {
             assertFalse onlineMode
             assertTrue debug
             assertEquals("-agentlib:jdwp=transport=dt_socket,server=y,suspend=n,address=5005 -Dfile.encoding=UTF-8 -Xmx1G", javaArgs)
-            assertEquals("-o false", bukkitArgs)
+            assertEquals("", bukkitArgs)
         }
     }
 
@@ -26,7 +26,7 @@ class RunConfigurationTest extends TestBase {
             assertTrue onlineMode
             assertFalse debug
             assertEquals("-Dfile.encoding=CP866 -Xmx2G", javaArgs)
-            assertEquals("-o true -s 2", bukkitArgs)
+            assertEquals("-s 2", bukkitArgs)
         }
     }
 
@@ -35,6 +35,7 @@ class RunConfigurationTest extends TestBase {
             eula = true
             onlineMode = true
             debug = false
+            dir = "devServer"
             encoding = "CP866"
             javaArgs = "-Xmx2G"
             bukkitArgs = "-s 2"
