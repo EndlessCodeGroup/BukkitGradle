@@ -3,6 +3,7 @@ package ru.endlesscode.bukkitgradle.server
 import org.gradle.api.DefaultTask
 import org.gradle.api.tasks.Input
 import org.gradle.api.tasks.TaskAction
+import ru.endlesscode.bukkitgradle.extension.RunConfiguration
 
 import java.nio.file.Files
 import java.nio.file.Path
@@ -13,20 +14,35 @@ class PrepareServer extends DefaultTask {
     ServerCore core
 
     private Path serverDir
+    private RunConfiguration run
 
     @TaskAction
     void prepareServer() {
         this.serverDir = core.serverDir
+        this.run = project.bukkit.run
 
         resolveEula()
+        resolveOnlineMode()
         copyPluginToServerDir()
     }
 
     void resolveEula() {
         Path eulaFile = serverDir.resolve("eula.txt")
 
-        boolean eula = project.bukkit.run.eula
+        boolean eula = this.run.eula
         eulaFile.text = "eula=$eula"
+    }
+
+    void resolveOnlineMode() {
+        Path propsFile = serverDir.resolve("server.properties")
+        if (!Files.exists(propsFile)) {
+            Files.createFile(propsFile)
+        }
+
+        Properties properties = new Properties()
+        properties.load(propsFile.newReader())
+        properties.setProperty("online-mode", "${this.run.onlineMode}")
+        properties.store(propsFile.newWriter(), "Minecraft server properties")
     }
 
     void copyPluginToServerDir() {

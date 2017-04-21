@@ -9,7 +9,6 @@ import java.nio.file.Path
 class GenerateMeta extends DefaultTask {
     @Input
     MetaFile metaFile
-    @Input
     Path target
 
     Path getTarget() {

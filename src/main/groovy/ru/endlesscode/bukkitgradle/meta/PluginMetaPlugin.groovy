@@ -16,7 +16,7 @@ class PluginMetaPlugin implements Plugin<Project> {
             } as GenerateMeta
 
             tasks.processResources.dependsOn genMeta
-            ((CopySpec) tasks.processResources).from genMeta.target.toFile()
+            (tasks.processResources as CopySpec).from genMeta.target.toFile()
         }
     }
 }
