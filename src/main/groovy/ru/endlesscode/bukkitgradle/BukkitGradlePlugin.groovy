@@ -68,7 +68,7 @@ class BukkitGradlePlugin implements Plugin<Project> {
 
                 maven {
                     name = "sk89q"
-                    url = "http://maven.sk89q.com/repo/org/sk89q/"
+                    url = "http://maven.sk89q.com/repo/"
                 }
 
                 maven {
