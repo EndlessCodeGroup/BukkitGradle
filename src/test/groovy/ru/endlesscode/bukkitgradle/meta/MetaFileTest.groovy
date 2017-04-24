@@ -23,7 +23,7 @@ class MetaFileTest extends TestBase {
 
     @Test
     void testRemovingMetaLines() throws Exception {
-        assertEquals(["depend: [Vault, ProtocolLib]"], this.target.readLines())
+        assertEquals(["depend: [Vault, ProtocolLib]", "command:", "  example"], this.target.readLines())
     }
 
     @Test
@@ -37,7 +37,9 @@ class MetaFileTest extends TestBase {
                 "version: 0.1",
                 "website: http://www.example.com/",
                 "authors: [OsipXD, Contributors]",
-                "depend: [Vault, ProtocolLib]"
+                "depend: [Vault, ProtocolLib]",
+                "command:",
+                "  example"
         ]
 
         this.metaFile.writeTo(target)

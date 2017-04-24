@@ -81,7 +81,6 @@ class MetaFile {
         }
 
         metaFile.eachLine { line ->
-            line = line.trim()
             if (isStaticLine(line)) {
                 staticLines << line
             }
