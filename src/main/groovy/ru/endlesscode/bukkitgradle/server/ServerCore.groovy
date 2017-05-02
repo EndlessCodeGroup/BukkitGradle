@@ -46,16 +46,16 @@ class ServerCore {
      */
     void registerDownloadingTask() {
         project.task("downloadServerCore") {
-            extensions.create("download", DownloadExtension, project)
             onlyIf { !project.gradle.startParameter.isOffline() }
+            extensions.create("download", DownloadExtension, project)
+
+            download {
+                src "https://hub.spigotmc.org/nexus/content/repositories/snapshots/org/bukkit/bukkit/$MAVEN_METADATA"
+                dest downloadDir.toFile()
+                quiet true
+            }
 
             doLast {
-                download {
-                    src "https://hub.spigotmc.org/nexus/content/repositories/snapshots/org/bukkit/bukkit/$MAVEN_METADATA"
-                    dest downloadDir.toFile()
-                    quiet true
-                }
-
                 download {
                     src "https://yivesmirror.com/files/spigot/${getCoreName()}"
                     dest downloadDir.toFile()

@@ -44,10 +44,6 @@ class DevServerPlugin implements Plugin<Project> {
                     option(name: 'VM_PARAMETERS', value: props)
                     option(name: 'PROGRAM_PARAMETERS', value: args)
                     option(name: 'WORKING_DIRECTORY', value: serverDir)
-                    method {
-                        option(name: 'Gradle.BeforeRunTask', enabled: 'true', tasks: 'buildIdeaRun',
-                                externalProjectPath: '$PROJECT_DIR$', vmOptions: '', scriptParameters: '')
-                    }
                 }
             }
         }.configure {
