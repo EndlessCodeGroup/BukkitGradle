@@ -46,6 +46,7 @@ class ServerCore {
     void registerDownloadingTask() {
         def task = project.task("downloadServerCore")
         task.extensions.create("download", DownloadExtension, project)
+        task.onlyIf { !project.gradle.startParameter.isOffline() }
 
         task.doLast {
             download {
@@ -55,7 +56,7 @@ class ServerCore {
             }
 
             download {
-                src { "https://yivesmirror.com/files/spigot/${getCoreName()}" }
+                src "https://yivesmirror.com/files/spigot/${getCoreName()}"
                 dest downloadDir.toFile()
                 onlyIfNewer true
             }
