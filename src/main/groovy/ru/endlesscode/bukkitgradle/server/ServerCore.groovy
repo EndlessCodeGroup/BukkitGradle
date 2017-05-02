@@ -36,16 +36,15 @@ class ServerCore {
      * Registers needed tasks
      */
     void registerTasks() {
-        registerUpdateMetaTask()
         registerDownloadingTask()
         registerCoreCopyTask()
     }
 
     /**
-     * Registers updating server core metadata task
+     * Registers core downloading task
      */
-    void registerUpdateMetaTask() {
-        def task = project.task("updateServerCoreMetadata")
+    void registerDownloadingTask() {
+        def task = project.task("downloadServerCore")
         task.extensions.create("download", DownloadExtension, project)
 
         task.doLast {
@@ -54,17 +53,7 @@ class ServerCore {
                 dest downloadDir.toFile()
                 quiet true
             }
-        }
-    }
 
-    /**
-     * Registers core downloading task
-     */
-    void registerDownloadingTask() {
-        def task = project.task("downloadServerCore", dependsOn: "updateServerCoreMetadata")
-        task.extensions.create("download", DownloadExtension, project)
-
-        task.doLast {
             download {
                 src { "https://yivesmirror.com/files/spigot/${getCoreName()}" }
                 dest downloadDir.toFile()
