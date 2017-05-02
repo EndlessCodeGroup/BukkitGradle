@@ -13,8 +13,8 @@ class PrepareServer extends DefaultTask {
     @Input
     ServerCore core
 
-    private Path serverDir
-    private RunConfiguration run
+    Path serverDir
+    RunConfiguration run
 
     @TaskAction
     void prepareServer() {
