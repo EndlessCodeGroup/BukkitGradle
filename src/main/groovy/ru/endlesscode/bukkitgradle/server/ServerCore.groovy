@@ -2,6 +2,7 @@ package ru.endlesscode.bukkitgradle.server
 
 import de.undercouch.gradle.tasks.download.DownloadExtension
 import org.gradle.api.Project
+import ru.endlesscode.bukkitgradle.BukkitGradlePlugin
 import ru.endlesscode.bukkitgradle.extension.Bukkit
 
 import java.nio.file.Files
@@ -44,22 +45,26 @@ class ServerCore {
      * Registers core downloading task
      */
     void registerDownloadingTask() {
-        def task = project.task("downloadServerCore")
-        task.extensions.create("download", DownloadExtension, project)
-        task.onlyIf { !project.gradle.startParameter.isOffline() }
+        project.task("downloadServerCore") {
+            extensions.create("download", DownloadExtension, project)
+            onlyIf { !project.gradle.startParameter.isOffline() }
 
-        task.doLast {
-            download {
-                src "https://hub.spigotmc.org/nexus/content/repositories/snapshots/org/bukkit/bukkit/$MAVEN_METADATA"
-                dest downloadDir.toFile()
-                quiet true
-            }
+            doLast {
+                download {
+                    src "https://hub.spigotmc.org/nexus/content/repositories/snapshots/org/bukkit/bukkit/$MAVEN_METADATA"
+                    dest downloadDir.toFile()
+                    quiet true
+                }
 
-            download {
-                src "https://yivesmirror.com/files/spigot/${getCoreName()}"
-                dest downloadDir.toFile()
-                onlyIfNewer true
+                download {
+                    src "https://yivesmirror.com/files/spigot/${getCoreName()}"
+                    dest downloadDir.toFile()
+                    onlyIfNewer true
+                }
             }
+        }.configure {
+            group = BukkitGradlePlugin.GROUP
+            description = 'Download Spigot server core'
         }
     }
 
@@ -73,6 +78,9 @@ class ServerCore {
                 Path destination = getServerDir().resolve(CORE_NAME)
 
                 Files.copy(source, destination, StandardCopyOption.REPLACE_EXISTING)
+            }.configure {
+                group = BukkitGradlePlugin.GROUP
+                description = 'Copy downloaded server core to server directory'
             }
         }
     }
