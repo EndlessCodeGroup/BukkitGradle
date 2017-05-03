@@ -66,4 +66,16 @@ depend: [Vault, ProtocolLib]'''
 
         task.execute()
     }
+
+    protected void configureRun() {
+        this.project.bukkit.run.with {
+            eula = true
+            onlineMode = true
+            debug = false
+            dir = "devServer"
+            encoding = "CP866"
+            javaArgs = "-Xmx2G"
+            bukkitArgs = "-s 2"
+        }
+    }
 }
