@@ -72,19 +72,19 @@ class RunConfiguration {
         }
 
         def taskName = "Run Server"
-        def serverDir = (project.tasks.prepareServer as PrepareServer).serverDir.toString()
+        def serverDir = (project.tasks.prepareServer as PrepareServer).serverDir
         def args = this.bukkitArgs
 
         def realDebug = this.debug
         this.debug = false
-        def props = this.javaArgs
+        def props = this.getJavaArgs()
         this.debug = realDebug
 
         def runConfiguration = configurationDir.resolve("${taskName.replace(" ", "_")}.xml")
         def xml = new MarkupBuilder(runConfiguration.newWriter())
         xml.component(name: "ProjectRunConfigurationManager") {
             configuration(default: 'false', name: taskName, type: "JarApplication", factoryName: "JAR Application", singleton: "true") {
-                option(name: 'JAR_PATH', value: "$serverDir/${ServerCore.CORE_NAME}")
+                option(name: 'JAR_PATH', value: "${serverDir.resolve(ServerCore.CORE_NAME).toRealPath()}")
                 option(name: 'VM_PARAMETERS', value: props)
                 option(name: 'PROGRAM_PARAMETERS', value: args)
                 option(name: 'WORKING_DIRECTORY', value: serverDir)
