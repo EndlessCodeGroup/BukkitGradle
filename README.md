@@ -106,6 +106,8 @@ Just create `plugin.yml` file and put custom attributes into it.
 ##### On IntelliJ IDEA
 Run `:buildIdeaRun` task. To your IDE will be added Run Configuration that will dynamically refreshes when you change server configurations.
 
+![Run Configuration](http://image.prntscr.com/image/1a12a03b8ac54fccb7d5b70a335fa996.png)
+
 ##### On other IDEs
 Run ':startServer' task.
 
