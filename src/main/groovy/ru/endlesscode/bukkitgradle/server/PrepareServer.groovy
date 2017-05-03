@@ -13,12 +13,12 @@ class PrepareServer extends DefaultTask {
     @Input
     ServerCore core
 
-    Path serverDir
+    Closure<Path> serverDir
     RunConfiguration run
 
     void setCore(ServerCore core) {
         this.core = core
-        this.serverDir = core.serverDir
+        this.serverDir = { core.serverDir }
         this.run = project.bukkit.run
     }
 
@@ -30,7 +30,7 @@ class PrepareServer extends DefaultTask {
     }
 
     void resolveEula() {
-        Path eulaFile = serverDir.resolve("eula.txt")
+        Path eulaFile = getServerDir().resolve("eula.txt")
         if (!Files.exists(eulaFile)) {
             Files.createFile(eulaFile)
         }
@@ -42,7 +42,7 @@ class PrepareServer extends DefaultTask {
     }
 
     void resolveOnlineMode() {
-        Path propsFile = serverDir.resolve("server.properties")
+        Path propsFile = getServerDir().resolve("server.properties")
         if (!Files.exists(propsFile)) {
             Files.createFile(propsFile)
         }
@@ -59,9 +59,13 @@ class PrepareServer extends DefaultTask {
         if (!Files.exists(jar)) {
             return
         }
-        
-        Path pluginsDir = serverDir.resolve("plugins")
+
+        Path pluginsDir = getServerDir().resolve("plugins")
         Files.createDirectories(pluginsDir)
         Files.copy(jar, pluginsDir.resolve(pluginName), StandardCopyOption.REPLACE_EXISTING)
+    }
+
+    Path getServerDir() {
+        return serverDir.call()
     }
 }
