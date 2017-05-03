@@ -16,11 +16,14 @@ class PrepareServer extends DefaultTask {
     Path serverDir
     RunConfiguration run
 
-    @TaskAction
-    void prepareServer() {
+    void setCore(ServerCore core) {
+        this.core = core
         this.serverDir = core.serverDir
         this.run = project.bukkit.run
+    }
 
+    @TaskAction
+    void prepareServer() {
         resolveEula()
         resolveOnlineMode()
         copyPluginToServerDir()

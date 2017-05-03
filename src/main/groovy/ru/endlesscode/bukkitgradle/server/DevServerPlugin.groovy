@@ -40,7 +40,7 @@ class DevServerPlugin implements Plugin<Project> {
 
             xml.component(name: "ProjectRunConfigurationManager") {
                 configuration(default: 'false', name: taskName, type: "JarApplication", factoryName: "JAR Application", singleton: "true") {
-                    option(name: 'JAR_PATH', value: "$serverDir/core.jar")
+                    option(name: 'JAR_PATH', value: "$serverDir/${ServerCore.CORE_NAME}")
                     option(name: 'VM_PARAMETERS', value: props)
                     option(name: 'PROGRAM_PARAMETERS', value: args)
                     option(name: 'WORKING_DIRECTORY', value: serverDir)
