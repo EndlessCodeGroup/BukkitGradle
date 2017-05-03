@@ -1,7 +1,11 @@
 package ru.endlesscode.bukkitgradle.extension
 
+import groovy.xml.MarkupBuilder
 import org.gradle.api.Project
+import ru.endlesscode.bukkitgradle.server.PrepareServer
+import ru.endlesscode.bukkitgradle.server.ServerCore
 
+import java.nio.file.Files
 import java.nio.file.Path
 
 class RunConfiguration {
@@ -55,5 +59,33 @@ class RunConfiguration {
      */
     Path getDir() {
         project.projectDir.toPath().resolve(this.dir)
+    }
+
+    /**
+     * Builds and writes to file run configuration in IDEA .xml format
+     *
+     * @param configurationDir The configurations dir
+     */
+    void buildIdeaConfiguration(Path configurationDir) {
+        if (Files.notExists(configurationDir)) {
+            return
+        }
+
+        this.debug = false
+        def taskName = "Run Server"
+        def serverDir = (project.tasks.prepareServer as PrepareServer).serverDir.toString()
+        def props = this.javaArgs
+        def args = this.bukkitArgs
+
+        def runConfiguration = configurationDir.resolve("${taskName.replace(" ", "_")}.xml")
+        def xml = new MarkupBuilder(runConfiguration.newWriter())
+        xml.component(name: "ProjectRunConfigurationManager") {
+            configuration(default: 'false', name: taskName, type: "JarApplication", factoryName: "JAR Application", singleton: "true") {
+                option(name: 'JAR_PATH', value: "$serverDir/${ServerCore.CORE_NAME}")
+                option(name: 'VM_PARAMETERS', value: props)
+                option(name: 'PROGRAM_PARAMETERS', value: args)
+                option(name: 'WORKING_DIRECTORY', value: serverDir)
+            }
+        }
     }
 }

@@ -1,14 +1,18 @@
 package ru.endlesscode.bukkitgradle.server
 
-import groovy.xml.MarkupBuilder
 import org.gradle.api.Plugin
 import org.gradle.api.Project
 import ru.endlesscode.bukkitgradle.BukkitGradlePlugin
 
+import java.nio.file.Files
+import java.nio.file.Paths
+
 class DevServerPlugin implements Plugin<Project> {
+    Project project
 
     @Override
     void apply(Project project) {
+        this.project = project
         ServerCore serverCore = new ServerCore(project)
         project.task("runServer", type: RunServer, dependsOn: "prepareServer") {
             core serverCore
@@ -17,35 +21,19 @@ class DevServerPlugin implements Plugin<Project> {
             description = 'Run dev server'
         }
 
-        project.task("prepareServer", type: PrepareServer, dependsOn: ["build", "copyServerCore"]) {
+        PrepareServer prepareServer = project.task("prepareServer", type: PrepareServer, dependsOn: ["build", "copyServerCore"]) {
             core serverCore
         }.configure {
             group = BukkitGradlePlugin.GROUP
             description = 'Prepare server ro run. Configure server and copy compiled plugin to plugins dir'
-        }
+        } as PrepareServer
 
-        project.task("buildIdeaRun", dependsOn: "prepareServer").doLast {
-            def runConfigurationsDir = new File(".idea/runConfigurations")
-            runConfigurationsDir.mkdirs()
-
-            def prepareServer = project.tasks.prepareServer as PrepareServer
-            def run = prepareServer.run
-            def taskName = "Run Server"
-            def serverDir = prepareServer.serverDir.toString()
-            def props = run.javaArgs
-            def args = run.bukkitArgs
-
-            def writer = new FileWriter(new File(runConfigurationsDir, "${taskName.replace(" ", "_")}.xml"))
-            def xml = new MarkupBuilder(writer)
-
-            xml.component(name: "ProjectRunConfigurationManager") {
-                configuration(default: 'false', name: taskName, type: "JarApplication", factoryName: "JAR Application", singleton: "true") {
-                    option(name: 'JAR_PATH', value: "$serverDir/${ServerCore.CORE_NAME}")
-                    option(name: 'VM_PARAMETERS', value: props)
-                    option(name: 'PROGRAM_PARAMETERS', value: args)
-                    option(name: 'WORKING_DIRECTORY', value: serverDir)
-                }
-            }
+        project.task("buildIdeaRun", dependsOn: "prepareServer") {
+            prepareServer.run.buildIdeaConfiguration(Paths.get(".idea/runConfigurations"))
+        }.doLast {
+            def runConfigurationsDir = Paths.get(".idea/runConfigurations")
+            Files.createDirectories(runConfigurationsDir)
+            prepareServer.run.buildIdeaConfiguration(runConfigurationsDir)
         }.configure {
             group = BukkitGradlePlugin.GROUP
             description = 'Configure IDEA server run configuration'
