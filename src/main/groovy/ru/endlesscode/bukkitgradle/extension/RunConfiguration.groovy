@@ -71,11 +71,14 @@ class RunConfiguration {
             return
         }
 
-        this.debug = false
         def taskName = "Run Server"
         def serverDir = (project.tasks.prepareServer as PrepareServer).serverDir.toString()
-        def props = this.javaArgs
         def args = this.bukkitArgs
+
+        def realDebug = this.debug
+        this.debug = false
+        def props = this.javaArgs
+        this.debug = realDebug
 
         def runConfiguration = configurationDir.resolve("${taskName.replace(" ", "_")}.xml")
         def xml = new MarkupBuilder(runConfiguration.newWriter())
@@ -85,6 +88,9 @@ class RunConfiguration {
                 option(name: 'VM_PARAMETERS', value: props)
                 option(name: 'PROGRAM_PARAMETERS', value: args)
                 option(name: 'WORKING_DIRECTORY', value: serverDir)
+                method {
+                    option(name: "Gradle.BeforeRunTask", enabled: "true", tasks: "prepareServer", externalProjectPath: '$PROJECT_DIR$', vmOptions: "", scriptParameters: "")
+                }
             }
         }
     }

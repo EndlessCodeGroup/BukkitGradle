@@ -33,6 +33,7 @@ class DevServerPlugin implements Plugin<Project> {
         }.doLast {
             def runConfigurationsDir = Paths.get(".idea/runConfigurations")
             Files.createDirectories(runConfigurationsDir)
+            println("Directory ${runConfigurationsDir.toRealPath()} created")
             prepareServer.run.buildIdeaConfiguration(runConfigurationsDir)
         }.configure {
             group = BukkitGradlePlugin.GROUP
