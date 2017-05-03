@@ -46,7 +46,13 @@ class ServerCore {
      */
     void registerDownloadingTask() {
         project.task("downloadServerCore") {
-            onlyIf { !project.gradle.startParameter.isOffline() }
+            def skip = project.gradle.startParameter.isOffline() || System.properties['test'] == 'true'
+            onlyIf { !skip }
+
+            if (skip) {
+                return
+            }
+
             extensions.create("download", DownloadExtension, project)
 
             download {

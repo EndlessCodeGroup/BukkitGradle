@@ -14,6 +14,8 @@ class TestBase {
 
     @Before
     void setUp() throws Exception {
+        System.properties.setProperty('test', 'true')
+
         this.project = ProjectBuilder.builder()
                 .withName("TestProject")
                 .withProjectDir(new File("build/testProject"))
