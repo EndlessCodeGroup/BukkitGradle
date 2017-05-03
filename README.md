@@ -1,4 +1,4 @@
-BukkitGradle
+BukkitGradle [![Build Status](https://img.shields.io/travis/EndlessCodeGroup/BukkitGradle.svg)](https://travis-ci.org/EndlessCodeGroup/BukkitGradle) [![license](https://img.shields.io/github/license/EndlessCodeGroup/BukkitGradle.svg)](https://github.com/EndlessCodeGroup/BukkitGradle/blob/master/LICENSE)
 ============
 Gradle utilities for easier writing Bukkit plugins.
 
@@ -22,7 +22,7 @@ Gradle utilities for easier writing Bukkit plugins.
 - Add smart dependency system
 
 ## Apply plugin
-
+[BukkitGradle on plugins.gradle.org](https://plugins.gradle.org/plugin/ru.endlesscode.bukkitgradle)
 #### Gradle 2.1 and higher
 ```groovy
 plugins {
