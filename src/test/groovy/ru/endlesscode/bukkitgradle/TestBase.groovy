@@ -56,7 +56,9 @@ main: com.example.plugin.Plugin_s
 author: OsipXD
 website: www.example_s.com
 
-depend: [Vault, ProtocolLib]'''
+depend: [Vault, ProtocolLib]
+command:
+  example'''
     }
 
     protected void executeTask(Task task) {
