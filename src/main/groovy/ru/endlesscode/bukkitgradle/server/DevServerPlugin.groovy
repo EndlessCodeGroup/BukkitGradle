@@ -30,9 +30,7 @@ class DevServerPlugin implements Plugin<Project> {
         } as PrepareServer
 
         Path runConfigurationsDir = project.projectDir.toPath().resolve(".idea/runConfigurations")
-        project.task("buildIdeaRun", dependsOn: "prepareServer") {
-            prepareServer.run.buildIdeaConfiguration(runConfigurationsDir)
-        }.doLast {
+        project.task("buildIdeaRun", dependsOn: "prepareServer").doLast {
             if (Files.notExists(runConfigurationsDir.parent)) {
                 throw new LifecycleExecutionException("This task only for IntelliJ IDEA.")
             }
@@ -42,6 +40,10 @@ class DevServerPlugin implements Plugin<Project> {
         }.configure {
             group = BukkitGradlePlugin.GROUP
             description = 'Configure IDEA server run configuration'
+        }
+
+        project.afterEvaluate {
+            prepareServer.run.buildIdeaConfiguration(runConfigurationsDir)
         }
     }
 }
