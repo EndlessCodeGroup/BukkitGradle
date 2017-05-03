@@ -13,28 +13,36 @@ class PrepareServer extends DefaultTask {
     @Input
     ServerCore core
 
-    private Path serverDir
-    private RunConfiguration run
+    Closure<Path> serverDir
+    RunConfiguration run
+
+    void setCore(ServerCore core) {
+        this.core = core
+        this.serverDir = { core.serverDir }
+        this.run = project.bukkit.run
+    }
 
     @TaskAction
     void prepareServer() {
-        this.serverDir = core.serverDir
-        this.run = project.bukkit.run
-
         resolveEula()
         resolveOnlineMode()
         copyPluginToServerDir()
     }
 
     void resolveEula() {
-        Path eulaFile = serverDir.resolve("eula.txt")
+        Path eulaFile = getServerDir().resolve("eula.txt")
+        if (!Files.exists(eulaFile)) {
+            Files.createFile(eulaFile)
+        }
 
-        boolean eula = this.run.eula
-        eulaFile.text = "eula=$eula"
+        Properties properties = new Properties()
+        properties.load(eulaFile.newReader())
+        properties.setProperty("eula", "${this.run.eula}")
+        properties.store(eulaFile.newWriter(), "By changing the setting below to TRUE you are indicating your agreement to our EULA (https://account.mojang.com/documents/minecraft_eula).")
     }
 
     void resolveOnlineMode() {
-        Path propsFile = serverDir.resolve("server.properties")
+        Path propsFile = getServerDir().resolve("server.properties")
         if (!Files.exists(propsFile)) {
             Files.createFile(propsFile)
         }
@@ -48,9 +56,16 @@ class PrepareServer extends DefaultTask {
     void copyPluginToServerDir() {
         String pluginName = "${project.bukkit.meta.name}.jar"
         Path jar = project.jar.archivePath.toPath()
-        Path pluginsDir = serverDir.resolve("plugins")
-        Files.createDirectories(pluginsDir)
+        if (!Files.exists(jar)) {
+            return
+        }
 
+        Path pluginsDir = getServerDir().resolve("plugins")
+        Files.createDirectories(pluginsDir)
         Files.copy(jar, pluginsDir.resolve(pluginName), StandardCopyOption.REPLACE_EXISTING)
+    }
+
+    Path getServerDir() {
+        return serverDir.call()
     }
 }

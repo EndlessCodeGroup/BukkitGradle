@@ -9,7 +9,6 @@ import static org.junit.Assert.assertTrue
 class ServerCoreTest extends TestBase {
     @Test
     void canAddTasksToProject() throws Exception {
-        assertTrue(project.updateServerCoreMetadata instanceof DefaultTask)
         assertTrue(project.downloadServerCore instanceof DefaultTask)
         assertTrue(project.copyServerCore instanceof DefaultTask)
     }

@@ -14,6 +14,8 @@ class TestBase {
 
     @Before
     void setUp() throws Exception {
+        System.properties.setProperty('test', 'true')
+
         this.project = ProjectBuilder.builder()
                 .withName("TestProject")
                 .withProjectDir(new File("build/testProject"))
@@ -65,5 +67,17 @@ command:
         }
 
         task.execute()
+    }
+
+    protected void configureRun() {
+        this.project.bukkit.run.with {
+            eula = true
+            onlineMode = true
+            debug = false
+            dir = "devServer"
+            encoding = "CP866"
+            javaArgs = "-Xmx2G"
+            bukkitArgs = "-s 2"
+        }
     }
 }

@@ -29,16 +29,4 @@ class RunConfigurationTest extends TestBase {
             assertEquals("-s 2", bukkitArgs)
         }
     }
-
-    void configureRun() {
-        this.project.bukkit.run.with {
-            eula = true
-            onlineMode = true
-            debug = false
-            dir = "devServer"
-            encoding = "CP866"
-            javaArgs = "-Xmx2G"
-            bukkitArgs = "-s 2"
-        }
-    }
 }

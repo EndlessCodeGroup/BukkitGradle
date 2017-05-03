@@ -2,6 +2,8 @@ package ru.endlesscode.bukkitgradle.server
 
 import de.undercouch.gradle.tasks.download.DownloadExtension
 import org.gradle.api.Project
+import org.gradle.internal.impldep.org.apache.maven.lifecycle.LifecycleExecutionException
+import ru.endlesscode.bukkitgradle.BukkitGradlePlugin
 import ru.endlesscode.bukkitgradle.extension.Bukkit
 
 import java.nio.file.Files
@@ -36,40 +38,40 @@ class ServerCore {
      * Registers needed tasks
      */
     void registerTasks() {
-        registerUpdateMetaTask()
         registerDownloadingTask()
         registerCoreCopyTask()
-    }
-
-    /**
-     * Registers updating server core metadata task
-     */
-    void registerUpdateMetaTask() {
-        def task = project.task("updateServerCoreMetadata")
-        task.extensions.create("download", DownloadExtension, project)
-
-        task.doLast {
-            download {
-                src "https://hub.spigotmc.org/nexus/content/repositories/snapshots/org/bukkit/bukkit/$MAVEN_METADATA"
-                dest downloadDir.toFile()
-                quiet true
-            }
-        }
     }
 
     /**
      * Registers core downloading task
      */
     void registerDownloadingTask() {
-        def task = project.task("downloadServerCore", dependsOn: "updateServerCoreMetadata")
-        task.extensions.create("download", DownloadExtension, project)
+        project.task("downloadServerCore") {
+            def skip = project.gradle.startParameter.isOffline() || BukkitGradlePlugin.isTesting()
+            onlyIf { !skip }
 
-        task.doLast {
-            download {
-                src { "https://yivesmirror.com/files/spigot/${getCoreName()}" }
-                dest downloadDir.toFile()
-                onlyIfNewer true
+            if (skip) {
+                return
             }
+
+            extensions.create("download", DownloadExtension, project)
+
+            download {
+                src "https://hub.spigotmc.org/nexus/content/repositories/snapshots/org/bukkit/bukkit/$MAVEN_METADATA"
+                dest downloadDir.toFile()
+                quiet true
+            }
+
+            doLast {
+                download {
+                    src "https://yivesmirror.com/files/spigot/${getCoreName()}"
+                    dest downloadDir.toFile()
+                    onlyIfNewer true
+                }
+            }
+        }.configure {
+            group = BukkitGradlePlugin.GROUP
+            description = 'Download Spigot server core'
         }
     }
 
@@ -83,6 +85,9 @@ class ServerCore {
                 Path destination = getServerDir().resolve(CORE_NAME)
 
                 Files.copy(source, destination, StandardCopyOption.REPLACE_EXISTING)
+            }.configure {
+                group = BukkitGradlePlugin.GROUP
+                description = 'Copy downloaded server core to server directory'
             }
         }
     }
@@ -117,6 +122,14 @@ class ServerCore {
         }
 
         Path metaFile = downloadDir.resolve(MAVEN_METADATA)
+        if (Files.notExists(metaFile)) {
+            if (BukkitGradlePlugin.isTesting()) {
+                return '1.11.0'
+            }
+
+            throw new LifecycleExecutionException("Server cores meta not downloaded, make sure that Gradle isn't running in offline mode.")
+        }
+
         def metadata = new XmlSlurper().parse(metaFile.toFile())
         metadata.versioning.latest.toString()
     }
