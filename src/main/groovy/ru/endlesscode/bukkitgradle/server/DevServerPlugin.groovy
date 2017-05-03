@@ -2,10 +2,11 @@ package ru.endlesscode.bukkitgradle.server
 
 import org.gradle.api.Plugin
 import org.gradle.api.Project
+import org.gradle.internal.impldep.org.apache.maven.lifecycle.LifecycleExecutionException
 import ru.endlesscode.bukkitgradle.BukkitGradlePlugin
 
 import java.nio.file.Files
-import java.nio.file.Paths
+import java.nio.file.Path
 
 class DevServerPlugin implements Plugin<Project> {
     Project project
@@ -28,12 +29,15 @@ class DevServerPlugin implements Plugin<Project> {
             description = 'Prepare server ro run. Configure server and copy compiled plugin to plugins dir'
         } as PrepareServer
 
+        Path runConfigurationsDir = project.projectDir.toPath().resolve(".idea/runConfigurations")
         project.task("buildIdeaRun", dependsOn: "prepareServer") {
-            prepareServer.run.buildIdeaConfiguration(Paths.get(".idea/runConfigurations"))
+            prepareServer.run.buildIdeaConfiguration(runConfigurationsDir)
         }.doLast {
-            def runConfigurationsDir = Paths.get(".idea/runConfigurations")
+            if (Files.notExists(runConfigurationsDir.parent)) {
+                throw new LifecycleExecutionException("This task only for IntelliJ IDEA.")
+            }
+
             Files.createDirectories(runConfigurationsDir)
-            println("Directory ${runConfigurationsDir.toRealPath()} created")
             prepareServer.run.buildIdeaConfiguration(runConfigurationsDir)
         }.configure {
             group = BukkitGradlePlugin.GROUP
