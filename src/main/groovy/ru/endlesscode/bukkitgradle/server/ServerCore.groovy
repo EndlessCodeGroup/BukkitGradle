@@ -2,6 +2,7 @@ package ru.endlesscode.bukkitgradle.server
 
 import de.undercouch.gradle.tasks.download.DownloadExtension
 import org.gradle.api.Project
+import org.gradle.internal.impldep.org.apache.maven.lifecycle.LifecycleExecutionException
 import ru.endlesscode.bukkitgradle.BukkitGradlePlugin
 import ru.endlesscode.bukkitgradle.extension.Bukkit
 
@@ -46,7 +47,7 @@ class ServerCore {
      */
     void registerDownloadingTask() {
         project.task("downloadServerCore") {
-            def skip = project.gradle.startParameter.isOffline() || System.properties['test'] == 'true'
+            def skip = project.gradle.startParameter.isOffline() || BukkitGradlePlugin.isTesting()
             onlyIf { !skip }
 
             if (skip) {
@@ -121,6 +122,14 @@ class ServerCore {
         }
 
         Path metaFile = downloadDir.resolve(MAVEN_METADATA)
+        if (Files.notExists(metaFile)) {
+            if (BukkitGradlePlugin.isTesting()) {
+                return '1.11.0'
+            }
+
+            throw new LifecycleExecutionException("Server cores meta not downloaded, make sure that Gradle isn't running in offline mode.")
+        }
+
         def metadata = new XmlSlurper().parse(metaFile.toFile())
         metadata.versioning.latest.toString()
     }

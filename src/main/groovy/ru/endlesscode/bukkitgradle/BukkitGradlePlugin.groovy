@@ -15,6 +15,10 @@ class BukkitGradlePlugin implements Plugin<Project> {
 
     Project project
 
+    static boolean isTesting() {
+        System.properties['test'] == 'true'
+    }
+
     @Override
     void apply(Project project) {
         this.project = project
