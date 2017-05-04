@@ -2,8 +2,8 @@ package ru.endlesscode.bukkitgradle.extension
 
 import groovy.xml.MarkupBuilder
 import org.gradle.api.Project
-import ru.endlesscode.bukkitgradle.server.PrepareServer
 import ru.endlesscode.bukkitgradle.server.ServerCore
+import ru.endlesscode.bukkitgradle.task.PrepareServer
 
 import java.nio.file.Files
 import java.nio.file.Path

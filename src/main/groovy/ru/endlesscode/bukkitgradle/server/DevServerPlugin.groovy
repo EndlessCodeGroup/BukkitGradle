@@ -4,6 +4,8 @@ import org.gradle.api.Plugin
 import org.gradle.api.Project
 import org.gradle.internal.impldep.org.apache.maven.lifecycle.LifecycleExecutionException
 import ru.endlesscode.bukkitgradle.BukkitGradlePlugin
+import ru.endlesscode.bukkitgradle.task.PrepareServer
+import ru.endlesscode.bukkitgradle.task.RunServer
 
 import java.nio.file.Files
 import java.nio.file.Path

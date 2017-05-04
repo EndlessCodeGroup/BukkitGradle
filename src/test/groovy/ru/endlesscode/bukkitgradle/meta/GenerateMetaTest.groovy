@@ -2,6 +2,7 @@ package ru.endlesscode.bukkitgradle.meta
 
 import org.junit.Test
 import ru.endlesscode.bukkitgradle.TestBase
+import ru.endlesscode.bukkitgradle.task.GenerateMeta
 
 import static org.junit.Assert.assertTrue
 

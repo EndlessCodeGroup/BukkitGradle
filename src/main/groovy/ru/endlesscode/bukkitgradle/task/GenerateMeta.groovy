@@ -1,8 +1,9 @@
-package ru.endlesscode.bukkitgradle.meta
+package ru.endlesscode.bukkitgradle.task
 
 import org.gradle.api.DefaultTask
 import org.gradle.api.tasks.Input
 import org.gradle.api.tasks.TaskAction
+import ru.endlesscode.bukkitgradle.meta.MetaFile
 
 import java.nio.file.Path
 
