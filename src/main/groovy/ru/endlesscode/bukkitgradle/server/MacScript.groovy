@@ -1,27 +1,28 @@
-package ru.endlesscode.bukkitgradle.server.script
+package ru.endlesscode.bukkitgradle.server
 
 import ru.endlesscode.bukkitgradle.extension.RunConfiguration
 
-class LinuxScript extends SystemScript {
-    LinuxScript(RunConfiguration configuration, String version) {
+class MacScript extends SystemScript {
+    MacScript(RunConfiguration configuration, String version) {
         super(configuration, version)
     }
 
     @Override
     protected String getExt() {
-        return "sh"
+        return "command"
     }
 
     @Override
     protected String getScriptText() {
         """#!/bin/sh
 
+cd "\$( dirname "\$0" )"
 ${buildRunCommand()}"""
     }
 
     @Override
     List<String> getCommand() {
         String scriptName = getFileName()
-        return ["chmod +x $scriptName", "&&", "./$scriptName", "&"]
+        return ["chmod +x $scriptName", "&&", "open", scriptName]
     }
 }

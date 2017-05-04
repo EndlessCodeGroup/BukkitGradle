@@ -1,10 +1,10 @@
-package ru.endlesscode.bukkitgradle.meta
+package ru.endlesscode.bukkitgradle
 
 import org.gradle.api.Plugin
 import org.gradle.api.Project
 import org.gradle.api.file.CopySpec
-import ru.endlesscode.bukkitgradle.BukkitGradlePlugin
 import ru.endlesscode.bukkitgradle.extension.Bukkit
+import ru.endlesscode.bukkitgradle.meta.MetaFile
 import ru.endlesscode.bukkitgradle.task.GenerateMeta
 
 class PluginMetaPlugin implements Plugin<Project> {

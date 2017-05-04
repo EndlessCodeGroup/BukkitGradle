@@ -1,8 +1,7 @@
-package ru.endlesscode.bukkitgradle.server.script
+package ru.endlesscode.bukkitgradle.server
 
 import org.gradle.internal.os.OperatingSystem
 import ru.endlesscode.bukkitgradle.extension.RunConfiguration
-import ru.endlesscode.bukkitgradle.server.ServerCore
 
 import java.nio.file.Files
 import java.nio.file.Path

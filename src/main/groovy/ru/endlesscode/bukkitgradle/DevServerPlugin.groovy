@@ -1,9 +1,9 @@
-package ru.endlesscode.bukkitgradle.server
+package ru.endlesscode.bukkitgradle
 
 import org.gradle.api.Plugin
 import org.gradle.api.Project
 import org.gradle.internal.impldep.org.apache.maven.lifecycle.LifecycleExecutionException
-import ru.endlesscode.bukkitgradle.BukkitGradlePlugin
+import ru.endlesscode.bukkitgradle.server.ServerCore
 import ru.endlesscode.bukkitgradle.task.PrepareServer
 import ru.endlesscode.bukkitgradle.task.RunServer
 

@@ -7,8 +7,6 @@ import org.gradle.api.artifacts.DependencyResolutionListener
 import org.gradle.api.artifacts.ResolvableDependencies
 import org.gradle.api.plugins.JavaPluginConvention
 import org.gradle.api.tasks.compile.JavaCompile
-import ru.endlesscode.bukkitgradle.meta.PluginMetaPlugin
-import ru.endlesscode.bukkitgradle.server.DevServerPlugin
 
 class BukkitGradlePlugin implements Plugin<Project> {
     final static String GROUP = "Bukkit"

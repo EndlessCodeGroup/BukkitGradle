@@ -5,7 +5,7 @@ import org.gradle.api.tasks.Input
 import org.gradle.api.tasks.TaskAction
 import ru.endlesscode.bukkitgradle.extension.RunConfiguration
 import ru.endlesscode.bukkitgradle.server.ServerCore
-import ru.endlesscode.bukkitgradle.server.script.SystemScript
+import ru.endlesscode.bukkitgradle.server.SystemScript
 
 class RunServer extends DefaultTask {
     @Input

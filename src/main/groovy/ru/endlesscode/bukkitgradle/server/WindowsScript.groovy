@@ -1,4 +1,4 @@
-package ru.endlesscode.bukkitgradle.server.script
+package ru.endlesscode.bukkitgradle.server
 
 import ru.endlesscode.bukkitgradle.extension.RunConfiguration
 
