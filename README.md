@@ -45,7 +45,7 @@ apply plugin: "ru.endlesscode.bukkitgradle"
 ```
 
 ## Usage
-You can clone [this example project](https://github.com/EndlessCodeGroup/BukkitGradle-Example), and use it as a starting point.
+You can clone [this example project](https://github.com/EndlessCodeGroup/BukkitGradle-Example), and use it for quick start.
 
 ### First steps
 Simple `build.gradle` file that use BukkitGradle:
@@ -98,8 +98,8 @@ website: http://www.example.com
 authors: [OsipXD, Contributors]
 ```
 
-Also you can add custom (unsupported by BukkitGradle) attributes like ad `depend` etc.
-Just create `plugin.yml` file and put custom attributes into it.
+Also you can add custom (unsupported by BukkitGradle) attributes like a `depend` etc.
+Just create `plugin.yml` file and put custom attributes into.
 
 ### Running Dev server
 
@@ -112,7 +112,7 @@ Run `:buildIdeaRun` task. To your IDE will be added Run Configuration that will 
 Run ':startServer' task.
 
 #### Server run configurations
-To accept EULA and change something setting use `bukkit.run` section:
+To accept EULA and change settings use `bukkit.run` section:
 ```groovy
 bukkit {
     // INFO: Here used default values
@@ -123,7 +123,7 @@ bukkit {
        onlineMode = false
        // Path to deploy server (relative)
        dir = "server"
-       // Debug mode (listen 5005 port, if you use running from IDEA this option be ignored)
+       // Debug mode (listen 5005 port, if you use running from IDEA this option will be ignored)
        debug = true
        // Set server encoding (flag -Dfile.encoding)
        encoding = "UTF-8"
