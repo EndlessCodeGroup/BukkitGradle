@@ -105,7 +105,7 @@ class BukkitGradlePlugin implements Plugin<Project> {
      */
     static void addBukkitApi(Project project) {
         project.with {
-            def compileDeps = configurations.compile.dependencies
+            def compileDeps = configurations.compileOnly.dependencies
             compileDeps.add(dependencies.create("org.bukkit:bukkit:$bukkit.version"))
         }
     }
