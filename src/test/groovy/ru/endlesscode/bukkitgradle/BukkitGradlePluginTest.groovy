@@ -39,6 +39,9 @@ class BukkitGradlePluginTest extends TestBase {
         for (Dependency dependency : project.configurations.compile.getDependencies()) {
             dependencies << "$dependency.group:$dependency.name:$dependency.version"
         }
+        for (Dependency dependency : project.configurations.compileOnly.getDependencies()) {
+            dependencies << "$dependency.group:$dependency.name:$dependency.version"
+        }
 
         return dependencies
     }
