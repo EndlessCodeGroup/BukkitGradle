@@ -8,10 +8,6 @@ plugins {
 
 apply from: "jacoco.gradle"
 
-group "ru.endlesscode"
-description "Bukkit Gradle integration plugins"
-version "0.6.7"
-
 sourceCompatibility = targetCompatibility = JavaVersion.VERSION_1_8
 
 repositories {
