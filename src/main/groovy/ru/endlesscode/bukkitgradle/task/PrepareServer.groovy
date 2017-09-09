@@ -3,6 +3,7 @@ package ru.endlesscode.bukkitgradle.task
 import org.gradle.api.DefaultTask
 import org.gradle.api.tasks.Input
 import org.gradle.api.tasks.TaskAction
+import org.gradle.jvm.tasks.Jar
 import ru.endlesscode.bukkitgradle.extension.RunConfiguration
 import ru.endlesscode.bukkitgradle.server.ServerCore
 
@@ -27,7 +28,7 @@ class PrepareServer extends DefaultTask {
     void prepareServer() {
         resolveEula()
         resolveOnlineMode()
-        copyPluginToServerDir()
+        copyPluginsToServerDir()
     }
 
     void resolveEula() {
@@ -54,16 +55,24 @@ class PrepareServer extends DefaultTask {
         properties.store(propsFile.newWriter(), "Minecraft server properties")
     }
 
-    void copyPluginToServerDir() {
+    void copyPluginsToServerDir() {
         String pluginName = "${project.bukkit.meta.name}.jar"
-        Path jar = project.jar.archivePath.toPath()
-        if (!Files.exists(jar)) {
-            return
+        List<Path> paths = project.tasks.withType(Jar).collect { jar ->
+            if (jar.classifier.matches("src|source[s]?|javadoc")) {
+                return
+            }
+            jar.archivePath.toPath()
         }
 
         Path pluginsDir = getServerDir().resolve("plugins")
         Files.createDirectories(pluginsDir)
-        Files.copy(jar, pluginsDir.resolve(pluginName), StandardCopyOption.REPLACE_EXISTING)
+        paths.forEach { jar ->
+            if (!Files.exists(jar)) {
+                return
+            }
+
+            Files.copy(jar, pluginsDir.resolve(pluginName), StandardCopyOption.REPLACE_EXISTING)
+        }
     }
 
     Path getServerDir() {
