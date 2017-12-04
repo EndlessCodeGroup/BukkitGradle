@@ -17,36 +17,36 @@ class ServerCore {
 
     private final Project project
 
-    private Path downloadDir
+    private Path bukkitGradleDir
 
     ServerCore(Project project) {
         this.project = project
 
-        this.initDownloadDir()
+        this.initDir()
         this.registerTasks()
     }
 
     /**
-     * Initializes downloading dir
+     * Initializes Bukkit Gradle dir
      */
-    void initDownloadDir() {
-        this.downloadDir = project.buildDir.toPath().resolve("serverCore")
-        Files.createDirectories(downloadDir)
+    void initDir() {
+        this.bukkitGradleDir = project.buildDir.toPath().resolve("bukkit-gradle")
+        Files.createDirectories(bukkitGradleDir)
     }
 
     /**
      * Registers needed tasks
      */
     void registerTasks() {
-        registerDownloadingTask()
+        registerBukkitMetaTask()
         registerCoreCopyTask()
     }
 
     /**
-     * Registers core downloading task
+     * Registers Bukkit metadata downloading task
      */
-    void registerDownloadingTask() {
-        project.task("downloadServerCore") {
+    void registerBukkitMetaTask() {
+        project.task("downloadBukkitMeta") {
             def skip = project.gradle.startParameter.isOffline() || BukkitGradlePlugin.isTesting()
             onlyIf { !skip }
 
@@ -58,20 +58,12 @@ class ServerCore {
 
             download {
                 src "https://hub.spigotmc.org/nexus/content/repositories/snapshots/org/bukkit/bukkit/$MAVEN_METADATA"
-                dest downloadDir.toFile()
+                dest bukkitGradleDir.toFile()
                 quiet true
-            }
-
-            doLast {
-                download {
-                    src "https://yivesmirror.com/files/spigot/${getCoreName()}"
-                    dest downloadDir.toFile()
-                    onlyIfNewer true
-                }
             }
         }.configure {
             group = BukkitGradlePlugin.GROUP
-            description = 'Download Spigot server core'
+            description = 'Download Bukkit metadata'
         }
     }
 
@@ -80,8 +72,8 @@ class ServerCore {
      */
     void registerCoreCopyTask() {
         project.with {
-            task("copyServerCore", dependsOn: "downloadServerCore").doLast {
-                Path source = downloadDir.resolve(getCoreName())
+            task("copyServerCore", dependsOn: "downloadBukkitMeta").doLast {
+                Path source = bukkitGradleDir.resolve(getCoreName())
                 Path destination = getServerDir().resolve(CORE_NAME)
 
                 Files.copy(source, destination, StandardCopyOption.REPLACE_EXISTING)
@@ -121,13 +113,14 @@ class ServerCore {
             return version
         }
 
-        Path metaFile = downloadDir.resolve(MAVEN_METADATA)
+        Path metaFile = bukkitGradleDir.resolve(MAVEN_METADATA)
         if (Files.notExists(metaFile)) {
-            if (BukkitGradlePlugin.isTesting()) {
-                return '1.11.0'
-            }
+            if (BukkitGradlePlugin.isTesting()) return '1.11.0'
 
-            throw new LifecycleExecutionException("Server cores meta not downloaded, make sure that Gradle isn't running in offline mode.")
+            throw new LifecycleExecutionException(
+                    'Server cores meta not downloaded, make sure that Gradle ' +
+                            'isn\'t running in offline mode.'
+            )
         }
 
         def metadata = new XmlSlurper().parse(metaFile.toFile())
