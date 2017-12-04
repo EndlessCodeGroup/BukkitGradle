@@ -11,6 +11,8 @@ class Bukkit {
     private final Project project
 
     String version
+    String buildtools = ""
+
     final PluginMeta meta
     final RunConfiguration run
 
