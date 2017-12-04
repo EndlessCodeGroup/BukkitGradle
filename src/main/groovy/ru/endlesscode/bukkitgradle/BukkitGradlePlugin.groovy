@@ -107,7 +107,7 @@ class BukkitGradlePlugin implements Plugin<Project> {
         project.with {
             def compileOnlyDeps = configurations.compileOnly.dependencies
             def testCompileDeps = configurations.testCompile.dependencies
-            def bukkitDep = dependencies.create("org.bukkit:bukkit:$bukkit.version")
+            def bukkitDep = dependencies.create("org.bukkit:bukkit:$bukkit.dependencyVersion")
 
             compileOnlyDeps.add(bukkitDep)
             testCompileDeps.add(bukkitDep)

@@ -18,12 +18,6 @@ class MavenApi {
         mavenLocal = Paths.get(project.repositories.mavenLocal().url)
     }
 
-    static def hasBukkit() {
-        def groupId = 'org.bukkit'
-        def version = project.bukkit.version
-        return hasArtifact(groupId, 'bukkit', version)
-    }
-
     static def hasSpigot() {
         def groupId = 'org.spigotmc'
         def version = project.bukkit.version

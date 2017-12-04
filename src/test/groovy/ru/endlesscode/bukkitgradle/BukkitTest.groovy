@@ -9,7 +9,7 @@ import static org.junit.Assert.assertNull
 class BukkitTest extends TestBase {
     @Test
     void testDefaultVersionMustBeLatest() throws Exception {
-        assertEquals "+", project.bukkit.version
+        assertEquals "latest", project.bukkit.version
     }
 
     @Test

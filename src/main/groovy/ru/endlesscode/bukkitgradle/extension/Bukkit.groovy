@@ -5,13 +5,13 @@ import ru.endlesscode.bukkitgradle.meta.PluginMeta
 
 class Bukkit {
     public static final String NAME = "bukkit"
-    public static final String DYNAMIC_LATEST = "+"
+    public static final String LATEST = "latest"
     public static final String REVISION_SUFFIX = "-R0.1-SNAPSHOT"
 
     private final Project project
 
     String version
-    String buildtools = ""
+    String buildtools = ''
 
     final PluginMeta meta
     final RunConfiguration run
@@ -30,7 +30,11 @@ class Bukkit {
      * @return Chosen Bukkit version
      */
     String getVersion() {
-        return version ? "$version$REVISION_SUFFIX" : DYNAMIC_LATEST
+        return version ? "$version$REVISION_SUFFIX" : LATEST
+    }
+
+    String getDependencyVersion() {
+        return getVersion().replace(LATEST, '+')
     }
 
     void meta(@DelegatesTo(PluginMeta) Closure<?> closure) {

@@ -2,6 +2,7 @@ package ru.endlesscode.bukkitgradle.server
 
 import de.undercouch.gradle.tasks.download.DownloadExtension
 import org.gradle.api.Project
+import org.gradle.api.tasks.JavaExec
 import org.gradle.internal.impldep.org.apache.maven.lifecycle.LifecycleExecutionException
 import ru.endlesscode.bukkitgradle.BukkitGradlePlugin
 import ru.endlesscode.bukkitgradle.extension.Bukkit
@@ -9,6 +10,7 @@ import ru.endlesscode.bukkitgradle.util.MavenApi
 
 import java.nio.file.Files
 import java.nio.file.Path
+import java.nio.file.Paths
 import java.nio.file.StandardCopyOption
 
 class ServerCore {
@@ -26,7 +28,10 @@ class ServerCore {
         MavenApi.init(project)
 
         this.initDir()
-        this.registerTasks()
+
+        project.afterEvaluate {
+            this.registerTasks()
+        }
     }
 
     /**
@@ -43,19 +48,20 @@ class ServerCore {
     void registerTasks() {
         registerBukkitMetaTask()
         registerCoreCopyTask()
+        registerBuildServerCoreTask()
     }
 
     /**
      * Registers Bukkit metadata downloading task
      */
     void registerBukkitMetaTask() {
-        project.task("downloadBukkitMeta") {
+        project.task('downloadBukkitMeta') {
+            group = BukkitGradlePlugin.GROUP
+            description = 'Download Bukkit metadata'
+
             def skip = project.gradle.startParameter.isOffline() || BukkitGradlePlugin.isTesting()
             onlyIf { !skip }
-
-            if (skip) {
-                return
-            }
+            if (skip) return
 
             extensions.create("download", DownloadExtension, project)
 
@@ -64,9 +70,6 @@ class ServerCore {
                 dest bukkitGradleDir.toFile()
                 quiet true
             }
-        }.configure {
-            group = BukkitGradlePlugin.GROUP
-            description = 'Download Bukkit metadata'
         }
     }
 
@@ -75,15 +78,52 @@ class ServerCore {
      */
     void registerCoreCopyTask() {
         project.with {
-            task("copyServerCore", dependsOn: "downloadBukkitMeta").doLast {
+            task('copyServerCore', dependsOn: 'downloadBukkitMeta') {
+                group = BukkitGradlePlugin.GROUP
+                description = 'Copy downloaded server core to server directory'
+            }.doLast {
                 Path source = bukkitGradleDir.resolve(getCoreName())
                 Path destination = getServerDir().resolve(CORE_NAME)
 
                 Files.copy(source, destination, StandardCopyOption.REPLACE_EXISTING)
-            }.configure {
-                group = BukkitGradlePlugin.GROUP
-                description = 'Copy downloaded server core to server directory'
             }
+        }
+    }
+
+    /**
+     * Registers core building task
+     */
+    void registerBuildServerCoreTask() {
+        project.task('buildServerCore', type: JavaExec) {
+            group = BukkitGradlePlugin.GROUP
+            description = 'Build server core'
+
+            if (MavenApi.hasSpigot()) {
+                enabled = false
+                return
+            }
+
+            String buildTools = project.bukkit.buildtools
+            if (buildTools.isEmpty()) {
+                project.logger.warn('Please specify \'buildtools\' option!\n' +
+                        'Without this option server running won\'t work.')
+                enabled = false
+                return
+            }
+
+            def buildToolsPath = Paths.get(buildTools)
+            def absolutePath = buildToolsPath.toAbsolutePath().toString()
+            if (Files.notExists(buildToolsPath) || Files.isDirectory(buildToolsPath)) {
+                project.logger.warn("BuildTools not found on path: '$absolutePath'\n" +
+                        'It should be path to .jar file of BuildTools.')
+                enabled = false
+                return
+            }
+
+            main = '-jar'
+            args absolutePath, "--rev", project.bukkit.version
+            workingDir = bukkitGradleDir
+            standardInput = System.in
         }
     }
 
@@ -102,7 +142,7 @@ class ServerCore {
      * @return Simple version
      */
     String getSimpleVersion() {
-        getRealVersion().replace(Bukkit.REVISION_SUFFIX, "")
+        return getRealVersion().replace(Bukkit.REVISION_SUFFIX, '')
     }
 
     /**
@@ -112,7 +152,7 @@ class ServerCore {
      */
     private String getRealVersion() {
         String version = project.bukkit.version
-        if (version != Bukkit.DYNAMIC_LATEST) {
+        if (version != Bukkit.LATEST) {
             return version
         }
 
@@ -127,7 +167,7 @@ class ServerCore {
         }
 
         def metadata = new XmlSlurper().parse(metaFile.toFile())
-        metadata.versioning.latest.toString()
+        return metadata.versioning.latest.toString()
     }
 
     /**

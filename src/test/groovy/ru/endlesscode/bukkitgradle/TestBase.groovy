@@ -27,6 +27,10 @@ class TestBase {
             description = "Test project description"
             version = "1.0"
             ext.url = "https://www.example.ru/"
+
+            bukkit {
+                buildtools = "/path/to/buildtools"
+            }
         }
     }
 
