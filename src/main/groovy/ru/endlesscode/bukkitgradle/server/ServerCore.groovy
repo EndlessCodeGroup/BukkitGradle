@@ -5,6 +5,7 @@ import org.gradle.api.Project
 import org.gradle.internal.impldep.org.apache.maven.lifecycle.LifecycleExecutionException
 import ru.endlesscode.bukkitgradle.BukkitGradlePlugin
 import ru.endlesscode.bukkitgradle.extension.Bukkit
+import ru.endlesscode.bukkitgradle.util.MavenApi
 
 import java.nio.file.Files
 import java.nio.file.Path
@@ -21,6 +22,8 @@ class ServerCore {
 
     ServerCore(Project project) {
         this.project = project
+
+        MavenApi.init(project)
 
         this.initDir()
         this.registerTasks()
