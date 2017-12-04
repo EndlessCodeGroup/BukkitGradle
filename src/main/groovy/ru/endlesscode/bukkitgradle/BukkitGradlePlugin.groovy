@@ -3,10 +3,9 @@ package ru.endlesscode.bukkitgradle
 import org.gradle.api.JavaVersion
 import org.gradle.api.Plugin
 import org.gradle.api.Project
-import org.gradle.api.artifacts.DependencyResolutionListener
-import org.gradle.api.artifacts.ResolvableDependencies
 import org.gradle.api.plugins.JavaPluginConvention
 import org.gradle.api.tasks.compile.JavaCompile
+import ru.endlesscode.bukkitgradle.util.Dependencies
 
 class BukkitGradlePlugin implements Plugin<Project> {
     final static String GROUP = 'Bukkit'
@@ -87,30 +86,6 @@ class BukkitGradlePlugin implements Plugin<Project> {
      * Adds needed dependencies
      */
     void addDependencies() {
-        project.gradle.addListener(new DependencyResolutionListener() {
-            @Override
-            void beforeResolve(ResolvableDependencies resolvableDependencies) {
-                addBukkitApi(project)
-                project.gradle.removeListener(this)
-            }
-
-            @Override
-            void afterResolve(ResolvableDependencies resolvableDependencies) {}
-        })
-    }
-
-    /**
-     * Adds Bukkit API to project dependencies
-     * @param project The project
-     */
-    static void addBukkitApi(Project project) {
-        project.with {
-            def compileOnlyDeps = configurations.compileOnly.dependencies
-            def testCompileDeps = configurations.testCompile.dependencies
-            def bukkitDep = dependencies.create("org.bukkit:bukkit:$bukkit.version")
-
-            compileOnlyDeps.add(bukkitDep)
-            testCompileDeps.add(bukkitDep)
-        }
+        Dependencies.configureProject(project)
     }
 }

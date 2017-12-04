@@ -24,7 +24,7 @@ class MavenApi {
                 hasArtifact(groupId, 'spigot', version)
     }
 
-    static def hasArtifact(groupId, artifactId, version) {
+    static def hasArtifact(String groupId, String artifactId, String version) {
         def artifactDir = getArtifactDir(groupId, artifactId, version)
         return Files.exists(artifactDir)
     }
@@ -33,7 +33,7 @@ class MavenApi {
         return getArtifactDir('org.spigotmc', 'spigot', version)
     }
 
-    static def getArtifactDir(groupId, artifactId, version) {
+    static def getArtifactDir(String groupId, String artifactId, String version) {
         return mavenLocal.resolve("${groupId.replace('.', '/')}/$artifactId/$version/")
     }
 }
