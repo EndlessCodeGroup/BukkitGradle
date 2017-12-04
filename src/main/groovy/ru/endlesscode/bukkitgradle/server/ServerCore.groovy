@@ -82,11 +82,12 @@ class ServerCore {
             task('copyServerCore', type: Copy,
                     dependsOn: ['buildServerCore']) {
                 group = BukkitGradlePlugin.GROUP
-                description = 'Copy downloaded server core to server directory'
+                description = 'Copy built server core to server directory'
 
-                from bukkitGradleDir.toString()
-                include getCoreName()
-                rename(getCoreName(), CORE_NAME)
+                def coreName = getCoreName()
+                from MavenApi.getSpigotDir(realVersion)
+                include coreName
+                rename(coreName, CORE_NAME)
                 into getServerDir().toString()
             }
         }
