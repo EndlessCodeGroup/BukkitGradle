@@ -48,13 +48,13 @@ class TestBase {
         Files.deleteIfExists(metaFile)
         Files.createFile(metaFile)
 
-        metaFile << '''name: TestPlugin_s
-description: Test plugin description_s
-version: 0.1_s
+        metaFile << '''name: TestPlugin
+description: Test plugin description
+version: 0.1
 
-main: com.example.plugin.Plugin_s
+main: com.example.plugin.Plugin
 author: OsipXD
-website: www.example_s.com
+website: www.example.com
 
 depend: [Vault, ProtocolLib]
 command:
