@@ -18,9 +18,8 @@ class MavenApi {
         mavenLocal = Paths.get(project.repositories.mavenLocal().url)
     }
 
-    static def hasSpigot() {
+    static def hasSpigot(String version) {
         def groupId = 'org.spigotmc'
-        def version = project.bukkit.version
         return hasArtifact(groupId, 'spigot-api', version) &&
                 hasArtifact(groupId, 'spigot', version)
     }

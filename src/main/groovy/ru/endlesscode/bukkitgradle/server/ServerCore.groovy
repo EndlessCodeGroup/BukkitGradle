@@ -2,6 +2,7 @@ package ru.endlesscode.bukkitgradle.server
 
 import de.undercouch.gradle.tasks.download.DownloadExtension
 import org.gradle.api.Project
+import org.gradle.api.tasks.Copy
 import org.gradle.api.tasks.JavaExec
 import org.gradle.internal.impldep.org.apache.maven.lifecycle.LifecycleExecutionException
 import ru.endlesscode.bukkitgradle.BukkitGradlePlugin
@@ -11,7 +12,6 @@ import ru.endlesscode.bukkitgradle.util.MavenApi
 import java.nio.file.Files
 import java.nio.file.Path
 import java.nio.file.Paths
-import java.nio.file.StandardCopyOption
 
 class ServerCore {
     public static final String CORE_NAME = "core.jar"
@@ -21,6 +21,7 @@ class ServerCore {
     private final Project project
 
     private Path bukkitGradleDir
+    private boolean forceRebuild = false
 
     ServerCore(Project project) {
         this.project = project
@@ -78,14 +79,15 @@ class ServerCore {
      */
     void registerCoreCopyTask() {
         project.with {
-            task('copyServerCore', dependsOn: 'downloadBukkitMeta') {
+            task('copyServerCore', type: Copy,
+                    dependsOn: ['buildServerCore']) {
                 group = BukkitGradlePlugin.GROUP
                 description = 'Copy downloaded server core to server directory'
-            }.doLast {
-                Path source = bukkitGradleDir.resolve(getCoreName())
-                Path destination = getServerDir().resolve(CORE_NAME)
 
-                Files.copy(source, destination, StandardCopyOption.REPLACE_EXISTING)
+                from bukkitGradleDir.toString()
+                include getCoreName()
+                rename(getCoreName(), CORE_NAME)
+                into getServerDir().toString()
             }
         }
     }
@@ -94,26 +96,22 @@ class ServerCore {
      * Registers core building task
      */
     void registerBuildServerCoreTask() {
-        project.task('buildServerCore', type: JavaExec) {
+        project.task('buildServerCore', type: JavaExec, dependsOn: 'downloadBukkitMeta') {
             group = BukkitGradlePlugin.GROUP
             description = 'Build server core'
 
-            if (MavenApi.hasSpigot()) {
-                enabled = false
-                return
+            onlyIf {
+                if (forceRebuild) {
+                    forceRebuild = false
+                    return true
+                }
+
+                return !MavenApi.hasSpigot(getRealVersion())
             }
 
-            String buildTools = project.bukkit.buildtools
-            if (buildTools.isEmpty()) {
-                project.logger.warn('Please specify \'buildtools\' option!\n' +
-                        'Without this option server running won\'t work.')
-                enabled = false
-                return
-            }
-
-            def buildToolsPath = Paths.get(buildTools)
-            def absolutePath = buildToolsPath.toAbsolutePath().toString()
-            if (Files.notExists(buildToolsPath) || Files.isDirectory(buildToolsPath)) {
+            def path = Paths.get(project.bukkit.buildtools as String)
+            def absolutePath = path.toAbsolutePath().toString()
+            if (Files.notExists(path) || !Files.isRegularFile(path)) {
                 project.logger.warn("BuildTools not found on path: '$absolutePath'\n" +
                         'It should be path to .jar file of BuildTools.')
                 enabled = false
@@ -121,10 +119,17 @@ class ServerCore {
             }
 
             main = '-jar'
-            args absolutePath, "--rev", project.bukkit.version
-            workingDir = bukkitGradleDir
+            args absolutePath, '--rev', getSimpleVersion()
+            workingDir = path.getParent().toAbsolutePath().toString()
             standardInput = System.in
         }
+
+        project.task('rebuildServerCore') {
+            group = BukkitGradlePlugin.GROUP
+            description = 'Force rebuild server core'
+        }.doLast {
+            forceRebuild = true
+        }.finalizedBy project.tasks.buildServerCore
     }
 
     /**

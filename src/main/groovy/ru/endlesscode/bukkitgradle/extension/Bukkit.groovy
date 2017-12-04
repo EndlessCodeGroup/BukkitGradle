@@ -5,7 +5,7 @@ import ru.endlesscode.bukkitgradle.meta.PluginMeta
 
 class Bukkit {
     public static final String NAME = "bukkit"
-    public static final String LATEST = "latest"
+    public static final String LATEST = "+"
     public static final String REVISION_SUFFIX = "-R0.1-SNAPSHOT"
 
     private final Project project
@@ -31,10 +31,6 @@ class Bukkit {
      */
     String getVersion() {
         return version ? "$version$REVISION_SUFFIX" : LATEST
-    }
-
-    String getDependencyVersion() {
-        return getVersion().replace(LATEST, '+')
     }
 
     void meta(@DelegatesTo(PluginMeta) Closure<?> closure) {
