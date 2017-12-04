@@ -98,7 +98,7 @@ class ServerCore {
     void registerBuildServerCoreTask() {
         project.task('buildServerCore', type: JavaExec, dependsOn: 'downloadBukkitMeta') {
             group = BukkitGradlePlugin.GROUP
-            description = 'Build server core'
+            description = 'Build server core, but only if it not contains in local maven repo'
 
             onlyIf {
                 if (forceRebuild) {
