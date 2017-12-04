@@ -17,31 +17,33 @@ class DevServerPlugin implements Plugin<Project> {
     void apply(Project project) {
         this.project = project
         ServerCore serverCore = new ServerCore(project)
-        project.task("runServer", type: RunServer, dependsOn: "prepareServer") {
-            core serverCore
-        }.configure {
+        project.task('runServer', type: RunServer, dependsOn: 'prepareServer') {
             group = BukkitGradlePlugin.GROUP
             description = 'Run dev server'
+            core serverCore
         }
 
-        PrepareServer prepareServer = project.task("prepareServer", type: PrepareServer, dependsOn: ["build", "copyServerCore"]) {
-            core serverCore
-        }.configure {
+        PrepareServer prepareServer = project.task(
+                'prepareServer',
+                type: PrepareServer,
+                dependsOn: ['build', 'buildServerCore', 'copyServerCore']
+        ) {
             group = BukkitGradlePlugin.GROUP
             description = 'Prepare server ro run. Configure server and copy compiled plugin to plugins dir'
+            core serverCore
         } as PrepareServer
 
         Path runConfigurationsDir = project.projectDir.toPath().resolve(".idea/runConfigurations")
-        project.task("buildIdeaRun", dependsOn: "prepareServer").doLast {
+        project.task('buildIdeaRun', dependsOn: 'prepareServer') {
+            group = BukkitGradlePlugin.GROUP
+            description = 'Configure IDEA server run configuration'
+        }.doLast {
             if (Files.notExists(runConfigurationsDir.parent)) {
                 throw new LifecycleExecutionException("This task only for IntelliJ IDEA.")
             }
 
             Files.createDirectories(runConfigurationsDir)
             prepareServer.run.buildIdeaConfiguration(runConfigurationsDir)
-        }.configure {
-            group = BukkitGradlePlugin.GROUP
-            description = 'Configure IDEA server run configuration'
         }
 
         project.afterEvaluate {

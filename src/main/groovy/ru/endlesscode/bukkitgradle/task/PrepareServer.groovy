@@ -58,19 +58,14 @@ class PrepareServer extends DefaultTask {
     void copyPluginsToServerDir() {
         String pluginName = "${project.bukkit.meta.name}.jar"
         List<Path> paths = project.tasks.withType(Jar).collect { jar ->
-            if (jar.classifier.matches("src|source[s]?|javadoc")) {
-                return
-            }
+            if (jar.classifier.matches("src|source[s]?|javadoc")) return
             jar.archivePath.toPath()
         }
 
         Path pluginsDir = getServerDir().resolve("plugins")
         Files.createDirectories(pluginsDir)
         paths.forEach { jar ->
-            if (!Files.exists(jar)) {
-                return
-            }
-
+            if (!Files.exists(jar)) return
             Files.copy(jar, pluginsDir.resolve(pluginName), StandardCopyOption.REPLACE_EXISTING)
         }
     }
