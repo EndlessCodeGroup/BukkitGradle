@@ -9,11 +9,14 @@ import java.nio.file.Files
 import java.nio.file.Path
 
 class RunConfiguration {
+    private static
+    final String DEBUG_ARGS = "-agentlib:jdwp=transport=dt_socket,server=y,suspend=n,address=5005"
 
     private Project project
 
     boolean eula
     boolean onlineMode
+    boolean debug
     String encoding
     String dir
     String javaArgs
@@ -24,6 +27,7 @@ class RunConfiguration {
 
         this.eula = false
         this.onlineMode = false
+        this.debug = true
         this.encoding = 'UTF-8'
         this.dir = 'server'
 
@@ -37,7 +41,7 @@ class RunConfiguration {
      * @return Java arguments
      */
     String getJavaArgs() {
-        return "-Dfile.encoding=$encoding ${this.javaArgs}"
+        return "${this.debug ? "$DEBUG_ARGS " : ''}-Dfile.encoding=$encoding ${this.javaArgs}"
     }
 
     /**
@@ -46,7 +50,7 @@ class RunConfiguration {
      * @return Bukkit arguments
      */
     String getBukkitArgs() {
-        return bukkitArgs ?: ""
+        return bukkitArgs ?: ''
     }
 
     /**
@@ -71,7 +75,11 @@ class RunConfiguration {
         def taskName = 'Run Server'
         def serverDir = (project.tasks.prepareServer as PrepareServer).serverDir.toRealPath()
         def args = this.bukkitArgs
+
+        def realDebug = this.debug
+        this.debug = false
         def props = this.getJavaArgs()
+        this.debug = realDebug
 
         def runConfiguration = configurationDir.resolve("${taskName.replace(' ', '_')}.xml")
         def xml = new MarkupBuilder(runConfiguration.newWriter())
