@@ -6,14 +6,14 @@ import org.gradle.api.artifacts.dsl.DependencyHandler
 
 class Dependencies {
 
+    private static Project project
     private static DependencyHandler handler
-    private static String version
 
     private Dependencies() {}
 
     static configureProject(Project project) {
+        this.project = project
         handler = project.dependencies
-        version = project.bukkit.version
         addExtensions()
     }
 
@@ -27,6 +27,7 @@ class Dependencies {
     }
 
     private static Dependency api(String groupId, String artifactId) {
+        def version = project.bukkit.version
         return handler.create("$groupId:$artifactId:$version")
     }
 }

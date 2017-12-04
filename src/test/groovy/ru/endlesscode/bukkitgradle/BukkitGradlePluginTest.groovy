@@ -3,6 +3,7 @@ package ru.endlesscode.bukkitgradle
 import org.gradle.api.artifacts.Dependency
 import org.junit.Test
 
+import static org.junit.Assert.assertEquals
 import static org.junit.Assert.assertTrue
 
 class BukkitGradlePluginTest extends TestBase {
@@ -20,18 +21,21 @@ class BukkitGradlePluginTest extends TestBase {
 
     @Test
     void testPluginAddsLatestBukkitVersion() throws Exception {
-        BukkitGradlePlugin.addBukkitApi(project)
-        def dependencies = getDependencies()
-        assertTrue dependencies.contains("org.bukkit:bukkit:+")
+
+        Dependency dependency = project.dependencies.ext.bukkit()
+        assertEquals('org.bukkit', dependency.group)
+        assertEquals('bukkit', dependency.name)
+        assertEquals('+', dependency.version)
     }
 
     @Test
     void testPluginAddsCustomBukkit() throws Exception {
         project.bukkit.version = "1.7.10"
-        BukkitGradlePlugin.addBukkitApi(project)
 
-        def dependencies = getDependencies()
-        assertTrue dependencies.contains("org.bukkit:bukkit:1.7.10-R0.1-SNAPSHOT")
+        Dependency dependency = project.dependencies.ext.bukkit()
+        assertEquals('org.bukkit', dependency.group)
+        assertEquals('bukkit', dependency.name)
+        assertEquals('1.7.10-R0.1-SNAPSHOT', dependency.version)
     }
 
     private String[] getDependencies() {
