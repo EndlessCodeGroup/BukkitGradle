@@ -4,7 +4,6 @@ import de.undercouch.gradle.tasks.download.DownloadExtension
 import org.gradle.api.Project
 import org.gradle.api.tasks.Copy
 import org.gradle.api.tasks.JavaExec
-import org.gradle.internal.impldep.org.apache.maven.lifecycle.LifecycleExecutionException
 import ru.endlesscode.bukkitgradle.BukkitGradlePlugin
 import ru.endlesscode.bukkitgradle.extension.Bukkit
 import ru.endlesscode.bukkitgradle.util.MavenApi
@@ -166,10 +165,14 @@ class ServerCore {
         if (Files.notExists(metaFile)) {
             if (BukkitGradlePlugin.isTesting()) return '1.11.0'
 
-            throw new LifecycleExecutionException(
+            def defaultVersion = '1.12.2'
+            project.logger.warn(
                     'Server cores meta not downloaded, make sure that Gradle ' +
-                            'isn\'t running in offline mode.'
+                            'isn\'t running in offline mode.\n' +
+                            "Using '$defaultVersion' by default."
             )
+
+            return defaultVersion
         }
 
         def metadata = new XmlSlurper().parse(metaFile.toFile())
