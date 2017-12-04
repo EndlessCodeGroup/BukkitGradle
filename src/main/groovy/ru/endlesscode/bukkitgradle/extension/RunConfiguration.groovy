@@ -9,13 +9,11 @@ import java.nio.file.Files
 import java.nio.file.Path
 
 class RunConfiguration {
-    private static final String DEBUG_ARGS = "-agentlib:jdwp=transport=dt_socket,server=y,suspend=n,address=5005"
 
     private Project project
 
     boolean eula
     boolean onlineMode
-    boolean debug
     String encoding
     String dir
     String javaArgs
@@ -26,12 +24,11 @@ class RunConfiguration {
 
         this.eula = false
         this.onlineMode = false
-        this.debug = true
-        this.encoding = "UTF-8"
-        this.dir = "server"
+        this.encoding = 'UTF-8'
+        this.dir = 'server'
 
-        this.javaArgs = "-Xmx1G"
-        this.bukkitArgs = ""
+        this.javaArgs = '-Xmx1G'
+        this.bukkitArgs = ''
     }
 
     /**
@@ -40,7 +37,7 @@ class RunConfiguration {
      * @return Java arguments
      */
     String getJavaArgs() {
-        return "${this.debug ? "$DEBUG_ARGS " : ""}-Dfile.encoding=$encoding ${this.javaArgs}"
+        return "-Dfile.encoding=$encoding ${this.javaArgs}"
     }
 
     /**
@@ -71,26 +68,34 @@ class RunConfiguration {
             return
         }
 
-        def taskName = "Run Server"
+        def taskName = 'Run Server'
         def serverDir = (project.tasks.prepareServer as PrepareServer).serverDir.toRealPath()
         def args = this.bukkitArgs
-
-        def realDebug = this.debug
-        this.debug = false
         def props = this.getJavaArgs()
-        this.debug = realDebug
 
-        def runConfiguration = configurationDir.resolve("${taskName.replace(" ", "_")}.xml")
+        def runConfiguration = configurationDir.resolve("${taskName.replace(' ', '_')}.xml")
         def xml = new MarkupBuilder(runConfiguration.newWriter())
-        xml.component(name: "ProjectRunConfigurationManager") {
-            configuration(default: 'false', name: taskName, type: "JarApplication", factoryName: "JAR Application", singleton: "true") {
+        xml.component(name: 'ProjectRunConfigurationManager') {
+            configuration(
+                    default: 'false',
+                    name: taskName,
+                    type: 'JarApplication',
+                    factoryName: 'JAR Application',
+                    singleton: 'true'
+            ) {
                 option(name: 'JAR_PATH', value: "${serverDir.resolve(ServerCore.CORE_NAME)}")
                 option(name: 'VM_PARAMETERS', value: props)
                 option(name: 'PROGRAM_PARAMETERS', value: args)
                 option(name: 'WORKING_DIRECTORY', value: serverDir)
                 envs()
                 method {
-                    option(name: "Gradle.BeforeRunTask", enabled: "true", tasks: "prepareServer", externalProjectPath: '$PROJECT_DIR$', vmOptions: "", scriptParameters: "")
+                    option(
+                            name: 'Gradle.BeforeRunTask',
+                            enabled: 'true',
+                            tasks: 'prepareServer',
+                            externalProjectPath: '$PROJECT_DIR$',
+                            vmOptions: '',
+                            scriptParameters: '')
                 }
             }
         }

@@ -73,11 +73,10 @@ command:
         this.project.bukkit.run.with {
             eula = true
             onlineMode = true
-            debug = false
-            dir = "devServer"
-            encoding = "CP866"
-            javaArgs = "-Xmx2G"
-            bukkitArgs = "-s 2"
+            dir = 'devServer'
+            encoding = 'CP866'
+            javaArgs = '-Xmx2G'
+            bukkitArgs = '-s 2'
         }
     }
 }
