@@ -3,7 +3,8 @@ package ru.endlesscode.bukkitgradle
 import org.junit.Test
 import ru.endlesscode.bukkitgradle.meta.PluginMeta
 
-import static org.junit.Assert.*
+import static org.junit.Assert.assertEquals
+import static org.junit.Assert.assertNull
 
 class BukkitTest extends TestBase {
     @Test
@@ -14,8 +15,8 @@ class BukkitTest extends TestBase {
     @Test
     void testChangedVersionMustBeRight() throws Exception {
         project.with {
-            bukkit.version = "1.7.10"
-            assertTrue "1.7.10-R0.1-SNAPSHOT" == "$bukkit.version"
+            bukkit.version = '1.7.10'
+            assertEquals('1.7.10-R0.1-SNAPSHOT', "$bukkit.version".toString())
         }
     }
 

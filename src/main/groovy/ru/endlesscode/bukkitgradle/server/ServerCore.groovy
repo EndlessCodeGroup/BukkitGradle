@@ -2,13 +2,15 @@ package ru.endlesscode.bukkitgradle.server
 
 import de.undercouch.gradle.tasks.download.DownloadExtension
 import org.gradle.api.Project
-import org.gradle.internal.impldep.org.apache.maven.lifecycle.LifecycleExecutionException
+import org.gradle.api.tasks.Copy
+import org.gradle.api.tasks.JavaExec
 import ru.endlesscode.bukkitgradle.BukkitGradlePlugin
 import ru.endlesscode.bukkitgradle.extension.Bukkit
+import ru.endlesscode.bukkitgradle.util.MavenApi
 
 import java.nio.file.Files
 import java.nio.file.Path
-import java.nio.file.StandardCopyOption
+import java.nio.file.Paths
 
 class ServerCore {
     public static final String CORE_NAME = "core.jar"
@@ -17,61 +19,57 @@ class ServerCore {
 
     private final Project project
 
-    private Path downloadDir
+    private Path bukkitGradleDir
+    private boolean forceRebuild = false
 
     ServerCore(Project project) {
         this.project = project
 
-        this.initDownloadDir()
-        this.registerTasks()
+        MavenApi.init(project)
+
+        this.initDir()
+
+        project.afterEvaluate {
+            this.registerTasks()
+        }
     }
 
     /**
-     * Initializes downloading dir
+     * Initializes Bukkit Gradle dir
      */
-    void initDownloadDir() {
-        this.downloadDir = project.buildDir.toPath().resolve("serverCore")
-        Files.createDirectories(downloadDir)
+    void initDir() {
+        this.bukkitGradleDir = project.buildDir.toPath().resolve("bukkit-gradle")
+        Files.createDirectories(bukkitGradleDir)
     }
 
     /**
      * Registers needed tasks
      */
     void registerTasks() {
-        registerDownloadingTask()
+        registerBukkitMetaTask()
         registerCoreCopyTask()
+        registerBuildServerCoreTask()
     }
 
     /**
-     * Registers core downloading task
+     * Registers Bukkit metadata downloading task
      */
-    void registerDownloadingTask() {
-        project.task("downloadServerCore") {
+    void registerBukkitMetaTask() {
+        project.task('downloadBukkitMeta') {
+            group = BukkitGradlePlugin.GROUP
+            description = 'Download Bukkit metadata'
+
             def skip = project.gradle.startParameter.isOffline() || BukkitGradlePlugin.isTesting()
             onlyIf { !skip }
-
-            if (skip) {
-                return
-            }
+            if (skip) return
 
             extensions.create("download", DownloadExtension, project)
 
             download {
                 src "https://hub.spigotmc.org/nexus/content/repositories/snapshots/org/bukkit/bukkit/$MAVEN_METADATA"
-                dest downloadDir.toFile()
+                dest bukkitGradleDir.toFile()
                 quiet true
             }
-
-            doLast {
-                download {
-                    src "https://yivesmirror.com/files/spigot/${getCoreName()}"
-                    dest downloadDir.toFile()
-                    onlyIfNewer true
-                }
-            }
-        }.configure {
-            group = BukkitGradlePlugin.GROUP
-            description = 'Download Spigot server core'
         }
     }
 
@@ -80,16 +78,58 @@ class ServerCore {
      */
     void registerCoreCopyTask() {
         project.with {
-            task("copyServerCore", dependsOn: "downloadServerCore").doLast {
-                Path source = downloadDir.resolve(getCoreName())
-                Path destination = getServerDir().resolve(CORE_NAME)
-
-                Files.copy(source, destination, StandardCopyOption.REPLACE_EXISTING)
-            }.configure {
+            task('copyServerCore', type: Copy,
+                    dependsOn: ['buildServerCore']) {
                 group = BukkitGradlePlugin.GROUP
-                description = 'Copy downloaded server core to server directory'
+                description = 'Copy built server core to server directory'
+
+                def coreName = getCoreName()
+                from MavenApi.getSpigotDir(realVersion)
+                include coreName
+                rename(coreName, CORE_NAME)
+                into getServerDir().toString()
             }
         }
+    }
+
+    /**
+     * Registers core building task
+     */
+    void registerBuildServerCoreTask() {
+        project.task('buildServerCore', type: JavaExec, dependsOn: 'downloadBukkitMeta') {
+            group = BukkitGradlePlugin.GROUP
+            description = 'Build server core, but only if it not contains in local maven repo'
+
+            onlyIf {
+                if (forceRebuild) {
+                    forceRebuild = false
+                    return true
+                }
+
+                return !MavenApi.hasSpigot(getRealVersion())
+            }
+
+            def path = Paths.get(project.bukkit.buildtools as String)
+            def absolutePath = path.toAbsolutePath().toString()
+            if (Files.notExists(path) || !Files.isRegularFile(path)) {
+                project.logger.warn("BuildTools not found on path: '$absolutePath'\n" +
+                        'It should be path to .jar file of BuildTools.')
+                enabled = false
+                return
+            }
+
+            main = '-jar'
+            args absolutePath, '--rev', getSimpleVersion()
+            workingDir = path.getParent().toAbsolutePath().toString()
+            standardInput = System.in
+        }
+
+        project.task('rebuildServerCore') {
+            group = BukkitGradlePlugin.GROUP
+            description = 'Force rebuild server core'
+        }.doLast {
+            forceRebuild = true
+        }.finalizedBy project.tasks.buildServerCore
     }
 
     /**
@@ -107,7 +147,7 @@ class ServerCore {
      * @return Simple version
      */
     String getSimpleVersion() {
-        getRealVersion().replace(Bukkit.REVISION_SUFFIX, "")
+        return getRealVersion().replace(Bukkit.REVISION_SUFFIX, '')
     }
 
     /**
@@ -117,21 +157,26 @@ class ServerCore {
      */
     private String getRealVersion() {
         String version = project.bukkit.version
-        if (version != Bukkit.DYNAMIC_LATEST) {
+        if (version != Bukkit.LATEST) {
             return version
         }
 
-        Path metaFile = downloadDir.resolve(MAVEN_METADATA)
+        Path metaFile = bukkitGradleDir.resolve(MAVEN_METADATA)
         if (Files.notExists(metaFile)) {
-            if (BukkitGradlePlugin.isTesting()) {
-                return '1.11.0'
-            }
+            if (BukkitGradlePlugin.isTesting()) return '1.11.0'
 
-            throw new LifecycleExecutionException("Server cores meta not downloaded, make sure that Gradle isn't running in offline mode.")
+            def defaultVersion = '1.12.2'
+            project.logger.warn(
+                    'Server cores meta not downloaded, make sure that Gradle ' +
+                            'isn\'t running in offline mode.\n' +
+                            "Using '$defaultVersion' by default."
+            )
+
+            return defaultVersion
         }
 
         def metadata = new XmlSlurper().parse(metaFile.toFile())
-        metadata.versioning.latest.toString()
+        return metadata.versioning.latest.toString()
     }
 
     /**
