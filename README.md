@@ -14,30 +14,34 @@ Gradle utilities for easier writing Bukkit plugins.
 - Automatically applies plugins: java, idea, eclipse
 - Sets up compiler encoding to UTF-8
 - Adds repositories: mavenCentral, mavenLocal, spigot-repo, sk89q-repo
-- Automatically resolves needed version of bukkit api
+- Provides short extension-functions to include bukkit/craftbukkit/spigot/spigot-api
 - Generates plugin.yml from Gradle project information
 - Allows to run dev server from IDE
+- Automatically copies your plugin to plugins dir on server running
 
 #### TODO:
+- Add extension function for PaperApi
+- Add possibility to use Paper/CraftBukkit as dev server core
+- Add automatically downloading of BuildTools
 - Add smart dependency system
 
 ## Apply plugin
 [BukkitGradle on plugins.gradle.org](https://plugins.gradle.org/plugin/ru.endlesscode.bukkitgradle)
-#### Gradle 2.1 and higher
+#### With new plugins mechanism
 ```groovy
 plugins {
-  id "ru.endlesscode.bukkitgradle" version "0.6.7"
+  id "ru.endlesscode.bukkitgradle" version "0.7.0"
 }
 ```
 
-#### Any gradle versions
+#### With buildscript and apply
 ```groovy
 buildscript {
   repositories {
     jcenter()
   }
   dependencies {
-    classpath "gradle.plugin.ru.endlesscode:bukkit-gradle:0.6.7"
+    classpath "gradle.plugin.ru.endlesscode:bukkit-gradle:0.7.0"
   }
 }
 
@@ -45,20 +49,27 @@ apply plugin: "ru.endlesscode.bukkitgradle"
 ```
 
 ## Usage
-You can clone [this example project](https://github.com/EndlessCodeGroup/BukkitGradle-Example), and use it for quick start.
+You can clone [this example project](https://github.com/EndlessCodeGroup/BukkitGradle-Example) [**OUTDATED**], and use it for quick start.
 
 ### First steps
 Simple `build.gradle` file that use BukkitGradle:
 ```groovy
 plugins {
-    id "ru.endlesscode.bukkitgradle" version "0.6.7"
+    id "ru.endlesscode.bukkitgradle" version "0.7.0"
 }
  
 // Project information
 group "com.example"
 description "My first Bukkit plugin with Gradle"
 version "0.1"
+
+// Let's add needed API to project
+dependencies {
+    compileOnly bukkit() 
+    // You also can use craftbukkit(), spigot() and spigotApi()
+}
 ```
+`compileOnly` - it's like provided scope in Maven. It means that this dependncy will not included to your final jar.
 It's enough! Will be hooked latest version of Bukkit and automatically generated `plugin.yml` with next content:
 ```yaml
 name: MyPlugin
@@ -73,8 +84,8 @@ You can configure attributes that will be placed to `plugin.yml`:
 ```groovy
 // Override default configurations
 bukkit {
-    // Version of Bukkit (latest by default)
-    version = "1.10.2"
+    // Version of API (latest by default)
+    version = "1.12.2"
  
     // Attributes for plugin.yml
     meta {
@@ -102,6 +113,12 @@ Also you can add custom (unsupported by BukkitGradle) attributes like a `depend`
 Just create `plugin.yml` file and put custom attributes into.
 
 ### Running Dev server
+Before running server you should configure path to BuildTools:
+```groovy
+bukkit {
+    buildtools = '/path/to/BuildTools.jar' // It can be only local directory
+}
+```
 
 ##### On IntelliJ IDEA
 Run `:buildIdeaRun` task. To your IDE will be added Run Configuration that will dynamically refreshes when you change server configurations.
