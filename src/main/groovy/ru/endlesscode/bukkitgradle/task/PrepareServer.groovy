@@ -65,7 +65,7 @@ class PrepareServer extends DefaultTask {
         Path pluginsDir = getServerDir().resolve("plugins")
         Files.createDirectories(pluginsDir)
         paths.forEach { jar ->
-            if (!Files.exists(jar)) return
+            if (jar == null || Files.notExists(jar)) return
             Files.copy(jar, pluginsDir.resolve(pluginName), StandardCopyOption.REPLACE_EXISTING)
         }
     }
