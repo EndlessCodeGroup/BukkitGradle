@@ -76,7 +76,7 @@ class MetaFile {
      */
     private void filterMetaLines() {
         staticLines.clear()
-        if (!Files.exists(metaFile)) {
+        if (Files.notExists(metaFile)) {
             return
         }
 
