@@ -3,7 +3,7 @@ plugins {
     id "idea"
 
     id "java-gradle-plugin"
-    id "com.gradle.plugin-publish" version "0.9.9"
+    id "com.gradle.plugin-publish" version "0.9.10"
 }
 
 apply from: "jacoco.gradle"
@@ -17,10 +17,10 @@ repositories {
 jar.archivePath
 
 dependencies {
-    compile gradleApi()
-    compile localGroovy()
-    compile group: "de.undercouch", name: "gradle-download-task", version: "3.2.+"
-    testCompile group: "junit", name: "junit", version: "4.12"
+    implementation gradleApi()
+    implementation localGroovy()
+    implementation "de.undercouch:gradle-download-task:3.4.3"
+    testImplementation "junit:junit:4.12"
 }
 
 pluginBundle {
