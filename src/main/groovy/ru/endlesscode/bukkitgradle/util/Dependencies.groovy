@@ -23,6 +23,7 @@ class Dependencies {
             spigotApi = { api('org.spigotmc', 'spigot-api') }
             bukkit = { api('org.bukkit', 'bukkit') }
             craftbukkit = { api('org.bukkit', 'craftbukkit') }
+            paperApi = { api('com.destroystokyo.paper', 'paper-api') }
         }
     }
 
