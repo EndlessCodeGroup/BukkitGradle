@@ -8,12 +8,18 @@ import ru.endlesscode.bukkitgradle.BukkitGradlePlugin
 import ru.endlesscode.bukkitgradle.extension.Bukkit
 import ru.endlesscode.bukkitgradle.util.MavenApi
 
+import javax.annotation.Nullable
 import java.nio.file.Files
 import java.nio.file.Path
 import java.nio.file.Paths
 
 class ServerCore {
     public static final String CORE_NAME = "core.jar"
+    public static final String SERVER_HOME_PROPERTY = "server.dir"
+    public static final String SERVER_HOME_ENV = "BUKKIT_DEV_SERVER_HOME"
+    public static final String BUILDTOOLS_NAME = "BuildTools.jar"
+    public static final String BUILDTOOLS_HOME_PROPERTY = "buildtools.dir"
+    public static final String BUILDTOOLS_HOME_ENV = "BUILDTOOLS_HOME"
 
     private static final String MAVEN_METADATA = "maven-metadata.xml"
 
@@ -21,12 +27,12 @@ class ServerCore {
 
     private Path bukkitGradleDir
     private boolean forceRebuild = false
+    private Properties localProps = new Properties()
 
     ServerCore(Project project) {
         this.project = project
 
         MavenApi.init(project)
-
         this.initDir()
 
         project.afterEvaluate {
@@ -47,8 +53,8 @@ class ServerCore {
      */
     void registerTasks() {
         registerBukkitMetaTask()
-        registerCoreCopyTask()
         registerBuildServerCoreTask()
+        registerCoreCopyTask()
     }
 
     /**
@@ -83,6 +89,11 @@ class ServerCore {
                 group = BukkitGradlePlugin.GROUP
                 description = 'Copy built server core to server directory'
 
+                if (!tasks.buildServerCore.enabled) {
+                    enabled = false
+                    return
+                }
+
                 def coreName = getCoreName()
                 from MavenApi.getSpigotDir(realVersion)
                 include coreName
@@ -109,17 +120,23 @@ class ServerCore {
                 return !MavenApi.hasSpigot(getRealVersion())
             }
 
-            def path = Paths.get(project.bukkit.buildtools as String)
+            if (buildToolsPath == null || serverDir == null) {
+                project.logger.warn("You can't use server running feature.")
+                enabled = false
+                return
+            }
+
+            def path = buildToolsPath.resolve(BUILDTOOLS_NAME)
             def absolutePath = path.toAbsolutePath().toString()
-            if (Files.notExists(path) || !Files.isRegularFile(path)) {
+            if (Files.notExists(path) || Files.isDirectory(path)) {
                 project.logger.warn("BuildTools not found on path: '$absolutePath'\n" +
-                        'It should be path to .jar file of BuildTools.')
+                        'BuildTools directory should contains BuildTools.jar file.')
                 enabled = false
                 return
             }
 
             main = '-jar'
-            args absolutePath, '--rev', getSimpleVersion()
+            args(absolutePath, '--rev', getSimpleVersion())
             workingDir = path.getParent().toAbsolutePath().toString()
             standardInput = System.in
         }
@@ -151,6 +168,67 @@ class ServerCore {
     }
 
     /**
+     * Returns server directory
+     *
+     * @return Server directory or null if dev server location not defined
+     */
+    @Nullable
+    Path getServerDir() {
+        return getDirFromPropsOrEnv(SERVER_HOME_PROPERTY, SERVER_HOME_ENV, "Dev server location")
+    }
+
+    private @Nullable
+    Path getBuildToolsPath() {
+        return getDirFromPropsOrEnv(BUILDTOOLS_HOME_PROPERTY, BUILDTOOLS_HOME_ENV, "BuildTools location")
+    }
+
+    private @Nullable
+    Path getDirFromPropsOrEnv(String propertyName, String envVariable, String comment) {
+        this.initLocalProps()
+
+        def localProp = localProps.getProperty(propertyName)
+        def globalEnv = System.getenv(envVariable)
+        if (localProp == null && globalEnv == null) {
+            project.logger.warn("$comment not found. It can be fixed by two ways:\n" +
+                    "   1. Define location with '$propertyName' in the local.properties file\n" +
+                    "   2. Define $envVariable environment variable")
+            return null
+        }
+        def dir = Paths.get(localProp ?: globalEnv)
+        Files.createDirectories(dir)
+
+        return dir
+    }
+
+    private initLocalProps() {
+        Path propsFile = this.project.file("local.properties").toPath()
+        if (Files.exists(propsFile)) {
+            localProps.load(propsFile.newReader())
+            return
+        }
+
+        project.logger.info("Local properties file not found. Creating...")
+        Files.createFile(propsFile)
+        localProps.load(propsFile.newReader())
+
+        if (System.getenv(SERVER_HOME_ENV) == null) {
+            localProps.setProperty(SERVER_HOME_PROPERTY, project.file("build/server").absolutePath)
+        }
+
+        if (System.getenv(BUILDTOOLS_HOME_ENV) == null) {
+            localProps.setProperty(BUILDTOOLS_HOME_PROPERTY, project.file("build/buildtools").absolutePath)
+        }
+
+        localProps.store(propsFile.newWriter(), " This file should *NOT* be checked into Version Control Systems,\n" +
+                " as it contains information specific to your local configuration.\n" +
+                " \n" +
+                " Location of the dev server and BuildTools.\n" +
+                " For customization when using a Version Control System, please read the\n" +
+                " header note."
+        )
+    }
+
+    /**
      * Resolves and returns dynamic version
      *
      * @return Real Bukkit version
@@ -177,17 +255,5 @@ class ServerCore {
 
         def metadata = new XmlSlurper().parse(metaFile.toFile())
         return metadata.versioning.latest.toString()
-    }
-
-    /**
-     * Returns server directory
-     *
-     * @return Server directory
-     */
-    Path getServerDir() {
-        Path serverDir = this.project.bukkit.run.dir.resolve(getSimpleVersion())
-        Files.createDirectories(serverDir)
-
-        return serverDir
     }
 }

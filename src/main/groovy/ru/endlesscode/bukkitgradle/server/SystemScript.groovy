@@ -22,7 +22,7 @@ abstract class SystemScript {
      */
     void buildOn(Path dir) {
         Path scriptFile = dir.resolve(getFileName())
-        if (!Files.exists(scriptFile)) {
+        if (Files.notExists(scriptFile)) {
             Files.createFile(scriptFile)
         }
 
