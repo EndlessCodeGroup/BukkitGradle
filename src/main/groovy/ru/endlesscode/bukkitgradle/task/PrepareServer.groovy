@@ -33,7 +33,7 @@ class PrepareServer extends DefaultTask {
 
     void resolveEula() {
         Path eulaFile = getServerDir().resolve("eula.txt")
-        if (!Files.exists(eulaFile)) {
+        if (Files.notExists(eulaFile)) {
             Files.createFile(eulaFile)
         }
 
@@ -45,7 +45,7 @@ class PrepareServer extends DefaultTask {
 
     void resolveOnlineMode() {
         Path propsFile = getServerDir().resolve("server.properties")
-        if (!Files.exists(propsFile)) {
+        if (Files.notExists(propsFile)) {
             Files.createFile(propsFile)
         }
 
@@ -65,7 +65,7 @@ class PrepareServer extends DefaultTask {
         Path pluginsDir = getServerDir().resolve("plugins")
         Files.createDirectories(pluginsDir)
         paths.forEach { jar ->
-            if (!Files.exists(jar)) return
+            if (jar == null || Files.notExists(jar)) return
             Files.copy(jar, pluginsDir.resolve(pluginName), StandardCopyOption.REPLACE_EXISTING)
         }
     }

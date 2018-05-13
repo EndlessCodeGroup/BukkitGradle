@@ -11,9 +11,12 @@ class PluginMeta {
     final MetaItem url
     final MetaItem authors
 
+    private final Project project
     private final List<MetaItem> metaItems = []
 
     PluginMeta(Project project) {
+        this.project = project
+
         this.name = new MetaItem("name", true, project.name)
         this.description = new MetaItem("description", { project.description })
         this.main = new MetaItem("main", true, { "${project.group}.${getName().toLowerCase()}.${getName()}" })
@@ -26,6 +29,7 @@ class PluginMeta {
 
     void setName(def name) {
         this.name.value = name
+        project.archivesBaseName = getName()
     }
 
     String getName() {
@@ -74,5 +78,25 @@ class PluginMeta {
 
     List<MetaItem> getItems() {
         return metaItems
+    }
+
+    /**
+     * Enclose value in single quotes.
+     *
+     * @param value The value
+     * @return Value with single quotes around
+     */
+    def q(value) {
+        return "'$value'"
+    }
+
+    /**
+     * Enclose value in double quotes.
+     *
+     * @param value The value
+     * @return Value with double quotes around
+     */
+    def qq(value) {
+        return "\"$value\""
     }
 }

@@ -18,7 +18,6 @@ class RunConfiguration {
     boolean onlineMode
     boolean debug
     String encoding
-    String dir
     String javaArgs
     String bukkitArgs
 
@@ -29,7 +28,6 @@ class RunConfiguration {
         this.onlineMode = false
         this.debug = true
         this.encoding = 'UTF-8'
-        this.dir = 'server'
 
         this.javaArgs = '-Xmx1G'
         this.bukkitArgs = ''
@@ -51,15 +49,6 @@ class RunConfiguration {
      */
     String getBukkitArgs() {
         return bukkitArgs ?: ''
-    }
-
-    /**
-     * Returns servers dir
-     *
-     * @return The directory
-     */
-    Path getDir() {
-        project.projectDir.toPath().resolve(this.dir)
     }
 
     /**

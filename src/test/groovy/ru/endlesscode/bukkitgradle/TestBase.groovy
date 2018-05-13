@@ -27,10 +27,6 @@ class TestBase {
             description = "Test project description"
             version = "1.0"
             ext.url = "https://www.example.ru/"
-
-            bukkit {
-                buildtools = "/path/to/buildtools"
-            }
         }
     }
 
@@ -78,7 +74,6 @@ command:
             eula = true
             onlineMode = true
             debug = false
-            dir = 'devServer'
             encoding = 'CP866'
             javaArgs = '-Xmx2G'
             bukkitArgs = '-s 2'
