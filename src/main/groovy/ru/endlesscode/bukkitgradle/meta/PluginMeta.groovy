@@ -79,4 +79,24 @@ class PluginMeta {
     List<MetaItem> getItems() {
         return metaItems
     }
+
+    /**
+     * Enclose value in single quotes.
+     *
+     * @param value The value
+     * @return Value with single quotes around
+     */
+    def q(value) {
+        return "'$value'"
+    }
+
+    /**
+     * Enclose value in double quotes.
+     *
+     * @param value The value
+     * @return Value with double quotes around
+     */
+    def qq(value) {
+        return "\"$value\""
+    }
 }
