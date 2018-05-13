@@ -1,5 +1,6 @@
 package ru.endlesscode.bukkitgradle.server
 
+import de.undercouch.gradle.tasks.download.Download
 import de.undercouch.gradle.tasks.download.DownloadExtension
 import org.gradle.api.Project
 import org.gradle.api.tasks.Copy
@@ -53,6 +54,7 @@ class ServerCore {
      */
     void registerTasks() {
         registerBukkitMetaTask()
+        registerDownloadBuildToolsTask()
         registerBuildServerCoreTask()
         registerCoreCopyTask()
     }
@@ -60,7 +62,7 @@ class ServerCore {
     /**
      * Registers Bukkit metadata downloading task
      */
-    void registerBukkitMetaTask() {
+    private void registerBukkitMetaTask() {
         project.task('downloadBukkitMeta') {
             group = BukkitGradlePlugin.GROUP
             description = 'Download Bukkit metadata'
@@ -79,10 +81,75 @@ class ServerCore {
         }
     }
 
+    private void registerDownloadBuildToolsTask() {
+        project.task('downloadBuildTools', type: Download) {
+            group = BukkitGradlePlugin.GROUP
+            description = 'Download BuildTools)'
+
+            def destDir = buildToolsPath
+            if (destDir == null) {
+                disabled = true
+                return
+            }
+
+            src 'https://hub.spigotmc.org/jenkins/job/BuildTools/lastSuccessfulBuild/artifact/target/BuildTools.jar'
+            dest destDir.toString()
+            onlyIfModified true
+        }
+    }
+
+    /**
+     * Registers core building task
+     */
+    private void registerBuildServerCoreTask() {
+        project.with {
+            task('buildServerCore', type: JavaExec, dependsOn: ['downloadBuildTools', 'downloadBukkitMeta']) {
+                group = BukkitGradlePlugin.GROUP
+                description = 'Build server core, but only if it not contains in local maven repo'
+
+                onlyIf {
+                    if (forceRebuild) {
+                        forceRebuild = false
+                        return true
+                    }
+
+                    return !MavenApi.hasSpigot(getRealVersion())
+                }
+
+                if (!tasks.downloadBuildTools.enabled || serverDir == null) {
+                    logger.warn("You can't use server running feature.")
+                    enabled = false
+                    return
+                }
+
+                def path = buildToolsPath.resolve(BUILDTOOLS_NAME)
+                def absolutePath = path.toAbsolutePath().toString()
+                if (Files.notExists(path) || Files.isDirectory(path)) {
+                    logger.warn("BuildTools not found on path: '$absolutePath'\n" +
+                            'BuildTools directory should contains BuildTools.jar file.')
+                    enabled = false
+                    return
+                }
+
+                main = '-jar'
+                args(absolutePath, '--rev', getSimpleVersion())
+                workingDir = path.getParent().toAbsolutePath().toString()
+                standardInput = System.in
+            }
+
+            task('rebuildServerCore') {
+                group = BukkitGradlePlugin.GROUP
+                description = 'Force rebuild server core'
+            }.doLast {
+                forceRebuild = true
+            }.finalizedBy tasks.buildServerCore
+        }
+    }
+
     /**
      * Registers core copying task
      */
-    void registerCoreCopyTask() {
+    private void registerCoreCopyTask() {
         project.with {
             task('copyServerCore', type: Copy,
                     dependsOn: ['buildServerCore']) {
@@ -104,58 +171,12 @@ class ServerCore {
     }
 
     /**
-     * Registers core building task
-     */
-    void registerBuildServerCoreTask() {
-        project.task('buildServerCore', type: JavaExec, dependsOn: 'downloadBukkitMeta') {
-            group = BukkitGradlePlugin.GROUP
-            description = 'Build server core, but only if it not contains in local maven repo'
-
-            onlyIf {
-                if (forceRebuild) {
-                    forceRebuild = false
-                    return true
-                }
-
-                return !MavenApi.hasSpigot(getRealVersion())
-            }
-
-            if (buildToolsPath == null || serverDir == null) {
-                project.logger.warn("You can't use server running feature.")
-                enabled = false
-                return
-            }
-
-            def path = buildToolsPath.resolve(BUILDTOOLS_NAME)
-            def absolutePath = path.toAbsolutePath().toString()
-            if (Files.notExists(path) || Files.isDirectory(path)) {
-                project.logger.warn("BuildTools not found on path: '$absolutePath'\n" +
-                        'BuildTools directory should contains BuildTools.jar file.')
-                enabled = false
-                return
-            }
-
-            main = '-jar'
-            args(absolutePath, '--rev', getSimpleVersion())
-            workingDir = path.getParent().toAbsolutePath().toString()
-            standardInput = System.in
-        }
-
-        project.task('rebuildServerCore') {
-            group = BukkitGradlePlugin.GROUP
-            description = 'Force rebuild server core'
-        }.doLast {
-            forceRebuild = true
-        }.finalizedBy project.tasks.buildServerCore
-    }
-
-    /**
      * Returns core file name
      *
      * @return Name of file
      */
-    String getCoreName() {
-        return "spigot-${getRealVersion()}.jar"
+    private String getCoreName() {
+        return "spigot-${realVersion}.jar"
     }
 
     /**
@@ -164,7 +185,7 @@ class ServerCore {
      * @return Simple version
      */
     String getSimpleVersion() {
-        return getRealVersion().replace(Bukkit.REVISION_SUFFIX, '')
+        return realVersion.replace(Bukkit.REVISION_SUFFIX, '')
     }
 
     /**
@@ -177,13 +198,13 @@ class ServerCore {
         return getDirFromPropsOrEnv(SERVER_HOME_PROPERTY, SERVER_HOME_ENV, "Dev server location")
     }
 
-    private @Nullable
-    Path getBuildToolsPath() {
+    @Nullable
+    private Path getBuildToolsPath() {
         return getDirFromPropsOrEnv(BUILDTOOLS_HOME_PROPERTY, BUILDTOOLS_HOME_ENV, "BuildTools location")
     }
 
-    private @Nullable
-    Path getDirFromPropsOrEnv(String propertyName, String envVariable, String comment) {
+    @Nullable
+    private Path getDirFromPropsOrEnv(String propertyName, String envVariable, String comment) {
         this.initLocalProps()
 
         def localProp = localProps.getProperty(propertyName)
