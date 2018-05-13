@@ -2,6 +2,7 @@ package ru.endlesscode.bukkitgradle.extension
 
 import groovy.xml.MarkupBuilder
 import org.gradle.api.Project
+import ru.endlesscode.bukkitgradle.server.CoreType
 import ru.endlesscode.bukkitgradle.server.ServerCore
 import ru.endlesscode.bukkitgradle.task.PrepareServer
 
@@ -21,8 +22,12 @@ class RunConfiguration {
     String javaArgs
     String bukkitArgs
 
+    private CoreType coreType
+
     RunConfiguration(Project project) {
         this.project = project
+
+        this.coreType = CoreType.SPIGOT
 
         this.eula = false
         this.onlineMode = false
@@ -31,6 +36,20 @@ class RunConfiguration {
 
         this.javaArgs = '-Xmx1G'
         this.bukkitArgs = ''
+    }
+
+    void setCore(String core) {
+        try {
+            coreType = CoreType.valueOf(core.toUpperCase())
+        } catch (IllegalArgumentException ignored) {
+            project.logger.warn("Core type '$core' not found. May be it doesn't supported by BukkitGradle yet. " +
+                    "You may write issue on GitHub to request supporting.\n" +
+                    "Fallback core type is '${coreType.toString().toLowerCase()}'")
+        }
+    }
+
+    def getCoreType() {
+        return coreType
     }
 
     /**
