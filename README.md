@@ -113,15 +113,21 @@ Also you can add custom (unsupported by BukkitGradle) attributes like a `depend`
 Just create `plugin.yml` file and put custom attributes into.
 
 ### Running Dev server
-Before running server you should configure path to BuildTools:
-```groovy
-bukkit {
-    buildtools = '/path/to/BuildTools.jar' // It can be only local directory
-}
+Before running server you should configure BuildTools and dev server location.
+
+You can define it in `local.properties` file (that was automatically created in project root on refresh):
+```properties
+# Absolute path to directory that contains BuildTools.jar
+buildtools.dir=/path/to/buildtools/
+# Absolute path to dev server
+server.dir=/path/to/buildtools/
 ```
+Or you can define it globally (for all projects that uses BukkitGradle) with environment variables `BUKKIT_DEV_SERVER_HOME` 
+and `BUILDTOOLS_HOME`.
 
 ##### On IntelliJ IDEA
-Run `:buildIdeaRun` task. To your IDE will be added Run Configuration that will dynamically refreshes when you change server configurations.
+Run `:buildIdeaRun` task. To your IDE will be added Run Configuration that will dynamically refreshes when you change 
+server configurations.
 
 ![Run Configuration](http://image.prntscr.com/image/1a12a03b8ac54fccb7d5b70a335fa996.png)
 
@@ -138,8 +144,6 @@ bukkit {
        eula = false
        // Set online-mode flag
        onlineMode = false
-       // Path to deploy server (relative)
-       dir = "server"
        // Debug mode (listen 5005 port, if you use running from IDEA this option will be ignored)
        debug = true
        // Set server encoding (flag -Dfile.encoding)
