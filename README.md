@@ -144,6 +144,17 @@ website: http://without.quot.es/
 BukkitGradle provides short extension-functions to add common repositories and dependencies.
 There are list of its.
 
+Usage example:
+```groovy
+repositories {
+    spigot() // Adds spigot repo
+}
+
+dependencies {
+    compileOnly paperApi() // Adds paper-api dependency
+}
+```
+
 ##### Repositories:
  Name           | Url
 ----------------|----------------------------------------------------------------
@@ -165,6 +176,7 @@ There are list of its.
  paperApi    | com.destroystokyo.paper:paper-api:$apiVersion
  
  **Note:** `$apiVersion` - is `${version}-R0.1-SNAPSHOT` (where `$version` is `bukkit.version`)
+
 
 ### Running Dev server
 Before running server you should configure dev server location.
