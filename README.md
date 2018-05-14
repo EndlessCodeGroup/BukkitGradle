@@ -32,7 +32,7 @@ Gradle utilities for easier writing Bukkit plugins.
 #### With new plugins mechanism
 ```groovy
 plugins {
-  id "ru.endlesscode.bukkitgradle" version "0.7.1"
+  id "ru.endlesscode.bukkitgradle" version "0.8.0"
 }
 ```
 
@@ -43,7 +43,7 @@ buildscript {
     jcenter()
   }
   dependencies {
-    classpath "gradle.plugin.ru.endlesscode:bukkit-gradle:0.7.1"
+    classpath "gradle.plugin.ru.endlesscode:bukkit-gradle:0.8.0"
   }
 }
 
@@ -57,7 +57,7 @@ You can clone [this example project](https://github.com/EndlessCodeGroup/BukkitG
 Simple `build.gradle` file that use BukkitGradle:
 ```groovy
 plugins {
-    id "ru.endlesscode.bukkitgradle" version "0.7.1"
+    id "ru.endlesscode.bukkitgradle" version "0.8.0"
 }
  
 // Project information
