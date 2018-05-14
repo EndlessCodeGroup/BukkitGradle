@@ -26,7 +26,7 @@ class DevServerPlugin implements Plugin<Project> {
         PrepareServer prepareServer = project.task(
                 'prepareServer',
                 type: PrepareServer,
-                dependsOn: ['build', 'buildServerCore', 'copyServerCore']
+                dependsOn: ['build', 'copyServerCore', 'downloadPaperclip']
         ) {
             group = BukkitGradlePlugin.GROUP
             description = 'Prepare server ro run. Configure server and copy compiled plugin to plugins dir'

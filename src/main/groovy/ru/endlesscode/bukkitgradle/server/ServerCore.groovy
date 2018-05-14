@@ -2,6 +2,7 @@ package ru.endlesscode.bukkitgradle.server
 
 import de.undercouch.gradle.tasks.download.Download
 import de.undercouch.gradle.tasks.download.DownloadExtension
+import groovy.json.JsonSlurper
 import org.gradle.api.Project
 import org.gradle.api.tasks.Copy
 import org.gradle.api.tasks.JavaExec
@@ -16,19 +17,24 @@ import java.nio.file.Paths
 
 class ServerCore {
     public static final String CORE_NAME = "core.jar"
-    public static final String SERVER_HOME_PROPERTY = "server.dir"
-    public static final String SERVER_HOME_ENV = "BUKKIT_DEV_SERVER_HOME"
-    public static final String BUILDTOOLS_NAME = "BuildTools.jar"
-    public static final String BUILDTOOLS_HOME_PROPERTY = "buildtools.dir"
-    public static final String BUILDTOOLS_HOME_ENV = "BUILDTOOLS_HOME"
 
+    private static final String SERVER_HOME_PROPERTY = "server.dir"
+    private static final String SERVER_HOME_ENV = "BUKKIT_DEV_SERVER_HOME"
+    private static final String BUILDTOOLS_NAME = "BuildTools.jar"
+    private static final String BUILDTOOLS_HOME_PROPERTY = "buildtools.dir"
+    private static final String BUILDTOOLS_HOME_ENV = "BUILDTOOLS_HOME"
     private static final String MAVEN_METADATA = "maven-metadata.xml"
+    private static final String PAPER_VERSIONS = "paper-versions.json"
+    private static final String FALLBACK_VERSION = "1.12.2"
 
     private final Project project
 
     private Path bukkitGradleDir
     private boolean forceRebuild = false
     private Properties localProps = new Properties()
+
+    private Closure<CoreType> coreType = { project.bukkit.run.coreType }
+    private String paperBuild = "lastSuccessfulBuild"
 
     ServerCore(Project project) {
         this.project = project
@@ -56,6 +62,7 @@ class ServerCore {
         registerBukkitMetaTask()
         registerDownloadBuildToolsTask()
         registerBuildServerCoreTask()
+        registerDownloadPaperclipTask()
         registerCoreCopyTask()
     }
 
@@ -72,7 +79,6 @@ class ServerCore {
             if (skip) return
 
             extensions.create("download", DownloadExtension, project)
-
             download {
                 src "https://hub.spigotmc.org/nexus/content/repositories/snapshots/org/bukkit/bukkit/$MAVEN_METADATA"
                 dest bukkitGradleDir.toFile()
@@ -86,14 +92,54 @@ class ServerCore {
             group = BukkitGradlePlugin.GROUP
             description = 'Download BuildTools)'
 
-            def destDir = buildToolsPath
-            if (destDir == null) {
-                disabled = true
+            // Skip it for not spigot
+            if (coreType() != CoreType.SPIGOT) {
+                enabled = false
                 return
             }
 
-            src 'https://hub.spigotmc.org/jenkins/job/BuildTools/lastSuccessfulBuild/artifact/target/BuildTools.jar'
+            def destDir = buildToolsPath
+            if (destDir == null) {
+                enabled = false
+                return
+            }
+
+            src "https://hub.spigotmc.org/jenkins/job/BuildTools/$paperBuild/artifact/target/BuildTools.jar"
             dest destDir.toString()
+            onlyIfModified true
+        }
+    }
+
+    private void registerDownloadPaperclipTask() {
+        project.task('downloadPaperclip', type: Download) {
+            group = BukkitGradlePlugin.GROUP
+            description = 'Download paperclip'
+
+            if (project.tasks.downloadBuildTools.enabled) {
+                enabled = false
+                return
+            }
+
+            def skip = project.gradle.startParameter.isOffline() || BukkitGradlePlugin.isTesting()
+            onlyIf { !skip }
+            if (skip) return
+
+            extensions.create("download", DownloadExtension, project)
+            download {
+                src "https://gist.githubusercontent.com/OsipXD/d9ef7020a86e69c13120fa942df8f045/raw/0858b04e9b41424fb5281a911f6c6f53d8b5d177/paper-versions.json"
+                dest bukkitGradleDir.toFile()
+                quiet true
+                onlyIfModified true
+            }
+
+            Path destDir = serverDir
+            if (destDir == null) {
+                enabled = false
+                return
+            }
+
+            src 'https://ci.destroystokyo.com/job/Paper/lastSuccessfulBuild/artifact/paperclip.jar'
+            dest destDir.resolve(CORE_NAME).toString()
             onlyIfModified true
         }
     }
@@ -113,11 +159,10 @@ class ServerCore {
                         return true
                     }
 
-                    return !MavenApi.hasSpigot(getRealVersion())
+                    return !MavenApi.hasSpigot(getCoreVersion())
                 }
 
                 if (!tasks.downloadBuildTools.enabled || serverDir == null) {
-                    logger.warn("You can't use server running feature.")
                     enabled = false
                     return
                 }
@@ -161,8 +206,8 @@ class ServerCore {
                     return
                 }
 
-                def coreName = getCoreName()
-                from MavenApi.getSpigotDir(realVersion)
+                def coreName = getSpigotCoreName()
+                from MavenApi.getSpigotDir(coreVersion)
                 include coreName
                 rename(coreName, CORE_NAME)
                 into getServerDir().toString()
@@ -175,8 +220,8 @@ class ServerCore {
      *
      * @return Name of file
      */
-    private String getCoreName() {
-        return "spigot-${realVersion}.jar"
+    private String getSpigotCoreName() {
+        return "spigot-${coreVersion}.jar"
     }
 
     /**
@@ -185,7 +230,7 @@ class ServerCore {
      * @return Simple version
      */
     String getSimpleVersion() {
-        return realVersion.replace(Bukkit.REVISION_SUFFIX, '')
+        return simplifyVersion(coreVersion)
     }
 
     /**
@@ -195,7 +240,7 @@ class ServerCore {
      */
     @Nullable
     Path getServerDir() {
-        return getDirFromPropsOrEnv(SERVER_HOME_PROPERTY, SERVER_HOME_ENV, "Dev server location")
+        return getDirFromPropsOrEnv(SERVER_HOME_PROPERTY, SERVER_HOME_ENV, "Dev server location").resolve(simpleVersion)
     }
 
     @Nullable
@@ -254,8 +299,18 @@ class ServerCore {
      *
      * @return Real Bukkit version
      */
-    private String getRealVersion() {
+    private String getCoreVersion() {
+        switch (coreType()) {
+            case CoreType.SPIGOT:
+                return getSpigotCoreVersion()
+            case CoreType.PAPER:
+                return getPaperCoreVersion()
+        }
+    }
+
+    private String getSpigotCoreVersion() {
         String version = project.bukkit.version
+
         if (version != Bukkit.LATEST) {
             return version
         }
@@ -264,17 +319,56 @@ class ServerCore {
         if (Files.notExists(metaFile)) {
             if (BukkitGradlePlugin.isTesting()) return '1.11.0'
 
-            def defaultVersion = '1.12.2'
             project.logger.warn(
-                    'Server cores meta not downloaded, make sure that Gradle ' +
+                    'Server core meta not downloaded, make sure that Gradle ' +
                             'isn\'t running in offline mode.\n' +
-                            "Using '$defaultVersion' by default."
+                            "Using '$FALLBACK_VERSION' by default."
             )
 
-            return defaultVersion
+            return FALLBACK_VERSION
         }
 
         def metadata = new XmlSlurper().parse(metaFile.toFile())
         return metadata.versioning.latest.toString()
+    }
+
+    private String getPaperCoreVersion() {
+        Path versionsFile = bukkitGradleDir.resolve(PAPER_VERSIONS)
+        if (Files.notExists(versionsFile)) {
+            project.logger.warn(
+                    'Paper versions file not downloaded, make sure that Gradle ' +
+                            'isn\'t running in offline mode.\n' +
+                            "Using '$FALLBACK_VERSION' by default."
+            )
+
+            return FALLBACK_VERSION
+        }
+
+        def jsonSlurper = new JsonSlurper()
+        def object = jsonSlurper.parse(versionsFile.toFile())
+
+        String version = simplifyVersion(project.bukkit.version)
+        if (version == Bukkit.LATEST) {
+            version = object.latest
+        }
+
+        def versionsBuilds = object.versions as Map
+        def buildNumber = versionsBuilds."$version"
+        if (buildNumber == null) {
+            project.logger.warn(
+                    "Paper v$version not found.\n" +
+                            "Supported paper versions: ${versionsBuilds.keySet()}\n" +
+                            "Using '$FALLBACK_VERSION' by default."
+            )
+
+            return FALLBACK_VERSION
+        }
+
+        paperBuild = buildNumber
+        return version
+    }
+
+    private static def simplifyVersion(version) {
+        return version.replace(Bukkit.REVISION_SUFFIX, '')
     }
 }
