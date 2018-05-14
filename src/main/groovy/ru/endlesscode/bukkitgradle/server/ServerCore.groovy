@@ -25,6 +25,7 @@ class ServerCore {
     private static final String BUILDTOOLS_HOME_ENV = "BUILDTOOLS_HOME"
     private static final String MAVEN_METADATA = "maven-metadata.xml"
     private static final String PAPER_VERSIONS = "paper-versions.json"
+    private static final String PAPERCLIP_FILE = "paperclip.jar"
     private static final String FALLBACK_VERSION = "1.12.2"
 
     private final Project project
@@ -33,7 +34,7 @@ class ServerCore {
     private boolean forceRebuild = false
     private Properties localProps = new Properties()
 
-    private Closure<CoreType> coreType = { project.bukkit.run.coreType }
+    private Closure<CoreType> getCoreType = { project.bukkit.run.coreType }
     private String paperBuild = "lastSuccessfulBuild"
 
     ServerCore(Project project) {
@@ -93,7 +94,7 @@ class ServerCore {
             description = 'Download BuildTools)'
 
             // Skip it for not spigot
-            if (coreType() != CoreType.SPIGOT) {
+            if (getCoreType() != CoreType.SPIGOT) {
                 enabled = false
                 return
             }
@@ -139,7 +140,7 @@ class ServerCore {
             }
 
             src 'https://ci.destroystokyo.com/job/Paper/lastSuccessfulBuild/artifact/paperclip.jar'
-            dest destDir.resolve(CORE_NAME).toString()
+            dest bukkitGradleDir.toString()
             onlyIfModified true
         }
     }
@@ -197,20 +198,24 @@ class ServerCore {
     private void registerCoreCopyTask() {
         project.with {
             task('copyServerCore', type: Copy,
-                    dependsOn: ['buildServerCore']) {
+                    dependsOn: ['buildServerCore', 'downloadPaperclip']) {
                 group = BukkitGradlePlugin.GROUP
-                description = 'Copy built server core to server directory'
+                description = 'Copy server core to server directory'
 
-                if (!tasks.buildServerCore.enabled) {
-                    enabled = false
-                    return
+                def srcDir
+                def fileName
+                if (getCoreType() == CoreType.SPIGOT) {
+                    srcDir = MavenApi.getSpigotDir(coreVersion)
+                    fileName = getSpigotCoreName()
+                } else {
+                    srcDir = bukkitGradleDir
+                    fileName = PAPERCLIP_FILE
                 }
 
-                def coreName = getSpigotCoreName()
-                from MavenApi.getSpigotDir(coreVersion)
-                include coreName
-                rename(coreName, CORE_NAME)
-                into getServerDir().toString()
+                from srcDir
+                include fileName
+                rename(fileName, CORE_NAME)
+                into serverDir.toString()
             }
         }
     }
@@ -300,7 +305,7 @@ class ServerCore {
      * @return Real Bukkit version
      */
     private String getCoreVersion() {
-        switch (coreType()) {
+        switch (getCoreType()) {
             case CoreType.SPIGOT:
                 return getSpigotCoreVersion()
             case CoreType.PAPER:
