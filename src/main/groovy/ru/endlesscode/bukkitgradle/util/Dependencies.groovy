@@ -47,10 +47,10 @@ class Dependencies {
 
         depHandler.ext {
             spigot = { api('org.spigotmc', 'spigot') }
-            spigotApi = { api('org.spigotmc', 'spigot-api') }
-            bukkit = { api('org.bukkit', 'bukkit') }
+            spigotApi = { api('org.spigotmc', 'spigot-api', 'spigot') }
+            bukkit = { api('org.bukkit', 'bukkit', 'spigot') }
             craftbukkit = { api('org.bukkit', 'craftbukkit') }
-            paperApi = { api('com.destroystokyo.paper', 'paper-api') }
+            paperApi = { api('com.destroystokyo.paper', 'paper-api', 'destroystokyo') }
         }
     }
 
@@ -61,8 +61,16 @@ class Dependencies {
         }
     }
 
-    private static Dependency api(String groupId, String artifactId) {
-        def version = project.bukkit.version
+    private static Dependency api(String groupId, String artifactId, String... requiredRepos) {
+        String version = project.bukkit.version
+        return dep(groupId, artifactId, version, requiredRepos)
+    }
+
+    private static Dependency dep(String groupId, String artifactId, String version, String... requiredRepos) {
+        for (repo in requiredRepos) {
+            repoHandler.ext."$repo"()
+        }
+
         return depHandler.create("$groupId:$artifactId:$version")
     }
 }
