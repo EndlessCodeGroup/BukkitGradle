@@ -16,7 +16,11 @@ class BukkitGradlePluginTest extends TestBase {
 
     @Test
     void testPluginAddsRequiredRepos() throws Exception {
-        project.repositories.getByName("spigot")
+        project.repositories {
+            sk89q()
+        }
+
+        project.repositories.getByName("sk89q-repo")
     }
 
     @Test
@@ -26,6 +30,7 @@ class BukkitGradlePluginTest extends TestBase {
         assertEquals('org.bukkit', dependency.group)
         assertEquals('bukkit', dependency.name)
         assertEquals('+', dependency.version)
+        project.repositories.getByName("spigot-repo")
     }
 
     @Test

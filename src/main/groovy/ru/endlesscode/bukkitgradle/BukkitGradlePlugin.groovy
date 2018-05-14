@@ -25,17 +25,17 @@ class BukkitGradlePlugin implements Plugin<Project> {
     /**
      * Configures project
      */
-    void configureProject() {
+    private void configureProject() {
         addPlugins()
         configureEncoding()
         addRepositories()
-        addDependencies()
+        addExtensionFunctions()
     }
 
     /**
      * Adds all needed plugins
      */
-    void addPlugins() {
+    private void addPlugins() {
         project.with {
             plugins.with {
                 apply('java')
@@ -54,7 +54,7 @@ class BukkitGradlePlugin implements Plugin<Project> {
     /**
      * Sets force encoding on compile to UTF-8
      */
-    void configureEncoding() {
+    private void configureEncoding() {
         project.tasks.withType(JavaCompile) {
             options.encoding = 'UTF-8'
         }
@@ -63,29 +63,22 @@ class BukkitGradlePlugin implements Plugin<Project> {
     /**
      * Adds needed repositories
      */
-    void addRepositories() {
-        project.with {
-            repositories {
-                mavenLocal()
-                mavenCentral()
-
-                maven {
-                    name = 'sk89q'
-                    url = 'http://maven.sk89q.com/repo/'
-                }
-
-                maven {
-                    name = 'spigot'
-                    url = 'https://hub.spigotmc.org/nexus/content/repositories/snapshots/'
-                }
-            }
+    private void addRepositories() {
+        project.repositories {
+            mavenLocal()
+            mavenCentral()
         }
     }
 
     /**
-     * Adds needed dependencies
+     * Adds repositories and dependencies extension functions
      */
-    void addDependencies() {
+    private void addExtensionFunctions() {
+        project.repositories {
+            mavenLocal()
+            mavenCentral()
+        }
+
         Dependencies.configureProject(project)
     }
 }
