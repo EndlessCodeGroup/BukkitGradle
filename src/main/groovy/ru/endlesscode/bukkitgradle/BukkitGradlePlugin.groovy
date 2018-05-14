@@ -6,6 +6,7 @@ import org.gradle.api.Project
 import org.gradle.api.plugins.JavaPluginConvention
 import org.gradle.api.tasks.compile.JavaCompile
 import ru.endlesscode.bukkitgradle.util.Dependencies
+import ru.endlesscode.bukkitgradle.util.Repositories
 
 class BukkitGradlePlugin implements Plugin<Project> {
     final static String GROUP = 'Bukkit'
@@ -64,21 +65,11 @@ class BukkitGradlePlugin implements Plugin<Project> {
      * Adds needed repositories
      */
     void addRepositories() {
-        project.with {
-            repositories {
-                mavenLocal()
-                mavenCentral()
+        Repositories.configureProject(project)
 
-                maven {
-                    name = 'sk89q'
-                    url = 'http://maven.sk89q.com/repo/'
-                }
-
-                maven {
-                    name = 'spigot'
-                    url = 'https://hub.spigotmc.org/nexus/content/repositories/snapshots/'
-                }
-            }
+        project.repositories {
+            mavenLocal()
+            mavenCentral()
         }
     }
 

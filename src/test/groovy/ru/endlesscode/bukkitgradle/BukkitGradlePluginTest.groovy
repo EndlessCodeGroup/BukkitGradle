@@ -16,7 +16,11 @@ class BukkitGradlePluginTest extends TestBase {
 
     @Test
     void testPluginAddsRequiredRepos() throws Exception {
-        project.repositories.getByName("spigot")
+        project.repositories {
+            spigot()
+        }
+
+        project.repositories.getByName("spigot-repo")
     }
 
     @Test
