@@ -15,15 +15,16 @@ Gradle utilities for easier writing Bukkit plugins.
 #### Features:
 - Automatically applies plugins: java, idea, eclipse
 - Sets up compiler encoding to UTF-8
+- Sets archivesBaseName to plugin name
+- Supports APIs: Bukkit, CraftBukkit, Spigot, Paper
 - Provides short extension-functions to add common repositories and dependencies
 - Generates plugin.yml from Gradle project information
 - Allows to run dev server from IDE
+- Supports two cores for dev server: Spigot and Paper
+- Automatically downloads and updates BuildTools or Paperclip
 - Automatically copies your plugin to plugins dir on server running
 
 #### TODO:
-- Add extension function for PaperApi
-- Add possibility to use Paper/CraftBukkit as dev server core
-- Add automatically downloading of BuildTools
 - Add smart dependency system
 
 ## Apply plugin
@@ -157,7 +158,7 @@ dependencies {
 
 ##### Repositories:
  Name           | Url
-----------------|----------------------------------------------------------------
+----------------|-------------------------------------------------------------------
  spigot         | https://hub.spigotmc.org/nexus/content/repositories/snapshots/   
  sk98q          | http://maven.sk89q.com/repo/                                     
  destroystokyo  | https://repo.destroystokyo.com/repository/maven-public/ 
@@ -167,16 +168,19 @@ dependencies {
  placeholderapi | http://repo.extendedclip.com/content/repositories/placeholderapi/
 
 ##### Dependencies:
- Name        | Signature
--------------|-----------------------------------------------
- spigot      | org.spigotmc:spigot:$apiVersion
- spigotApi   | org.spigotmc:spigot-api:$apiVersion
- bukkit      | org.bukkit:bukkit:$apiVersion
- craftbukkit | org.bukkit:craftbukkit:$apiVersion
- paperApi    | com.destroystokyo.paper:paper-api:$apiVersion
+Some dependencies also applies repo that needed for them.
+
+ Name        | Signature                                     | Applies repo
+-------------|-----------------------------------------------|---------------
+ spigot      | org.spigotmc:spigot:$apiVersion               | -   
+ spigotApi   | org.spigotmc:spigot-api:$apiVersion           | spigot
+ bukkit      | org.bukkit:bukkit:$apiVersion                 | spigot
+ craftbukkit | org.bukkit:craftbukkit:$apiVersion            | -
+ paperApi    | com.destroystokyo.paper:paper-api:$apiVersion | destroystokyo
  
  **Note:** `$apiVersion` - is `${version}-R0.1-SNAPSHOT` (where `$version` is `bukkit.version`)
 
+If you want more extension-functions - you can [write issue](https://github.com/EndlessCodeGroup/BukkitGradle/issues/new).
 
 ### Running Dev server
 Before running server you should configure dev server location.
