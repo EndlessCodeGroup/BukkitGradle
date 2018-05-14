@@ -65,12 +65,6 @@ group "com.example"
 description "My first Bukkit plugin with Gradle"
 version "0.1"
 
-// Wee need to add some repos
-repositories {
-    spigot()
-    // see section 'Repositories' for more info
-}
-
 // Let's add needed API to project
 dependencies {
     compileOnly bukkit() 
