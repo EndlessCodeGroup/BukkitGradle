@@ -181,6 +181,7 @@ needed.
 # Absolute path to directory that contains BuildTools.jar
 buildtools.dir=/path/to/buildtools/
 ```
+If there no BuildTools.jar it will be automatically downloaded.
 
 **TIP:** you can define it globally (for all projects that uses BukkitGradle) with environment variables `BUKKIT_DEV_SERVER_HOME` 
 and `BUILDTOOLS_HOME`.
