@@ -7,14 +7,15 @@ Gradle utilities for easier writing Bukkit plugins.
 2. [Usage](#usage)
     1. [First steps](#first-steps)
     2. [Configuring plugin](#configuring-plugin)
-    3. [Running Dev server](#running-dev-server)
+        1. [Quotes around values](#quotes-around-values)
+    3. [Repositories and Dependencies](#repositories-and-dependencies)
+    4. [Running Dev server](#running-dev-server)
         1. [Server run configurations](#server-run-configurations)
 
 #### Features:
 - Automatically applies plugins: java, idea, eclipse
 - Sets up compiler encoding to UTF-8
-- Adds repositories: mavenCentral, mavenLocal, spigot-repo, sk89q-repo
-- Provides short extension-functions to include bukkit/craftbukkit/spigot/spigot-api
+- Provides short extension-functions to add common repositories and dependencies
 - Generates plugin.yml from Gradle project information
 - Allows to run dev server from IDE
 - Automatically copies your plugin to plugins dir on server running
@@ -138,6 +139,32 @@ website: http://without.quot.es/
 ```
 
 **Note:** In Groovy you can use functions in two ways: normal - `q("value")` and without braces - `q "value"`
+
+### Repositories and Dependencies
+BukkitGradle provides short extension-functions to add common repositories and dependencies.
+There are list of its.
+
+##### Repositories:
+ Name           | Url
+----------------|----------------------------------------------------------------
+ spigot         | https://hub.spigotmc.org/nexus/content/repositories/snapshots/   
+ sk98q          | http://maven.sk89q.com/repo/                                     
+ destroystokyo  | https://repo.destroystokyo.com/repository/maven-public/ 
+ dmulloy2       | http://repo.dmulloy2.net/nexus/repository/public/
+ md5            | http://repo.md-5.net/content/groups/public/
+ vault          | http://nexus.hc.to/content/repositories/pub_releases/
+ placeholderapi | http://repo.extendedclip.com/content/repositories/placeholderapi/
+
+##### Dependencies:
+ Name        | Signature
+-------------|-----------------------------------------------
+ spigot      | org.spigotmc:spigot:$apiVersion
+ spigotApi   | org.spigotmc:spigot-api:$apiVersion
+ bukkit      | org.bukkit:bukkit:$apiVersion
+ craftbukkit | org.bukkit:craftbukkit:$apiVersion
+ paperApi    | com.destroystokyo.paper:paper-api:$apiVersion
+ 
+ **Note:** `$apiVersion` - is `${version}-R0.1-SNAPSHOT` (where `$version` is `bukkit.version`)
 
 ### Running Dev server
 Before running server you should configure dev server location.
