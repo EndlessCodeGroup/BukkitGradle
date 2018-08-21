@@ -160,6 +160,7 @@ dependencies {
  md5            | http://repo.md-5.net/content/groups/public/
  vault          | http://nexus.hc.to/content/repositories/pub_releases/
  placeholderapi | http://repo.extendedclip.com/content/repositories/placeholderapi/
+ aikar          | https://repo.aikar.co/content/groups/aikar/
 
 ##### Dependencies:
 Some dependencies also applies repo that needed for them.
