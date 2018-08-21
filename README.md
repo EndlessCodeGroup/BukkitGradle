@@ -32,7 +32,7 @@ Gradle utilities for easier writing Bukkit plugins.
 #### With new plugins mechanism
 ```groovy
 plugins {
-  id "ru.endlesscode.bukkitgradle" version "0.8.0"
+  id "ru.endlesscode.bukkitgradle" version "0.8.1"
 }
 ```
 
@@ -43,7 +43,7 @@ buildscript {
     jcenter()
   }
   dependencies {
-    classpath "gradle.plugin.ru.endlesscode:bukkit-gradle:0.8.0"
+    classpath "gradle.plugin.ru.endlesscode:bukkit-gradle:0.8.1"
   }
 }
 
@@ -57,19 +57,13 @@ You can clone [this example project](https://github.com/EndlessCodeGroup/BukkitG
 Simple `build.gradle` file that use BukkitGradle:
 ```groovy
 plugins {
-    id "ru.endlesscode.bukkitgradle" version "0.8.0"
+    id "ru.endlesscode.bukkitgradle" version "0.8.1"
 }
  
 // Project information
 group "com.example"
 description "My first Bukkit plugin with Gradle"
 version "0.1"
-
-// Wee need to add some repos
-repositories {
-    spigot()
-    // see section 'Repositories' for more info
-}
 
 // Let's add needed API to project
 dependencies {
@@ -166,6 +160,7 @@ dependencies {
  md5            | http://repo.md-5.net/content/groups/public/
  vault          | http://nexus.hc.to/content/repositories/pub_releases/
  placeholderapi | http://repo.extendedclip.com/content/repositories/placeholderapi/
+ aikar          | https://repo.aikar.co/content/groups/aikar/
 
 ##### Dependencies:
 Some dependencies also applies repo that needed for them.

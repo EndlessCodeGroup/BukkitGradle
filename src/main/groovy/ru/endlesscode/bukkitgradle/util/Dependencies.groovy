@@ -43,6 +43,9 @@ class Dependencies {
             placeholderapi = {
                 addRepo('placeholderapi-repo', 'http://repo.extendedclip.com/content/repositories/placeholderapi/')
             }
+            aikar = {
+                addRepo('aikar-repo', 'https://repo.aikar.co/content/groups/aikar/')
+            }
         }
 
         depHandler.ext {

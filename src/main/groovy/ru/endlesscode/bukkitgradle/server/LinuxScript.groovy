@@ -22,6 +22,6 @@ ${buildRunCommand()}"""
     @Override
     List<String> getCommand() {
         String scriptName = getFileName()
-        return ["chmod +x $scriptName", "&&", "./$scriptName", "&"]
+        return ["sh", scriptName]
     }
 }
