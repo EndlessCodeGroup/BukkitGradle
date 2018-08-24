@@ -20,7 +20,7 @@ class PrepareServer extends DefaultTask {
 
     void setCore(ServerCore core) {
         this.core = core
-        this.serverDir = { core.serverDir }
+        this.serverDir = { Files.createDirectories(core.serverDir) }
         this.run = project.bukkit.run
     }
 
