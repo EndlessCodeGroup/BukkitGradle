@@ -1,9 +1,8 @@
 plugins {
     id "groovy"
-    id "idea"
-
     id "java-gradle-plugin"
     id "com.gradle.plugin-publish" version "0.9.10"
+    id "com.github.ben-manes.versions" version "0.21.0"
 }
 
 apply from: "jacoco.gradle"
@@ -13,8 +12,6 @@ sourceCompatibility = targetCompatibility = JavaVersion.VERSION_1_8
 repositories {
     mavenCentral()
 }
-
-jar.archivePath
 
 dependencies {
     implementation gradleApi()

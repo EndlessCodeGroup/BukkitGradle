@@ -2,6 +2,7 @@ package ru.endlesscode.bukkitgradle.task
 
 import org.gradle.api.DefaultTask
 import org.gradle.api.tasks.Input
+import org.gradle.api.tasks.OutputDirectory
 import org.gradle.api.tasks.TaskAction
 import org.gradle.jvm.tasks.Jar
 import ru.endlesscode.bukkitgradle.extension.RunConfiguration
@@ -15,13 +16,16 @@ class PrepareServer extends DefaultTask {
     @Input
     ServerCore core
 
-    Closure<Path> serverDir
+    @Input
     RunConfiguration run
+
+    @OutputDirectory
+    Closure<Path> serverDir
 
     void setCore(ServerCore core) {
         this.core = core
-        this.serverDir = { core.serverDir }
         this.run = project.bukkit.run
+        this.serverDir = { Files.createDirectories(core.serverDir) }
     }
 
     @TaskAction
@@ -58,8 +62,8 @@ class PrepareServer extends DefaultTask {
     void copyPluginsToServerDir() {
         String pluginName = "${project.bukkit.meta.name}.jar"
         List<Path> paths = project.tasks.withType(Jar).collect { jar ->
-            if (jar.classifier in ["src", "source", "sources", "javadoc"]) return
-            jar.archivePath.toPath()
+            if (jar.archiveClassifier.get() in ["src", "source", "sources", "javadoc"]) return
+            jar.archiveFile.get().asFile.toPath()
         }
 
         Path pluginsDir = getServerDir().resolve("plugins")
