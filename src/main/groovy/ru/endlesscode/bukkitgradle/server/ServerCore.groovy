@@ -26,7 +26,7 @@ class ServerCore {
     private static final String MAVEN_METADATA = "maven-metadata.xml"
     private static final String PAPER_VERSIONS = "paper-versions.json"
     private static final String PAPERCLIP_FILE = "paperclip.jar"
-    private static final String FALLBACK_VERSION = "1.12.2"
+    private static final String FALLBACK_VERSION = "1.13.2"
 
     private final Project project
 
