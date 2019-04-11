@@ -2,6 +2,7 @@ package ru.endlesscode.bukkitgradle.task
 
 import org.gradle.api.DefaultTask
 import org.gradle.api.tasks.Input
+import org.gradle.api.tasks.OutputFile
 import org.gradle.api.tasks.TaskAction
 import ru.endlesscode.bukkitgradle.meta.MetaFile
 
@@ -10,6 +11,8 @@ import java.nio.file.Path
 class GenerateMeta extends DefaultTask {
     @Input
     MetaFile metaFile
+
+    @OutputFile
     Path target
 
     Path getTarget() {
