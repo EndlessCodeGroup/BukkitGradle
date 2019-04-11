@@ -91,7 +91,7 @@ class ServerCore {
     private void registerDownloadBuildToolsTask() {
         project.task('downloadBuildTools', type: Download) {
             group = BukkitGradlePlugin.GROUP
-            description = 'Download BuildTools)'
+            description = 'Download BuildTools'
 
             // Skip it for not spigot
             if (getCoreType() != CoreType.SPIGOT) {
@@ -105,7 +105,7 @@ class ServerCore {
                 return
             }
 
-            src "https://hub.spigotmc.org/jenkins/job/BuildTools/$paperBuild/artifact/target/BuildTools.jar"
+            src "https://hub.spigotmc.org/jenkins/job/BuildTools/lastSuccessfulBuild/artifact/target/BuildTools.jar"
             dest destDir.toString()
             onlyIfModified true
         }
@@ -139,7 +139,7 @@ class ServerCore {
                 return
             }
 
-            src 'https://ci.destroystokyo.com/job/Paper/lastSuccessfulBuild/artifact/paperclip.jar'
+            src "https://ci.destroystokyo.com/job/Paper/$paperBuild/artifact/paperclip.jar"
             dest bukkitGradleDir.toString()
             onlyIfModified true
         }
