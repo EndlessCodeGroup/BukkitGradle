@@ -27,6 +27,7 @@ class ServerCore {
     private static final String PAPER_VERSIONS = "paper-versions.json"
     private static final String PAPERCLIP_FILE = "paperclip.jar"
     private static final String FALLBACK_VERSION = "1.13.2"
+    private static final String PAPER_FALLBACK_VERSION = "1.12.2"
 
     private final Project project
 
@@ -80,10 +81,14 @@ class ServerCore {
             if (skip) return
 
             extensions.create("download", DownloadExtension, project)
-            download {
-                src "https://hub.spigotmc.org/nexus/content/repositories/snapshots/org/bukkit/bukkit/$MAVEN_METADATA"
-                dest bukkitGradleDir.toFile()
-                quiet true
+            try {
+                download {
+                    src "https://hub.spigotmc.org/nexus/content/repositories/snapshots/org/bukkit/bukkit/$MAVEN_METADATA"
+                    dest bukkitGradleDir.toFile()
+                    quiet true
+                }
+            } catch (Exception e) {
+                logger.error("Error on bukkit meta downloading: ${e.toString()}")
             }
         }
     }
@@ -126,11 +131,15 @@ class ServerCore {
             if (skip) return
 
             extensions.create("download", DownloadExtension, project)
-            download {
-                src "https://gist.githubusercontent.com/OsipXD/d9ef7020a86e69c13120fa942df8f045/raw/0858b04e9b41424fb5281a911f6c6f53d8b5d177/paper-versions.json"
-                dest bukkitGradleDir.toFile()
-                quiet true
-                onlyIfModified true
+            try {
+                download {
+                    src "https://gist.githubusercontent.com/OsipXD/d9ef7020a86e69c13120fa942df8f045/raw/0858b04e9b41424fb5281a911f6c6f53d8b5d177/$PAPER_VERSIONS"
+                    dest bukkitGradleDir.toFile()
+                    quiet true
+                    onlyIfModified true
+                }
+            } catch (Exception e) {
+                logger.error("Error on paperclip versions list downloading: ${e.toString()}")
             }
 
             Path destDir = serverDir
@@ -343,10 +352,10 @@ class ServerCore {
             project.logger.warn(
                     'Paper versions file not downloaded, make sure that Gradle ' +
                             'isn\'t running in offline mode.\n' +
-                            "Using '$FALLBACK_VERSION' by default."
+                            "Using '$PAPER_FALLBACK_VERSION' by default."
             )
 
-            return FALLBACK_VERSION
+            return PAPER_FALLBACK_VERSION
         }
 
         def jsonSlurper = new JsonSlurper()
