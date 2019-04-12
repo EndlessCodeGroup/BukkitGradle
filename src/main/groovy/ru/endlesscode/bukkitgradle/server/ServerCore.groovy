@@ -26,7 +26,8 @@ class ServerCore {
     private static final String MAVEN_METADATA = "maven-metadata.xml"
     private static final String PAPER_VERSIONS = "paper-versions.json"
     private static final String PAPERCLIP_FILE = "paperclip.jar"
-    private static final String FALLBACK_VERSION = "1.12.2"
+    private static final String FALLBACK_VERSION = "1.13.2"
+    private static final String PAPER_FALLBACK_VERSION = "1.12.2"
 
     private final Project project
 
@@ -80,10 +81,14 @@ class ServerCore {
             if (skip) return
 
             extensions.create("download", DownloadExtension, project)
-            download {
-                src "https://hub.spigotmc.org/nexus/content/repositories/snapshots/org/bukkit/bukkit/$MAVEN_METADATA"
-                dest bukkitGradleDir.toFile()
-                quiet true
+            try {
+                download {
+                    src "https://hub.spigotmc.org/nexus/content/repositories/snapshots/org/bukkit/bukkit/$MAVEN_METADATA"
+                    dest bukkitGradleDir.toFile()
+                    quiet true
+                }
+            } catch (Exception e) {
+                logger.error("Error on bukkit meta downloading: ${e.toString()}")
             }
         }
     }
@@ -91,7 +96,7 @@ class ServerCore {
     private void registerDownloadBuildToolsTask() {
         project.task('downloadBuildTools', type: Download) {
             group = BukkitGradlePlugin.GROUP
-            description = 'Download BuildTools)'
+            description = 'Download BuildTools'
 
             // Skip it for not spigot
             if (getCoreType() != CoreType.SPIGOT) {
@@ -105,7 +110,7 @@ class ServerCore {
                 return
             }
 
-            src "https://hub.spigotmc.org/jenkins/job/BuildTools/$paperBuild/artifact/target/BuildTools.jar"
+            src "https://hub.spigotmc.org/jenkins/job/BuildTools/lastSuccessfulBuild/artifact/target/BuildTools.jar"
             dest destDir.toString()
             onlyIfModified true
         }
@@ -126,11 +131,15 @@ class ServerCore {
             if (skip) return
 
             extensions.create("download", DownloadExtension, project)
-            download {
-                src "https://gist.githubusercontent.com/OsipXD/d9ef7020a86e69c13120fa942df8f045/raw/0858b04e9b41424fb5281a911f6c6f53d8b5d177/paper-versions.json"
-                dest bukkitGradleDir.toFile()
-                quiet true
-                onlyIfModified true
+            try {
+                download {
+                    src "https://gist.githubusercontent.com/OsipXD/d9ef7020a86e69c13120fa942df8f045/raw/0858b04e9b41424fb5281a911f6c6f53d8b5d177/$PAPER_VERSIONS"
+                    dest bukkitGradleDir.toFile()
+                    quiet true
+                    onlyIfModified true
+                }
+            } catch (Exception e) {
+                logger.error("Error on paperclip versions list downloading: ${e.toString()}")
             }
 
             Path destDir = serverDir
@@ -139,7 +148,7 @@ class ServerCore {
                 return
             }
 
-            src 'https://ci.destroystokyo.com/job/Paper/lastSuccessfulBuild/artifact/paperclip.jar'
+            src "https://ci.destroystokyo.com/job/Paper/$paperBuild/artifact/paperclip.jar"
             dest bukkitGradleDir.toString()
             onlyIfModified true
         }
@@ -343,10 +352,10 @@ class ServerCore {
             project.logger.warn(
                     'Paper versions file not downloaded, make sure that Gradle ' +
                             'isn\'t running in offline mode.\n' +
-                            "Using '$FALLBACK_VERSION' by default."
+                            "Using '$PAPER_FALLBACK_VERSION' by default."
             )
 
-            return FALLBACK_VERSION
+            return PAPER_FALLBACK_VERSION
         }
 
         def jsonSlurper = new JsonSlurper()

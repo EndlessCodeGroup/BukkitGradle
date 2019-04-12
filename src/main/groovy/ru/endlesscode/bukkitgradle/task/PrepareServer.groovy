@@ -2,7 +2,6 @@ package ru.endlesscode.bukkitgradle.task
 
 import org.gradle.api.DefaultTask
 import org.gradle.api.tasks.Input
-import org.gradle.api.tasks.OutputDirectory
 import org.gradle.api.tasks.TaskAction
 import org.gradle.jvm.tasks.Jar
 import ru.endlesscode.bukkitgradle.extension.RunConfiguration
@@ -16,16 +15,13 @@ class PrepareServer extends DefaultTask {
     @Input
     ServerCore core
 
-    @Input
-    RunConfiguration run
-
-    @OutputDirectory
     Closure<Path> serverDir
+    RunConfiguration run
 
     void setCore(ServerCore core) {
         this.core = core
-        this.run = project.bukkit.run
         this.serverDir = { Files.createDirectories(core.serverDir) }
+        this.run = project.bukkit.run
     }
 
     @TaskAction
