@@ -1,8 +1,8 @@
 plugins {
     id "groovy"
     id "java-gradle-plugin"
-    id "com.gradle.plugin-publish" version "0.9.10"
-    id "com.github.ben-manes.versions" version "0.21.0"
+    id "com.gradle.plugin-publish" version "0.11.0"
+    id "com.github.ben-manes.versions" version "0.28.0"
 }
 
 apply from: "jacoco.gradle"
@@ -16,8 +16,8 @@ repositories {
 dependencies {
     implementation gradleApi()
     implementation localGroovy()
-    implementation "de.undercouch:gradle-download-task:3.4.3"
-    testImplementation "junit:junit:4.12"
+    implementation "de.undercouch:gradle-download-task:4.0.4"
+    testImplementation "junit:junit:4.13"
 }
 
 pluginBundle {
