@@ -26,8 +26,8 @@ class ServerCore {
     private static final String MAVEN_METADATA = "maven-metadata.xml"
     private static final String PAPER_VERSIONS = "paper-versions.json"
     private static final String PAPERCLIP_FILE = "paperclip.jar"
-    private static final String FALLBACK_VERSION = "1.13.2"
-    private static final String PAPER_FALLBACK_VERSION = "1.12.2"
+    private static final String FALLBACK_VERSION = "1.15.2"
+    private static final String PAPER_FALLBACK_VERSION = "1.15.2"
 
     private final Project project
 
@@ -36,7 +36,7 @@ class ServerCore {
     private Properties localProps = new Properties()
 
     private Closure<CoreType> getCoreType = { project.bukkit.run.coreType }
-    private String paperBuild = "lastSuccessfulBuild"
+    private String paperUrl = "https://papermc.io/ci/job/Paper-1.15/lastSuccessfulBuild/artifact/paperclip.jar"
 
     ServerCore(Project project) {
         this.project = project
@@ -133,7 +133,7 @@ class ServerCore {
             extensions.create("download", DownloadExtension, project)
             try {
                 download {
-                    src "https://gist.githubusercontent.com/OsipXD/d9ef7020a86e69c13120fa942df8f045/raw/0858b04e9b41424fb5281a911f6c6f53d8b5d177/$PAPER_VERSIONS"
+                    src "https://gist.githubusercontent.com/osipxd/6119732e30059241c2192c4a8d2218d9/raw/7d2b9f6eaa982edebf1147ece8439dacd5f33d16/$PAPER_VERSIONS"
                     dest bukkitGradleDir.toFile()
                     quiet true
                     onlyIfModified true
@@ -148,7 +148,7 @@ class ServerCore {
                 return
             }
 
-            src "https://ci.destroystokyo.com/job/Paper/$paperBuild/artifact/paperclip.jar"
+            src paperUrl
             dest bukkitGradleDir.toString()
             onlyIfModified true
         }
@@ -254,7 +254,7 @@ class ServerCore {
      */
     @Nullable
     Path getServerDir() {
-        return getDirFromPropsOrEnv(SERVER_HOME_PROPERTY, SERVER_HOME_ENV, "Dev server location").resolve(simpleVersion)
+        return getDirFromPropsOrEnv(SERVER_HOME_PROPERTY, SERVER_HOME_ENV, "Dev server location")?.resolve(simpleVersion)
     }
 
     @Nullable
@@ -358,27 +358,26 @@ class ServerCore {
             return PAPER_FALLBACK_VERSION
         }
 
-        def jsonSlurper = new JsonSlurper()
-        def object = jsonSlurper.parse(versionsFile.toFile())
+        def object = new JsonSlurper().parse(versionsFile.toFile())
 
         String version = simplifyVersion(project.bukkit.version)
         if (version == Bukkit.LATEST) {
             version = object.latest
         }
 
-        def versionsBuilds = object.versions as Map
-        def buildNumber = versionsBuilds."$version"
-        if (buildNumber == null) {
+        def versionsUrls = object.versions as Map
+        def versionUrl = versionsUrls."$version"
+        if (versionUrl == null) {
             project.logger.warn(
                     "Paper v$version not found.\n" +
-                            "Supported paper versions: ${versionsBuilds.keySet()}\n" +
+                            "Supported paper versions: ${versionsUrls.keySet()}\n" +
                             "Using '$FALLBACK_VERSION' by default."
             )
 
             return FALLBACK_VERSION
         }
 
-        paperBuild = buildNumber
+        paperUrl = versionUrl
         return version
     }
 
