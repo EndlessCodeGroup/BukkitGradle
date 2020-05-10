@@ -22,7 +22,7 @@ class ServerProperties {
     ServerProperties(Path projectPath) {
         propertiesFile = projectPath.resolve(NAME)
         if (Files.exists(propertiesFile)) {
-            properties.load(propertiesFile.newReader())
+            properties.load(propertiesFile.newReader("UTF-8"))
         } else {
             loadDefaults(projectPath.resolve("build").toAbsolutePath())
         }
@@ -34,7 +34,7 @@ class ServerProperties {
         setDefault(devServerDir, defaultPath.resolve("server").toString())
         setDefault(buildToolsDir, defaultPath.resolve("buildtools").toString())
 
-        properties.store(propertiesFile.newWriter(), $/
+        properties.store(propertiesFile.newWriter("UTF-8"), $/
  This file should *NOT* be checked into Version Control Systems,
  as it contains information specific to your local configuration./$)
     }

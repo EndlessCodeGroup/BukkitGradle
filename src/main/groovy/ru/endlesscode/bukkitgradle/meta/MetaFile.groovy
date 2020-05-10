@@ -80,7 +80,7 @@ class MetaFile {
             return
         }
 
-        metaFile.eachLine { line ->
+        metaFile.eachLine("UTF-8") { line ->
             if (isExtraLine(line)) {
                 extraLines << line
             }
@@ -108,13 +108,7 @@ class MetaFile {
      * @return true if line is dynamic meta, otherwise false
      */
     private static boolean isMetaLine(String line) {
-        for (String field in KNOWN_FIELDS) {
-            if (line.startsWith("$field:")) {
-                return true
-            }
-        }
-
-        return false
+        return KNOWN_FIELDS.any { line.startsWith("$it:") }
     }
 
     /**
@@ -137,9 +131,7 @@ class MetaFile {
      */
     private static void writeLinesTo(Path target, List<String>... lineLists) {
         target.withWriter("UTF-8") { writer ->
-            lineLists.each { lineList ->
-                lineList.each { line -> writer.println line }
-            }
+            lineLists.flatten().each { line -> writer.println line }
         }
     }
 }

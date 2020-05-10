@@ -1,12 +1,16 @@
 package ru.endlesscode.bukkitgradle.meta
 
+import groovy.transform.NamedVariant
 import org.gradle.api.GradleException
 import org.junit.Before
 import org.junit.Rule
 import org.junit.Test
 import org.junit.rules.TemporaryFolder
 import ru.endlesscode.bukkitgradle.meta.extension.PluginMeta
+import ru.endlesscode.bukkitgradle.util.CharsetUtils
 
+import java.lang.reflect.Field
+import java.nio.charset.Charset
 import java.nio.file.Path
 
 class MetaFileTest {
@@ -27,12 +31,13 @@ class MetaFileTest {
         target = tempFolder.newFile(MetaFile.NAME).toPath()
         meta = new PluginMeta()
         metaFile = new MetaFile(meta, source)
+
+        configureMeta()
     }
 
     @Test
     void 'when write meta to file - should keep only unsupported lines in source file'() {
         // Given
-        configureMeta()
         source << $/
             name: TestPlugin
             description: Test plugin description
@@ -55,9 +60,13 @@ class MetaFileTest {
     }
 
     @Test
-    void 'when write meta to file - and meta configured - should write all lines'() {
+    void 'when write meta to file - and all meta configured - should write all lines'() {
         // Given
-        configureMeta()
+        configureMeta(
+                description: "Test plugin description",
+                authors: ["OsipXD", "Contributors"],
+                url: "http://www.example.com/"
+        )
 
         // When
         metaFile.writeTo(target)
@@ -77,7 +86,6 @@ class MetaFileTest {
     @Test
     void 'when write meta to file - and there are extra fields in source - should write all lines'() {
         // Given
-        configureMeta()
         source << $/
             depend: [Vault, ProtocolLib]
             command:
@@ -90,14 +98,37 @@ class MetaFileTest {
         // Then
         List<String> expected = [
                 "name: TestPlugin",
-                "description: Test plugin description",
                 "main: com.example.plugin.Plugin",
                 "version: 0.1",
-                "website: http://www.example.com/",
-                "authors: [OsipXD, Contributors]",
                 "depend: [Vault, ProtocolLib]",
                 "command:",
                 "  example"
+        ]
+        assert expected == target.readLines()
+    }
+
+    @Test
+    void 'when write meta to file - and there are exotic chars in source - should read it correctly'() {
+        // Given
+        source.append($/
+            commands:
+              퀘스트:
+                description: 퀘스트 명령어 입니다.
+            /$.stripIndent())
+
+        // When
+        CharsetUtils.setDefaultCharset('CP866')
+        metaFile.writeTo(target)
+        CharsetUtils.setDefaultCharset('UTF-8')
+
+        // Then
+        List<String> expected = [
+                "name: TestPlugin",
+                "main: com.example.plugin.Plugin",
+                "version: 0.1",
+                "commands:",
+                "  퀘스트:",
+                "    description: 퀘스트 명령어 입니다."
         ]
         assert expected == target.readLines()
     }
@@ -111,18 +142,19 @@ class MetaFileTest {
         metaFile.writeTo(target)
     }
 
+    @NamedVariant
     private void configureMeta(
-            name = "TestPlugin",
-            description = "Test plugin description",
-            version = "0.1",
-            main = "com.example.plugin.Plugin",
-            authors = ["OsipXD", "Contributors"],
-            url = "http://www.example.com/"
+            name = null,
+            description = null,
+            version = null,
+            main = null,
+            authors = null,
+            url = null
     ) {
-        meta.name = name
+        meta.name = name ?: "TestPlugin"
         meta.description = description
-        meta.version = version
-        meta.main = main
+        meta.version = version ?: "0.1"
+        meta.main = main ?: "com.example.plugin.Plugin"
         meta.authors = authors
         meta.url = url
     }

@@ -38,9 +38,9 @@ class PrepareServer extends DefaultTask {
         }
 
         Properties properties = new Properties()
-        properties.load(eulaFile.newReader())
+        properties.load(eulaFile.newReader("UTF-8"))
         properties.setProperty("eula", "${this.run.eula}")
-        properties.store(eulaFile.newWriter(), "By changing the setting below to TRUE you are indicating your agreement to our EULA (https://account.mojang.com/documents/minecraft_eula).")
+        properties.store(eulaFile.newWriter("UTF-8"), "By changing the setting below to TRUE you are indicating your agreement to our EULA (https://account.mojang.com/documents/minecraft_eula).")
     }
 
     void resolveOnlineMode() {
@@ -50,9 +50,9 @@ class PrepareServer extends DefaultTask {
         }
 
         Properties properties = new Properties()
-        properties.load(propsFile.newReader())
+        properties.load(propsFile.newReader("UTF-8"))
         properties.setProperty("online-mode", "${this.run.onlineMode}")
-        properties.store(propsFile.newWriter(), "Minecraft server properties")
+        properties.store(propsFile.newWriter("UTF-8"), "Minecraft server properties")
     }
 
     void copyPluginsToServerDir() {
