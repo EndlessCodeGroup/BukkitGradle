@@ -1,5 +1,7 @@
 package ru.endlesscode.bukkitgradle.meta
 
+import ru.endlesscode.bukkitgradle.util.StringUtils
+
 class MetaItem {
     final String id
     final boolean required
@@ -17,7 +19,7 @@ class MetaItem {
     }
 
     String getValue() {
-        return resolve(this.value)
+        return StringUtils.resolve(this.value)
     }
 
     /**
@@ -36,31 +38,5 @@ class MetaItem {
      */
     boolean isValid() {
         return !this.required || getValue() != null
-    }
-
-    /**
-     * Resolves all objects to String
-     *
-     * @param obj The object to resolve
-     * @return Resolved string
-     */
-    private static String resolve(def obj) {
-        if (obj == null) {
-            return null
-        }
-
-        if (obj instanceof String) {
-            return obj
-        }
-
-        if (obj instanceof Closure) {
-            return resolve(obj.call())
-        }
-
-        if (obj instanceof Class) {
-            return obj.name
-        }
-
-        return obj as String
     }
 }
