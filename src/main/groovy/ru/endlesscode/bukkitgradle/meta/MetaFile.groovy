@@ -16,8 +16,8 @@ class MetaFile {
             "name", "description", "version", "author", "authors", "website", "main"
     ]
 
-    final List<String> metaLines = []
-    final List<String> staticLines = []
+    private final List<String> metaLines = []
+    private final List<String> extraLines = []
 
     private final PluginMeta meta
     private final Path metaFile
@@ -29,8 +29,6 @@ class MetaFile {
     MetaFile(PluginMeta meta, Path file) {
         this.meta = meta
         this.metaFile = file
-
-        this.filterMetaLines()
     }
 
     /**
@@ -51,11 +49,11 @@ class MetaFile {
      * @param target
      */
     void writeTo(Path target) {
-        this.validateMeta()
-        this.filterMetaLines()
-        this.generateMetaLines()
+        validateMeta()
+        filterMetaLines()
+        generateMetaLines()
 
-        writeLinesTo(target, metaLines, staticLines)
+        writeLinesTo(target, metaLines, extraLines)
     }
 
     /**
@@ -73,24 +71,24 @@ class MetaFile {
     }
 
     /**
-     * Removes all meta lines from metaFile, and saves static lines to
-     * list. If metaFile not exists only clears staticLines
+     * Removes all meta lines from metaFile, and saves extra lines to
+     * list. If metaFile not exists only clears extra lines.
      */
     private void filterMetaLines() {
-        staticLines.clear()
+        extraLines.clear()
         if (Files.notExists(metaFile)) {
             return
         }
 
         metaFile.eachLine { line ->
-            if (isStaticLine(line)) {
-                staticLines << line
+            if (isExtraLine(line)) {
+                extraLines << line
             }
 
             return
         }
 
-        writeLinesTo(metaFile, staticLines)
+        writeLinesTo(metaFile, extraLines)
     }
 
     /**
@@ -99,8 +97,8 @@ class MetaFile {
      * @param line The line to check
      * @return true if line is static
      */
-    private boolean isStaticLine(String line) {
-        return !isMetaLine(line) && (!line.empty || !staticLines.empty)
+    private boolean isExtraLine(String line) {
+        return !(line.empty && extraLines.empty) && !isMetaLine(line)
     }
 
     /**

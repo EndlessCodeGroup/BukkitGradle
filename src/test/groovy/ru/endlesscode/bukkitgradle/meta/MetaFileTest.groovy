@@ -14,6 +14,7 @@ class MetaFileTest {
     @Rule
     public TemporaryFolder tempFolder = new TemporaryFolder()
 
+    private Path source
     private Path target
     private PluginMeta meta
 
@@ -22,24 +23,66 @@ class MetaFileTest {
 
     @Before
     void setUp() {
-        target = createDefaultMetaFile()
+        source = tempFolder.newFile("source-$MetaFile.NAME").toPath()
+        target = tempFolder.newFile(MetaFile.NAME).toPath()
         meta = new PluginMeta()
-        metaFile = new MetaFile(meta, target)
+        metaFile = new MetaFile(meta, source)
     }
 
     @Test
-    void 'when initialized - should keep only unsupported lines'() {
+    void 'when write meta to file - should keep only unsupported lines in source file'() {
+        // Given
+        configureMeta()
+        source << $/
+            name: TestPlugin
+            description: Test plugin description
+            version: 0.1
+            
+            main: com.example.plugin.Plugin
+            author: OsipXD
+            website: www.example.com
+            
+            depend: [Vault, ProtocolLib]
+            command:
+              example
+            /$.stripIndent()
+
         // When
-        def lines = target.readLines()
+        metaFile.writeTo(target)
 
         // Then
-        assert ["depend: [Vault, ProtocolLib]", "command:", "  example"] == lines
+        assert ["depend: [Vault, ProtocolLib]", "command:", "  example"] == source.readLines()
     }
 
     @Test
     void 'when write meta to file - and meta configured - should write all lines'() {
         // Given
         configureMeta()
+
+        // When
+        metaFile.writeTo(target)
+
+        // Then
+        List<String> expected = [
+                "name: TestPlugin",
+                "description: Test plugin description",
+                "main: com.example.plugin.Plugin",
+                "version: 0.1",
+                "website: http://www.example.com/",
+                "authors: [OsipXD, Contributors]"
+        ]
+        assert expected == target.readLines()
+    }
+
+    @Test
+    void 'when write meta to file - and there are extra fields in source - should write all lines'() {
+        // Given
+        configureMeta()
+        source << $/
+            depend: [Vault, ProtocolLib]
+            command:
+              example
+            /$.stripIndent()
 
         // When
         metaFile.writeTo(target)
@@ -68,30 +111,13 @@ class MetaFileTest {
         metaFile.writeTo(target)
     }
 
-    private Path createDefaultMetaFile() {
-        Path metaFile = tempFolder.newFile(MetaFile.NAME).toPath()
-        metaFile << $/
-            name: TestPlugin
-            description: Test plugin description
-            version: 0.1
-            
-            main: com.example.plugin.Plugin
-            author: OsipXD
-            website: www.example.com
-            
-            depend: [Vault, ProtocolLib]
-            command:
-              example
-            /$.stripIndent()
-    }
-
     private void configureMeta(
-            String name = "TestPlugin",
-            String description = "Test plugin description",
-            String version = "0.1",
-            String main = "com.example.plugin.Plugin",
-            List<String> authors = ["OsipXD", "Contributors"],
-            String url = "http://www.example.com/"
+            name = "TestPlugin",
+            description = "Test plugin description",
+            version = "0.1",
+            main = "com.example.plugin.Plugin",
+            authors = ["OsipXD", "Contributors"],
+            url = "http://www.example.com/"
     ) {
         meta.name = name
         meta.description = description
