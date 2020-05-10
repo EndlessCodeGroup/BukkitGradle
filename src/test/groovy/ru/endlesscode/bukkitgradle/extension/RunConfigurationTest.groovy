@@ -4,8 +4,6 @@ import org.junit.Before
 import org.junit.Test
 import ru.endlesscode.bukkitgradle.server.CoreType
 
-import static org.junit.Assert.*
-
 class RunConfigurationTest {
 
     // SUT
@@ -22,7 +20,7 @@ class RunConfigurationTest {
         def args = runConfiguration.buildJvmArgs()
 
         // Then
-        assertEquals("-agentlib:jdwp=transport=dt_socket,server=y,suspend=n,address=5005 -Dfile.encoding=UTF-8 -Xmx1G", args)
+        assert "-agentlib:jdwp=transport=dt_socket,server=y,suspend=n,address=5005 -Dfile.encoding=UTF-8 -Xmx1G" == args
     }
 
     @Test
@@ -34,7 +32,7 @@ class RunConfigurationTest {
         def args = runConfiguration.buildJvmArgs()
 
         // Then
-        assertEquals("-Dfile.encoding=UTF-8 -Xmx1G", args)
+        assert "-Dfile.encoding=UTF-8 -Xmx1G" == args
     }
 
     @Test
@@ -43,7 +41,7 @@ class RunConfigurationTest {
         def args = runConfiguration.buildJvmArgs(false)
 
         // Then
-        assertEquals("-Dfile.encoding=UTF-8 -Xmx1G", args)
+        assert "-Dfile.encoding=UTF-8 -Xmx1G" == args
     }
 
     @Test
@@ -52,7 +50,7 @@ class RunConfigurationTest {
         runConfiguration.core = "paper"
 
         // Then
-        assertEquals(CoreType.PAPER, runConfiguration.coreType)
+        assert CoreType.PAPER == runConfiguration.coreType
     }
 
     @Test
@@ -61,7 +59,7 @@ class RunConfigurationTest {
         runConfiguration.core = "Paper"
 
         // Then
-        assertEquals(CoreType.PAPER, runConfiguration.coreType)
+        assert CoreType.PAPER == runConfiguration.coreType
     }
 
     @Test
@@ -70,6 +68,6 @@ class RunConfigurationTest {
         runConfiguration.core = "uber-bukkit"
 
         // Then
-        assertEquals(CoreType.SPIGOT, runConfiguration.coreType)
+        assert CoreType.SPIGOT == runConfiguration.coreType
     }
 }

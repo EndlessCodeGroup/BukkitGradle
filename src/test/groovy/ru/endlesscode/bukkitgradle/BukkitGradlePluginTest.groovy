@@ -3,10 +3,8 @@ package ru.endlesscode.bukkitgradle
 import org.gradle.api.artifacts.Dependency
 import org.junit.Test
 
-import static org.junit.Assert.assertEquals
-import static org.junit.Assert.assertTrue
+class BukkitGradlePluginTest extends PluginTestBase {
 
-class BukkitGradlePluginTest extends TestBase {
     @Test
     void 'when initialized - should add required plugins'() {
         // When

@@ -3,16 +3,14 @@ package ru.endlesscode.bukkitgradle.server
 import org.gradle.api.DefaultTask
 import org.junit.Ignore
 import org.junit.Test
-import ru.endlesscode.bukkitgradle.TestBase
+import ru.endlesscode.bukkitgradle.PluginTestBase
 
-import static org.junit.Assert.assertTrue
-
-class ServerCoreTest extends TestBase {
+class ServerCoreTest extends PluginTestBase {
 
     @Ignore
     @Test
     void canAddTasksToProject() throws Exception {
-        assertTrue(project.downloadBukkitMeta instanceof DefaultTask)
-        assertTrue(project.copyServerCore instanceof DefaultTask)
+        assert project.downloadBukkitMeta instanceof DefaultTask
+        assert project.copyServerCore instanceof DefaultTask
     }
 }

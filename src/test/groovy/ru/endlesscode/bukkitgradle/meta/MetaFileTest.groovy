@@ -3,13 +3,11 @@ package ru.endlesscode.bukkitgradle.meta
 import org.gradle.api.GradleException
 import org.junit.Before
 import org.junit.Test
-import ru.endlesscode.bukkitgradle.TestBase
+import ru.endlesscode.bukkitgradle.PluginTestBase
 
 import java.nio.file.Path
 
-import static org.junit.Assert.assertEquals
-
-class MetaFileTest extends TestBase {
+class MetaFileTest extends PluginTestBase {
     private MetaFile metaFile
     private Path target
 
@@ -23,7 +21,7 @@ class MetaFileTest extends TestBase {
 
     @Test
     void testRemovingMetaLines() throws Exception {
-        assertEquals(["depend: [Vault, ProtocolLib]", "command:", "  example"], this.target.readLines())
+        assert ["depend: [Vault, ProtocolLib]", "command:", "  example"] == target.readLines()
     }
 
     @Test
@@ -43,7 +41,7 @@ class MetaFileTest extends TestBase {
         ]
 
         this.metaFile.writeTo(target)
-        assertEquals(expected, target.readLines())
+        assert expected == target.readLines()
     }
 
     @Test(expected = GradleException)
