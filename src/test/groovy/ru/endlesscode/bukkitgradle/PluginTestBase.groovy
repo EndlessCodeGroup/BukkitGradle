@@ -50,26 +50,6 @@ class PluginTestBase {
         }
     }
 
-    protected Path createDefaultMetaFile() {
-        Path metaDir = project.buildDir.toPath().resolve("meta/")
-        Files.createDirectories(metaDir)
-        Path metaFile = metaDir.resolve(MetaFile.NAME)
-        Files.deleteIfExists(metaFile)
-        Files.createFile(metaFile)
-
-        metaFile << '''name: TestPlugin
-description: Test plugin description
-version: 0.1
-
-main: com.example.plugin.Plugin
-author: OsipXD
-website: www.example.com
-
-depend: [Vault, ProtocolLib]
-command:
-  example'''
-    }
-
     protected void executeTask(Task task) {
         task.taskDependencies.getDependencies(task).each {
             subTask -> executeTask(subTask)

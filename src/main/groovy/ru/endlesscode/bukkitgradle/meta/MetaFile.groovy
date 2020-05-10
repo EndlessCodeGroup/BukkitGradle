@@ -12,23 +12,23 @@ import java.nio.file.Path
 class MetaFile {
     public static final String NAME = "plugin.yml"
 
-    private static final String[] ATTRIBUTES = [
+    private static final String[] KNOWN_FIELDS = [
             "name", "description", "version", "author", "authors", "website", "main"
     ]
 
-    final List<String> metaLines
-    final List<String> staticLines
-    final Project project
+    final List<String> metaLines = []
+    final List<String> staticLines = []
 
     private final PluginMeta meta
     private final Path metaFile
 
-    MetaFile(Project project, Path file = null) {
-        this.metaLines = []
-        this.staticLines = []
-        this.project = project
-        this.meta = project.bukkit.meta
-        this.metaFile = file ?: this.findMetaFile()
+    MetaFile(Project project) {
+        this(project.bukkit.meta as PluginMeta, findMetaFile(project))
+    }
+
+    MetaFile(PluginMeta meta, Path file) {
+        this.meta = meta
+        this.metaFile = file
 
         this.filterMetaLines()
     }
@@ -38,7 +38,7 @@ class MetaFile {
      *
      * @return The File
      */
-    private Path findMetaFile() {
+    private static Path findMetaFile(Project project) {
         def javaPlugin = project.convention.getPlugin(JavaPluginConvention)
         def mainSourceSet = javaPlugin.sourceSets.main
         def resourceDir = mainSourceSet.resources.srcDirs[0].toPath()
@@ -59,7 +59,7 @@ class MetaFile {
     }
 
     /**
-     * Validates that meta contains all required attributes
+     * Validates that meta contains all required fields
      * If it isn't throw GradleException
      *
      * @param metaItems List of MetaItem
@@ -110,8 +110,8 @@ class MetaFile {
      * @return true if line is dynamic meta, otherwise false
      */
     private static boolean isMetaLine(String line) {
-        for (String attribute in ATTRIBUTES) {
-            if (line.startsWith("$attribute:")) {
+        for (String field in KNOWN_FIELDS) {
+            if (line.startsWith("$field:")) {
                 return true
             }
         }
