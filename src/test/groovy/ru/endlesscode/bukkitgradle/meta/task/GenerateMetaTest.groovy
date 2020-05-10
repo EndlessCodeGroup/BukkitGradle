@@ -1,8 +1,7 @@
-package ru.endlesscode.bukkitgradle.meta
+package ru.endlesscode.bukkitgradle.meta.task
 
 import org.junit.Test
 import ru.endlesscode.bukkitgradle.PluginTestBase
-import ru.endlesscode.bukkitgradle.task.GenerateMeta
 
 class GenerateMetaTest extends PluginTestBase {
 

@@ -1,4 +1,4 @@
-package ru.endlesscode.bukkitgradle.extension
+package ru.endlesscode.bukkitgradle.server.extension
 
 import org.junit.Before
 import org.junit.Test

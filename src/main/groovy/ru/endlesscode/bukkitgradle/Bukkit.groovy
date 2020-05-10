@@ -1,7 +1,8 @@
-package ru.endlesscode.bukkitgradle.extension
+package ru.endlesscode.bukkitgradle
 
 import org.gradle.util.ConfigureUtil
-import ru.endlesscode.bukkitgradle.meta.PluginMeta
+import ru.endlesscode.bukkitgradle.meta.extension.PluginMeta
+import ru.endlesscode.bukkitgradle.server.extension.RunConfiguration
 
 class Bukkit {
     public static final String NAME = "bukkit"

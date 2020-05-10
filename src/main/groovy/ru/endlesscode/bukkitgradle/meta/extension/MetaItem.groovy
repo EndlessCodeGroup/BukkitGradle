@@ -1,6 +1,6 @@
-package ru.endlesscode.bukkitgradle.meta
+package ru.endlesscode.bukkitgradle.meta.extension
 
-import ru.endlesscode.bukkitgradle.util.StringUtils
+import ru.endlesscode.bukkitgradle.meta.util.StringUtils
 
 class MetaItem {
     final String id

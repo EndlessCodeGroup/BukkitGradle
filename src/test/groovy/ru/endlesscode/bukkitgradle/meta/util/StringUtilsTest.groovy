@@ -1,4 +1,4 @@
-package ru.endlesscode.bukkitgradle.util
+package ru.endlesscode.bukkitgradle.meta.util
 
 import org.junit.Test
 import org.junit.runner.RunWith
@@ -20,7 +20,7 @@ class StringUtilsTest {
                 args(42, "42"),
                 args({ 42 }, "42"),
                 args({ "I'm lazy" }, "I'm lazy"),
-                args(StringUtils, "ru.endlesscode.bukkitgradle.util.StringUtils")
+                args(StringUtils, "ru.endlesscode.bukkitgradle.meta.util.StringUtils")
         ]
     }
 

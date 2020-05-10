@@ -5,7 +5,8 @@ import org.gradle.api.Plugin
 import org.gradle.api.Project
 import org.gradle.api.plugins.JavaPluginConvention
 import org.gradle.api.tasks.compile.JavaCompile
-import ru.endlesscode.bukkitgradle.util.Dependencies
+import ru.endlesscode.bukkitgradle.meta.extension.PluginMeta
+import ru.endlesscode.bukkitgradle.server.extension.RunConfiguration
 
 class BukkitGradlePlugin implements Plugin<Project> {
     final static String GROUP = 'Bukkit'
@@ -37,6 +38,8 @@ class BukkitGradlePlugin implements Plugin<Project> {
      */
     private void addPlugins() {
         project.with {
+            extensions.create(Bukkit.NAME, Bukkit, new PluginMeta(project), new RunConfiguration())
+
             plugins.with {
                 apply('java')
                 apply(PluginMetaPlugin)

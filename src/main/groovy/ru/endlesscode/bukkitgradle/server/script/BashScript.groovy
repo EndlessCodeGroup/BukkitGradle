@@ -1,6 +1,6 @@
 package ru.endlesscode.bukkitgradle.server.script
 
-import ru.endlesscode.bukkitgradle.extension.RunConfiguration
+import ru.endlesscode.bukkitgradle.server.extension.RunConfiguration
 
 class BashScript extends RunningScript {
 

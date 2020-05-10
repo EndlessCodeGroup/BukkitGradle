@@ -1,7 +1,7 @@
 package ru.endlesscode.bukkitgradle
 
 import org.junit.Test
-import ru.endlesscode.bukkitgradle.meta.PluginMeta
+import ru.endlesscode.bukkitgradle.meta.extension.PluginMeta
 
 class BukkitTest extends PluginTestBase {
 

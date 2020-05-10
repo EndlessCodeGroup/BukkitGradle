@@ -1,4 +1,4 @@
-package ru.endlesscode.bukkitgradle.util
+package ru.endlesscode.bukkitgradle.meta.util
 
 class StringUtils {
 

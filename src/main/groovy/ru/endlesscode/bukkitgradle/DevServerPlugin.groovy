@@ -5,8 +5,8 @@ import org.gradle.api.Plugin
 import org.gradle.api.Project
 import ru.endlesscode.bukkitgradle.server.ServerCore
 import ru.endlesscode.bukkitgradle.server.idea.IdeaRunConfigurationBuilder
-import ru.endlesscode.bukkitgradle.task.PrepareServer
-import ru.endlesscode.bukkitgradle.task.RunServer
+import ru.endlesscode.bukkitgradle.server.task.PrepareServer
+import ru.endlesscode.bukkitgradle.server.task.RunServer
 
 import java.nio.file.Files
 import java.nio.file.Path

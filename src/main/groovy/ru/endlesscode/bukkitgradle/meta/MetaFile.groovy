@@ -3,6 +3,8 @@ package ru.endlesscode.bukkitgradle.meta
 import org.gradle.api.GradleException
 import org.gradle.api.Project
 import org.gradle.api.plugins.JavaPluginConvention
+import ru.endlesscode.bukkitgradle.meta.extension.MetaItem
+import ru.endlesscode.bukkitgradle.meta.extension.PluginMeta
 
 import java.nio.file.Files
 import java.nio.file.Path

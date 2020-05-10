@@ -6,9 +6,9 @@ import groovy.json.JsonSlurper
 import org.gradle.api.Project
 import org.gradle.api.tasks.Copy
 import org.gradle.api.tasks.JavaExec
+import ru.endlesscode.bukkitgradle.Bukkit
 import ru.endlesscode.bukkitgradle.BukkitGradlePlugin
-import ru.endlesscode.bukkitgradle.extension.Bukkit
-import ru.endlesscode.bukkitgradle.util.MavenApi
+import ru.endlesscode.bukkitgradle.server.util.MavenApi
 
 import javax.annotation.Nullable
 import java.nio.file.Files
