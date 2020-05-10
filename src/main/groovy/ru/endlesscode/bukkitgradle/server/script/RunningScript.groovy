@@ -1,16 +1,18 @@
-package ru.endlesscode.bukkitgradle.server
+package ru.endlesscode.bukkitgradle.server.script
 
 import org.gradle.internal.os.OperatingSystem
-import ru.endlesscode.bukkitgradle.extension.RunConfiguration
+import ru.endlesscode.bukkitgradle.server.extension.RunConfiguration
+import ru.endlesscode.bukkitgradle.server.ServerConstants
 
 import java.nio.file.Files
 import java.nio.file.Path
 
-abstract class SystemScript {
+abstract class RunningScript {
+
     protected RunConfiguration configuration
     private String version
 
-    SystemScript(RunConfiguration configuration, String version) {
+    RunningScript(RunConfiguration configuration, String version) {
         this.configuration = configuration
         this.version = version
     }
@@ -21,7 +23,7 @@ abstract class SystemScript {
      * @param dir The directory
      */
     void buildOn(Path dir) {
-        Path scriptFile = dir.resolve(getFileName())
+        def scriptFile = dir.resolve(getFileName())
         if (Files.notExists(scriptFile)) {
             Files.createFile(scriptFile)
         }
@@ -59,7 +61,7 @@ abstract class SystemScript {
      * @return Server run command
      */
     protected String buildRunCommand() {
-        "java ${configuration.javaArgs} -jar ${ServerCore.CORE_NAME} ${configuration.bukkitArgs}"
+        "java ${configuration.buildJvmArgs()} -jar ${ServerConstants.FILE_CORE} ${configuration.bukkitArgs}"
     }
 
     /**
@@ -85,15 +87,11 @@ abstract class SystemScript {
      * @param version Server version
      * @return The script
      */
-    static SystemScript getScript(RunConfiguration configuration, String version) {
+    static RunningScript getScript(RunConfiguration configuration, String version) {
         if (OperatingSystem.current().isWindows()) {
             return new WindowsScript(configuration, version)
         }
 
-        if (OperatingSystem.current().isMacOsX()) {
-            return new MacScript(configuration, version)
-        }
-
-        return new LinuxScript(configuration, version)
+        return new BashScript(configuration, version)
     }
 }

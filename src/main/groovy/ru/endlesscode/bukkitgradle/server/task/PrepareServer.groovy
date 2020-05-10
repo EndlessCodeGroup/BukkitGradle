@@ -1,10 +1,10 @@
-package ru.endlesscode.bukkitgradle.task
+package ru.endlesscode.bukkitgradle.server.task
 
 import org.gradle.api.DefaultTask
 import org.gradle.api.tasks.Input
 import org.gradle.api.tasks.TaskAction
 import org.gradle.jvm.tasks.Jar
-import ru.endlesscode.bukkitgradle.extension.RunConfiguration
+import ru.endlesscode.bukkitgradle.server.extension.RunConfiguration
 import ru.endlesscode.bukkitgradle.server.ServerCore
 
 import java.nio.file.Files

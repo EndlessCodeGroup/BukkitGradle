@@ -9,19 +9,21 @@ import ru.endlesscode.bukkitgradle.meta.MetaFile
 import java.nio.file.Files
 import java.nio.file.Path
 
-class TestBase {
+class PluginTestBase {
+
     protected Project project
 
     @Before
     void setUp() throws Exception {
-        System.properties.setProperty('test', 'true')
+        System.properties.setProperty("test", "true")
 
-        this.project = ProjectBuilder.builder()
+        project = ProjectBuilder.builder()
                 .withName("TestProject")
                 .withProjectDir(new File("build/testProject"))
                 .build()
-        this.project.with {
-            apply plugin: BukkitGradlePlugin
+
+        project.with {
+            apply(plugin: BukkitGradlePlugin)
 
             group = "com.example.plugin"
             description = "Test project description"
@@ -30,19 +32,26 @@ class TestBase {
         }
     }
 
-    protected void initBukkitMeta() {
-        this.project.bukkit.meta {
-            name = "TestPlugin"
-            description = "Test plugin description"
-            version = "0.1"
-            main = "com.example.plugin.Plugin"
-            authors = ["OsipXD", "Contributors"]
-            url = "http://www.example.com/"
+    protected void initBukkitMeta(
+            String name = "TestPlugin",
+            String description = "Test plugin description",
+            String version = "0.1",
+            String main = "com.example.plugin.Plugin",
+            List<String> authors = ["OsipXD", "Contributors"],
+            String url = "http://www.example.com/"
+    ) {
+        project.bukkit.meta {
+            delegate.name = name
+            delegate.description = description
+            delegate.version = version
+            delegate.main = main
+            delegate.authors = authors
+            delegate.url = url
         }
     }
 
     protected Path createDefaultMetaFile() {
-        Path metaDir = this.project.buildDir.toPath().resolve("meta/")
+        Path metaDir = project.buildDir.toPath().resolve("meta/")
         Files.createDirectories(metaDir)
         Path metaFile = metaDir.resolve(MetaFile.NAME)
         Files.deleteIfExists(metaFile)
@@ -67,16 +76,5 @@ command:
         }
 
         task.execute()
-    }
-
-    protected void configureRun() {
-        this.project.bukkit.run.with {
-            eula = true
-            onlineMode = true
-            debug = false
-            encoding = 'CP866'
-            javaArgs = '-Xmx2G'
-            bukkitArgs = '-s 2'
-        }
     }
 }

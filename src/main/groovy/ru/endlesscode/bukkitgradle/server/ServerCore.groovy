@@ -6,40 +6,31 @@ import groovy.json.JsonSlurper
 import org.gradle.api.Project
 import org.gradle.api.tasks.Copy
 import org.gradle.api.tasks.JavaExec
+import ru.endlesscode.bukkitgradle.Bukkit
 import ru.endlesscode.bukkitgradle.BukkitGradlePlugin
-import ru.endlesscode.bukkitgradle.extension.Bukkit
-import ru.endlesscode.bukkitgradle.util.MavenApi
+import ru.endlesscode.bukkitgradle.server.util.MavenApi
 
 import javax.annotation.Nullable
 import java.nio.file.Files
 import java.nio.file.Path
-import java.nio.file.Paths
 
 class ServerCore {
-    public static final String CORE_NAME = "core.jar"
 
-    private static final String SERVER_HOME_PROPERTY = "server.dir"
-    private static final String SERVER_HOME_ENV = "BUKKIT_DEV_SERVER_HOME"
-    private static final String BUILDTOOLS_NAME = "BuildTools.jar"
-    private static final String BUILDTOOLS_HOME_PROPERTY = "buildtools.dir"
-    private static final String BUILDTOOLS_HOME_ENV = "BUILDTOOLS_HOME"
-    private static final String MAVEN_METADATA = "maven-metadata.xml"
-    private static final String PAPER_VERSIONS = "paper-versions.json"
-    private static final String PAPERCLIP_FILE = "paperclip.jar"
-    private static final String FALLBACK_VERSION = "1.13.2"
-    private static final String PAPER_FALLBACK_VERSION = "1.12.2"
+    private static final String FALLBACK_VERSION = "1.15.2"
+    private static final String PAPER_FALLBACK_VERSION = "1.15.2"
 
     private final Project project
 
     private Path bukkitGradleDir
     private boolean forceRebuild = false
-    private Properties localProps = new Properties()
+    private ServerProperties serverProperties
 
     private Closure<CoreType> getCoreType = { project.bukkit.run.coreType }
-    private String paperBuild = "lastSuccessfulBuild"
+    private String paperUrl = PaperConstants.URL_PAPER_DEFAULT
 
     ServerCore(Project project) {
         this.project = project
+        serverProperties = new ServerProperties(project.rootDir.toPath())
 
         MavenApi.init(project)
         this.initDir()
@@ -52,7 +43,7 @@ class ServerCore {
     /**
      * Initializes Bukkit Gradle dir
      */
-    void initDir() {
+    private void initDir() {
         this.bukkitGradleDir = project.buildDir.toPath().resolve("bukkit-gradle")
         Files.createDirectories(bukkitGradleDir)
     }
@@ -60,7 +51,7 @@ class ServerCore {
     /**
      * Registers needed tasks
      */
-    void registerTasks() {
+    private void registerTasks() {
         registerBukkitMetaTask()
         registerDownloadBuildToolsTask()
         registerBuildServerCoreTask()
@@ -83,7 +74,7 @@ class ServerCore {
             extensions.create("download", DownloadExtension, project)
             try {
                 download {
-                    src "https://hub.spigotmc.org/nexus/content/repositories/snapshots/org/bukkit/bukkit/$MAVEN_METADATA"
+                    src ServerConstants.URL_BUKKIT_METADATA
                     dest bukkitGradleDir.toFile()
                     quiet true
                 }
@@ -104,7 +95,7 @@ class ServerCore {
                 return
             }
 
-            def destDir = buildToolsPath
+            def destDir = serverProperties.buildToolsDir
             if (destDir == null) {
                 enabled = false
                 return
@@ -133,7 +124,7 @@ class ServerCore {
             extensions.create("download", DownloadExtension, project)
             try {
                 download {
-                    src "https://gist.githubusercontent.com/OsipXD/d9ef7020a86e69c13120fa942df8f045/raw/0858b04e9b41424fb5281a911f6c6f53d8b5d177/$PAPER_VERSIONS"
+                    src PaperConstants.URL_PAPER_VERSIONS
                     dest bukkitGradleDir.toFile()
                     quiet true
                     onlyIfModified true
@@ -148,7 +139,7 @@ class ServerCore {
                 return
             }
 
-            src "https://ci.destroystokyo.com/job/Paper/$paperBuild/artifact/paperclip.jar"
+            src paperUrl
             dest bukkitGradleDir.toString()
             onlyIfModified true
         }
@@ -177,7 +168,7 @@ class ServerCore {
                     return
                 }
 
-                def path = buildToolsPath.resolve(BUILDTOOLS_NAME)
+                def path = serverProperties.buildToolsDir.resolve(ServerConstants.FILE_BUILDTOOLS)
                 def absolutePath = path.toAbsolutePath().toString()
                 if (Files.notExists(path) || Files.isDirectory(path)) {
                     logger.warn("BuildTools not found on path: '$absolutePath'\n" +
@@ -218,12 +209,12 @@ class ServerCore {
                     fileName = getSpigotCoreName()
                 } else {
                     srcDir = bukkitGradleDir
-                    fileName = PAPERCLIP_FILE
+                    fileName = PaperConstants.FILE_PAPERCLIP
                 }
 
                 from srcDir
                 include fileName
-                rename(fileName, CORE_NAME)
+                rename(fileName, ServerConstants.FILE_CORE)
                 into serverDir.toString()
             }
         }
@@ -254,58 +245,7 @@ class ServerCore {
      */
     @Nullable
     Path getServerDir() {
-        return getDirFromPropsOrEnv(SERVER_HOME_PROPERTY, SERVER_HOME_ENV, "Dev server location").resolve(simpleVersion)
-    }
-
-    @Nullable
-    private Path getBuildToolsPath() {
-        return getDirFromPropsOrEnv(BUILDTOOLS_HOME_PROPERTY, BUILDTOOLS_HOME_ENV, "BuildTools location")
-    }
-
-    @Nullable
-    private Path getDirFromPropsOrEnv(String propertyName, String envVariable, String comment) {
-        this.initLocalProps()
-
-        def localProp = localProps.getProperty(propertyName)
-        def globalEnv = System.getenv(envVariable)
-        if (localProp == null && globalEnv == null) {
-            project.logger.warn("$comment not found. It can be fixed by two ways:\n" +
-                    "   1. Define location with '$propertyName' in the local.properties file\n" +
-                    "   2. Define $envVariable environment variable")
-            return null
-        }
-        def dir = Paths.get(localProp ?: globalEnv)
-        Files.createDirectories(dir)
-
-        return dir
-    }
-
-    private initLocalProps() {
-        Path propsFile = this.project.file("local.properties").toPath()
-        if (Files.exists(propsFile)) {
-            localProps.load(propsFile.newReader())
-            return
-        }
-
-        project.logger.info("Local properties file not found. Creating...")
-        Files.createFile(propsFile)
-        localProps.load(propsFile.newReader())
-
-        if (System.getenv(SERVER_HOME_ENV) == null) {
-            localProps.setProperty(SERVER_HOME_PROPERTY, project.file("build/server").absolutePath)
-        }
-
-        if (System.getenv(BUILDTOOLS_HOME_ENV) == null) {
-            localProps.setProperty(BUILDTOOLS_HOME_PROPERTY, project.file("build/buildtools").absolutePath)
-        }
-
-        localProps.store(propsFile.newWriter(), " This file should *NOT* be checked into Version Control Systems,\n" +
-                " as it contains information specific to your local configuration.\n" +
-                " \n" +
-                " Location of the dev server and BuildTools.\n" +
-                " For customization when using a Version Control System, please read the\n" +
-                " header note."
-        )
+        return serverProperties.devServerDir?.resolve(simpleVersion)
     }
 
     /**
@@ -329,7 +269,7 @@ class ServerCore {
             return version
         }
 
-        Path metaFile = bukkitGradleDir.resolve(MAVEN_METADATA)
+        Path metaFile = bukkitGradleDir.resolve(ServerConstants.FILE_MAVEN_METADATA)
         if (Files.notExists(metaFile)) {
             if (BukkitGradlePlugin.isTesting()) return '1.11.0'
 
@@ -347,7 +287,7 @@ class ServerCore {
     }
 
     private String getPaperCoreVersion() {
-        Path versionsFile = bukkitGradleDir.resolve(PAPER_VERSIONS)
+        Path versionsFile = bukkitGradleDir.resolve(PaperConstants.FILE_PAPER_VERSIONS)
         if (Files.notExists(versionsFile)) {
             project.logger.warn(
                     'Paper versions file not downloaded, make sure that Gradle ' +
@@ -358,27 +298,26 @@ class ServerCore {
             return PAPER_FALLBACK_VERSION
         }
 
-        def jsonSlurper = new JsonSlurper()
-        def object = jsonSlurper.parse(versionsFile.toFile())
+        def object = new JsonSlurper().parse(versionsFile.toFile())
 
         String version = simplifyVersion(project.bukkit.version)
         if (version == Bukkit.LATEST) {
             version = object.latest
         }
 
-        def versionsBuilds = object.versions as Map
-        def buildNumber = versionsBuilds."$version"
-        if (buildNumber == null) {
+        def versionsUrls = object.versions as Map
+        def versionUrl = versionsUrls."$version"
+        if (versionUrl == null) {
             project.logger.warn(
                     "Paper v$version not found.\n" +
-                            "Supported paper versions: ${versionsBuilds.keySet()}\n" +
+                            "Supported paper versions: ${versionsUrls.keySet()}\n" +
                             "Using '$FALLBACK_VERSION' by default."
             )
 
             return FALLBACK_VERSION
         }
 
-        paperBuild = buildNumber
+        paperUrl = versionUrl
         return version
     }
 

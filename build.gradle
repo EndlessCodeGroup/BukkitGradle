@@ -1,6 +1,7 @@
 plugins {
     id "groovy"
     id "java-gradle-plugin"
+    id "maven-publish"
     id "com.gradle.plugin-publish" version "0.11.0"
     id "com.github.ben-manes.versions" version "0.28.0"
 }
@@ -22,15 +23,15 @@ dependencies {
 
 pluginBundle {
     website = "https://github.com/EndlessCodeGroup/BukkitGradle"
-    vcsUrl = website
+    vcsUrl = "${website}.git"
     description = this.description
     tags = ["minecraft", "bukkit", "plugin"]
 
     plugins {
-        bukkitPlugin {
+        bukkitGradle {
             id = "ru.endlesscode.bukkitgradle"
-            displayName = "Bukkit Plugin Gradle integration"
-            description = "Gradle plugin providing integration for plugins made for the Bukkit platform"
+            displayName = "Bukkit Plugin development Gradle integration"
+            description = "Gradle plugin providing integration for easier Bukkit plugins developement."
         }
     }
 }

@@ -5,7 +5,8 @@ import org.gradle.api.Plugin
 import org.gradle.api.Project
 import org.gradle.api.plugins.JavaPluginConvention
 import org.gradle.api.tasks.compile.JavaCompile
-import ru.endlesscode.bukkitgradle.util.Dependencies
+import ru.endlesscode.bukkitgradle.meta.extension.PluginMeta
+import ru.endlesscode.bukkitgradle.server.extension.RunConfiguration
 
 class BukkitGradlePlugin implements Plugin<Project> {
     final static String GROUP = 'Bukkit'
@@ -26,10 +27,10 @@ class BukkitGradlePlugin implements Plugin<Project> {
      * Configures project
      */
     private void configureProject() {
+        addRepositories()
         addPlugins()
         configureEncoding()
-        addRepositories()
-        addExtensionFunctions()
+        Dependencies.configureProject(project)
     }
 
     /**
@@ -37,10 +38,10 @@ class BukkitGradlePlugin implements Plugin<Project> {
      */
     private void addPlugins() {
         project.with {
+            extensions.create(Bukkit.NAME, Bukkit, new PluginMeta(project), new RunConfiguration())
+
             plugins.with {
                 apply('java')
-                apply('eclipse')
-                apply('idea')
                 apply(PluginMetaPlugin)
                 apply(DevServerPlugin)
             }
@@ -66,19 +67,7 @@ class BukkitGradlePlugin implements Plugin<Project> {
     private void addRepositories() {
         project.repositories {
             mavenLocal()
-            mavenCentral()
+            jcenter()
         }
-    }
-
-    /**
-     * Adds repositories and dependencies extension functions
-     */
-    private void addExtensionFunctions() {
-        project.repositories {
-            mavenLocal()
-            mavenCentral()
-        }
-
-        Dependencies.configureProject(project)
     }
 }

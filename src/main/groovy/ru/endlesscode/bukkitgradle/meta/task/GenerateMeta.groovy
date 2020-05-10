@@ -1,4 +1,4 @@
-package ru.endlesscode.bukkitgradle.task
+package ru.endlesscode.bukkitgradle.meta.task
 
 import org.gradle.api.DefaultTask
 import org.gradle.api.tasks.Input

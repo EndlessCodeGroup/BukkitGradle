@@ -13,13 +13,13 @@ Gradle utilities for easier writing Bukkit plugins.
         1. [Server run configurations](#server-run-configurations)
 
 #### Features:
-- Automatically applies plugins: java, idea, eclipse
+- Automatically applies plugin: java
 - Sets up compiler encoding to UTF-8
 - Sets archivesBaseName to plugin name
 - Supports APIs: Bukkit, CraftBukkit, Spigot, Paper
-- Provides short extension-functions to add common repositories and dependencies
+- Provides short extension functions to add common repositories and dependencies
 - Generates plugin.yml from Gradle project information
-- Allows to run dev server from IDE
+- Allows running dev server from IDE
 - Supports two cores for dev server: Spigot and Paper
 - Automatically downloads and updates BuildTools or Paperclip
 - Automatically copies your plugin to plugins dir on server running
@@ -197,7 +197,7 @@ buildtools.dir=/path/to/buildtools/
 If there no BuildTools.jar it will be automatically downloaded.
 
 **TIP:** you can define it globally (for all projects that uses BukkitGradle) with environment variables `BUKKIT_DEV_SERVER_HOME` 
-and `BUILDTOOLS_HOME`.
+and `BUKKIT_BUILDTOOLS_HOME`.
 
 ##### On IntelliJ IDEA
 Run `:buildIdeaRun` task. To your IDE will be added Run Configuration that will dynamically refreshes when you change 

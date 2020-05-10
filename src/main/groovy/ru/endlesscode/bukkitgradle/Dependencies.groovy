@@ -1,4 +1,4 @@
-package ru.endlesscode.bukkitgradle.util
+package ru.endlesscode.bukkitgradle
 
 import org.gradle.api.Project
 import org.gradle.api.artifacts.Dependency
@@ -23,28 +23,28 @@ class Dependencies {
     private static addExtensions() {
         repoHandler.ext {
             spigot = {
-                addRepo('spigot-repo', 'https://hub.spigotmc.org/nexus/content/repositories/snapshots/')
+                addRepo('Spigot', 'https://hub.spigotmc.org/nexus/content/repositories/snapshots/')
             }
             sk89q = {
-                addRepo('sk89q-repo', 'http://maven.sk89q.com/repo/')
+                addRepo('sk89q', 'https://maven.sk89q.com/repo/')
             }
-            destroystokyo = {
-                addRepo('destroystokyo-repo', 'https://repo.destroystokyo.com/repository/maven-public/')
+            papermc = {
+                addRepo('PaperMC', 'https://papermc.io/repo/repository/maven-public/')
             }
             dmulloy2 = {
-                addRepo('dmulloy2-repo', 'http://repo.dmulloy2.net/nexus/repository/public/')
+                addRepo('dmulloy2', 'https://repo.dmulloy2.net/nexus/repository/public/')
             }
             md5 = {
-                addRepo('md5-repo', 'http://repo.md-5.net/content/groups/public/')
+                addRepo('md5', 'https://repo.md-5.net/content/groups/public/')
             }
             vault = {
-                addRepo('vault-repo', 'http://nexus.hc.to/content/repositories/pub_releases/')
+                addRepo('Vault', 'http://nexus.hc.to/content/repositories/pub_releases/')
             }
-            placeholderapi = {
-                addRepo('placeholderapi-repo', 'http://repo.extendedclip.com/content/repositories/placeholderapi/')
+            placeholderApi = {
+                addRepo('PlaceholderAPI', 'https://repo.extendedclip.com/content/repositories/placeholderapi/')
             }
             aikar = {
-                addRepo('aikar-repo', 'https://repo.aikar.co/content/groups/aikar/')
+                addRepo('aikar', 'https://repo.aikar.co/content/groups/aikar/')
             }
         }
 
@@ -53,7 +53,7 @@ class Dependencies {
             spigotApi = { api('org.spigotmc', 'spigot-api', 'spigot') }
             bukkit = { api('org.bukkit', 'bukkit', 'spigot') }
             craftbukkit = { api('org.bukkit', 'craftbukkit') }
-            paperApi = { api('com.destroystokyo.paper', 'paper-api', 'destroystokyo') }
+            paperApi = { api('com.destroystokyo.paper', 'paper-api', 'papermc') }
         }
     }
 
@@ -71,7 +71,7 @@ class Dependencies {
 
     private static Dependency dep(String groupId, String artifactId, String version, String... requiredRepos) {
         for (repo in requiredRepos) {
-            repoHandler.ext."$repo"()
+            repoHandler."$repo"()
         }
 
         return depHandler.create("$groupId:$artifactId:$version")

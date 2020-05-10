@@ -1,24 +1,22 @@
-package ru.endlesscode.bukkitgradle.extension
+package ru.endlesscode.bukkitgradle
 
-import org.gradle.api.Project
-import ru.endlesscode.bukkitgradle.meta.PluginMeta
+import org.gradle.util.ConfigureUtil
+import ru.endlesscode.bukkitgradle.meta.extension.PluginMeta
+import ru.endlesscode.bukkitgradle.server.extension.RunConfiguration
 
 class Bukkit {
     public static final String NAME = "bukkit"
     public static final String LATEST = "+"
     public static final String REVISION_SUFFIX = "-R0.1-SNAPSHOT"
 
-    private final Project project
-
     String version
 
     final PluginMeta meta
     final RunConfiguration run
 
-    Bukkit(Project project) {
-        this.project = project
-        this.meta = new PluginMeta(project)
-        this.run = new RunConfiguration(project)
+    Bukkit(PluginMeta meta, RunConfiguration run) {
+        this.meta = meta
+        this.run = run
     }
 
     /**
@@ -33,10 +31,10 @@ class Bukkit {
     }
 
     void meta(@DelegatesTo(PluginMeta) Closure<?> closure) {
-        project.configure(meta, closure)
+        ConfigureUtil.configure(closure, meta)
     }
 
     void run(@DelegatesTo(RunConfiguration) Closure<?> closure) {
-        project.configure(run, closure)
+        ConfigureUtil.configure(closure, run)
     }
 }
