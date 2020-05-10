@@ -18,7 +18,7 @@ class Bukkit {
     Bukkit(Project project) {
         this.project = project
         this.meta = new PluginMeta(project)
-        this.run = new RunConfiguration(project)
+        this.run = new RunConfiguration()
     }
 
     /**

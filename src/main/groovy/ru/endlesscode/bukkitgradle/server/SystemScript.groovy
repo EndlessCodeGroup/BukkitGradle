@@ -59,7 +59,7 @@ abstract class SystemScript {
      * @return Server run command
      */
     protected String buildRunCommand() {
-        "java ${configuration.javaArgs} -jar ${ServerCore.CORE_NAME} ${configuration.bukkitArgs}"
+        "java ${configuration.buildJvmArgs()} -jar ${ServerCore.CORE_NAME} ${configuration.bukkitArgs}"
     }
 
     /**

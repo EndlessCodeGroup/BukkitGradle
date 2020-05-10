@@ -3,6 +3,7 @@ package ru.endlesscode.bukkitgradle
 import org.gradle.api.GradleException
 import org.gradle.api.Plugin
 import org.gradle.api.Project
+import ru.endlesscode.bukkitgradle.idea.IdeaRunConfigurationBuilder
 import ru.endlesscode.bukkitgradle.server.ServerCore
 import ru.endlesscode.bukkitgradle.task.PrepareServer
 import ru.endlesscode.bukkitgradle.task.RunServer
@@ -11,16 +12,14 @@ import java.nio.file.Files
 import java.nio.file.Path
 
 class DevServerPlugin implements Plugin<Project> {
-    Project project
 
     @Override
     void apply(Project project) {
-        this.project = project
         ServerCore serverCore = new ServerCore(project)
         project.task('runServer', type: RunServer, dependsOn: 'prepareServer') {
             group = BukkitGradlePlugin.GROUP
             description = 'Run dev server'
-            core serverCore
+            core = serverCore
         }
 
         PrepareServer prepareServer = project.task(
@@ -30,7 +29,7 @@ class DevServerPlugin implements Plugin<Project> {
         ) {
             group = BukkitGradlePlugin.GROUP
             description = 'Prepare server ro run. Configure server and copy compiled plugin to plugins dir'
-            core serverCore
+            core = serverCore
         } as PrepareServer
 
         Path runConfigurationsDir = project.rootProject.projectDir.toPath().resolve(".idea/runConfigurations")
@@ -43,11 +42,13 @@ class DevServerPlugin implements Plugin<Project> {
             }
 
             Files.createDirectories(runConfigurationsDir)
-            prepareServer.run.buildIdeaConfiguration(runConfigurationsDir)
+            def serverDir = prepareServer.serverDir.toRealPath()
+            IdeaRunConfigurationBuilder.build(runConfigurationsDir, serverDir, prepareServer.run)
         }
 
         project.afterEvaluate {
-            prepareServer.run.buildIdeaConfiguration(runConfigurationsDir)
+            def serverDir = prepareServer.serverDir.toRealPath()
+            IdeaRunConfigurationBuilder.build(runConfigurationsDir, serverDir, prepareServer.run)
         }
     }
 }

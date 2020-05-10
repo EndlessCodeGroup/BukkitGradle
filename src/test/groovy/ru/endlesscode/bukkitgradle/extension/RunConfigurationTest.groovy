@@ -1,32 +1,75 @@
 package ru.endlesscode.bukkitgradle.extension
 
+import org.junit.Before
 import org.junit.Test
-import ru.endlesscode.bukkitgradle.TestBase
+import ru.endlesscode.bukkitgradle.server.CoreType
 
 import static org.junit.Assert.*
 
-class RunConfigurationTest extends TestBase {
-    @Test
-    void testDefaultConfiguration() {
-        this.project.bukkit.run.with {
-            assertFalse eula
-            assertFalse onlineMode
-            assertTrue debug
-            assertEquals('-agentlib:jdwp=transport=dt_socket,server=y,suspend=n,address=5005 -Dfile.encoding=UTF-8 -Xmx1G', javaArgs)
-            assertEquals("", bukkitArgs)
-        }
+class RunConfigurationTest {
+
+    // SUT
+    RunConfiguration runConfiguration
+
+    @Before
+    void setUp() {
+        runConfiguration = new RunConfiguration()
     }
 
     @Test
-    void testCustomConfiguration() {
-        configureRun()
+    void 'when build args - should return args with debug flags'() {
+        // When
+        def args = runConfiguration.buildJvmArgs()
 
-        this.project.bukkit.run.with {
-            assertTrue eula
-            assertTrue onlineMode
-            assertFalse debug
-            assertEquals('-Dfile.encoding=CP866 -Xmx2G', javaArgs)
-            assertEquals('-s 2', bukkitArgs)
-        }
+        // Then
+        assertEquals("-agentlib:jdwp=transport=dt_socket,server=y,suspend=n,address=5005 -Dfile.encoding=UTF-8 -Xmx1G", args)
+    }
+
+    @Test
+    void 'when build args - and debug disabled - should return args without debug flags'() {
+        // Given
+        runConfiguration.debug = false
+
+        // When
+        def args = runConfiguration.buildJvmArgs()
+
+        // Then
+        assertEquals("-Dfile.encoding=UTF-8 -Xmx1G", args)
+    }
+
+    @Test
+    void 'when build args with debug mode override - should return args without debug flags'() {
+        // When
+        def args = runConfiguration.buildJvmArgs(false)
+
+        // Then
+        assertEquals("-Dfile.encoding=UTF-8 -Xmx1G", args)
+    }
+
+    @Test
+    void 'when set existing core - should set core successfully'() {
+        // When
+        runConfiguration.core = "paper"
+
+        // Then
+        assertEquals(CoreType.PAPER, runConfiguration.coreType)
+    }
+
+    @Test
+    void 'when set existing core in mixed case - should set core successfully'() {
+        // When
+        runConfiguration.core = "Paper"
+
+        // Then
+        assertEquals(CoreType.PAPER, runConfiguration.coreType)
+    }
+
+    @Test
+    void 'when set not existing core - should fallback to spigot core'() {
+        // When
+        runConfiguration.core = "uber-bukkit"
+
+        // Then
+        assertEquals(CoreType.SPIGOT, runConfiguration.coreType)
     }
 }
