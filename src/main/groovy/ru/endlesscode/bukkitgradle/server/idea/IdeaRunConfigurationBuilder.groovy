@@ -26,7 +26,7 @@ class IdeaRunConfigurationBuilder {
         def jvmArgs = runConfiguration.buildJvmArgs(false)
 
         def runConfigurationFile = configurationDir.resolve("${taskName.replace(' ', '_')}.xml")
-        def xml = new MarkupBuilder(runConfigurationFile.newWriter())
+        def xml = new MarkupBuilder(runConfigurationFile.newWriter("UTF-8"))
         xml.component(name: 'ProjectRunConfigurationManager') {
             configuration(
                     default: 'false',

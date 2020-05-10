@@ -12,25 +12,23 @@ import java.nio.file.Path
 class MetaFile {
     public static final String NAME = "plugin.yml"
 
-    private static final String[] ATTRIBUTES = [
+    private static final String[] KNOWN_FIELDS = [
             "name", "description", "version", "author", "authors", "website", "main"
     ]
 
-    final List<String> metaLines
-    final List<String> staticLines
-    final Project project
+    private final List<String> metaLines = []
+    private final List<String> extraLines = []
 
     private final PluginMeta meta
     private final Path metaFile
 
-    MetaFile(Project project, Path file = null) {
-        this.metaLines = []
-        this.staticLines = []
-        this.project = project
-        this.meta = project.bukkit.meta
-        this.metaFile = file ?: this.findMetaFile()
+    MetaFile(Project project) {
+        this(project.bukkit.meta as PluginMeta, findMetaFile(project))
+    }
 
-        this.filterMetaLines()
+    MetaFile(PluginMeta meta, Path file) {
+        this.meta = meta
+        this.metaFile = file
     }
 
     /**
@@ -38,7 +36,7 @@ class MetaFile {
      *
      * @return The File
      */
-    private Path findMetaFile() {
+    private static Path findMetaFile(Project project) {
         def javaPlugin = project.convention.getPlugin(JavaPluginConvention)
         def mainSourceSet = javaPlugin.sourceSets.main
         def resourceDir = mainSourceSet.resources.srcDirs[0].toPath()
@@ -51,15 +49,15 @@ class MetaFile {
      * @param target
      */
     void writeTo(Path target) {
-        this.validateMeta()
-        this.filterMetaLines()
-        this.generateMetaLines()
+        validateMeta()
+        filterMetaLines()
+        generateMetaLines()
 
-        writeLinesTo(target, metaLines, staticLines)
+        writeLinesTo(target, metaLines, extraLines)
     }
 
     /**
-     * Validates that meta contains all required attributes
+     * Validates that meta contains all required fields
      * If it isn't throw GradleException
      *
      * @param metaItems List of MetaItem
@@ -73,24 +71,24 @@ class MetaFile {
     }
 
     /**
-     * Removes all meta lines from metaFile, and saves static lines to
-     * list. If metaFile not exists only clears staticLines
+     * Removes all meta lines from metaFile, and saves extra lines to
+     * list. If metaFile not exists only clears extra lines.
      */
     private void filterMetaLines() {
-        staticLines.clear()
+        extraLines.clear()
         if (Files.notExists(metaFile)) {
             return
         }
 
-        metaFile.eachLine { line ->
-            if (isStaticLine(line)) {
-                staticLines << line
+        metaFile.eachLine("UTF-8") { line ->
+            if (isExtraLine(line)) {
+                extraLines << line
             }
 
             return
         }
 
-        writeLinesTo(metaFile, staticLines)
+        writeLinesTo(metaFile, extraLines)
     }
 
     /**
@@ -99,8 +97,8 @@ class MetaFile {
      * @param line The line to check
      * @return true if line is static
      */
-    private boolean isStaticLine(String line) {
-        return !isMetaLine(line) && (!line.empty || !staticLines.empty)
+    private boolean isExtraLine(String line) {
+        return !(line.empty && extraLines.empty) && !isMetaLine(line)
     }
 
     /**
@@ -110,13 +108,7 @@ class MetaFile {
      * @return true if line is dynamic meta, otherwise false
      */
     private static boolean isMetaLine(String line) {
-        for (String attribute in ATTRIBUTES) {
-            if (line.startsWith("$attribute:")) {
-                return true
-            }
-        }
-
-        return false
+        return KNOWN_FIELDS.any { line.startsWith("$it:") }
     }
 
     /**
@@ -139,9 +131,7 @@ class MetaFile {
      */
     private static void writeLinesTo(Path target, List<String>... lineLists) {
         target.withWriter("UTF-8") { writer ->
-            lineLists.each { lineList ->
-                lineList.each { line -> writer.println line }
-            }
+            lineLists.flatten().each { line -> writer.println line }
         }
     }
 }
