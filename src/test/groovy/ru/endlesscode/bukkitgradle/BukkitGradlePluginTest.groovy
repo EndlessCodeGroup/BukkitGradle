@@ -8,48 +8,64 @@ import static org.junit.Assert.assertTrue
 
 class BukkitGradlePluginTest extends TestBase {
     @Test
-    void testPluginAddsRequiredPlugins() throws Exception {
-        assertTrue project.pluginManager.hasPlugin("java")
-        assertTrue project.pluginManager.hasPlugin("idea")
-        assertTrue project.pluginManager.hasPlugin("eclipse")
+    void 'when initialized - should add required plugins'() {
+        // When
+        def hasJavaPlugin = project.pluginManager.hasPlugin("java")
+
+        // Then
+        assert hasJavaPlugin
     }
 
     @Test
-    void testPluginAddsRequiredRepos() throws Exception {
-        project.repositories {
-            sk89q()
-        }
+    void 'when use custom repos extension - should add repos'() {
+        // When
+        project.repositories.sk89q()
 
-        project.repositories.getByName("sk89q-repo")
+        // Then
+        project.repositories.getByName("sk89q")
     }
 
     @Test
-    void testPluginAddsLatestBukkitVersion() throws Exception {
+    void 'when use bukkit extension - and bukkit version not set - should return bukkit dependency without version'() {
+        // When
+        Dependency dependency = project.dependencies.bukkit()
 
-        Dependency dependency = project.dependencies.ext.bukkit()
-        assertEquals('org.bukkit', dependency.group)
-        assertEquals('bukkit', dependency.name)
-        assertEquals('+', dependency.version)
-        project.repositories.getByName("spigot-repo")
+        // Then
+        assert 'org.bukkit' == dependency.group
+        assert 'bukkit' == dependency.name
+        assert '+' == dependency.version
     }
 
     @Test
-    void testPluginAddsCustomBukkit() throws Exception {
+    void 'when use bukkit extension - and bukkit version set - should return bukkit with specified version'() {
+        // Given
         project.bukkit.version = "1.7.10"
 
-        Dependency dependency = project.dependencies.ext.bukkit()
-        assertEquals('org.bukkit', dependency.group)
-        assertEquals('bukkit', dependency.name)
-        assertEquals('1.7.10-R0.1-SNAPSHOT', dependency.version)
+        // When
+        Dependency dependency = project.dependencies.bukkit()
+
+        // Then
+        assert 'org.bukkit' == dependency.group
+        assert 'bukkit' == dependency.name
+        assert '1.7.10-R0.1-SNAPSHOT' == dependency.version
     }
 
-    private String[] getDependencies() {
-        def dependencies = []
+    @Test
+    void 'when use bukkit extension - should add repo spigot'() {
+        // When
+        project.dependencies.bukkit()
 
-        for (Dependency dependency : project.configurations.compileOnly.getDependencies()) {
-            dependencies << "$dependency.group:$dependency.name:$dependency.version"
-        }
+        // Then
+        project.repositories.getByName("Spigot")
+    }
 
-        return dependencies
+    @Test
+    void 'when use spigot extension - should add repo mavenLocal'() {
+        project.repositories.getByName("MavenLocal")
+        // When
+        project.dependencies.spigot()
+
+        // Then
+        project.repositories.getByName("MavenLocal")
     }
 }
