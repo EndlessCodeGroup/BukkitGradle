@@ -8,10 +8,6 @@ class MetaItem {
 
     def value
 
-    MetaItem(String id, def value, boolean required = false) {
-        this(id, required, value)
-    }
-
     MetaItem(String id, boolean required = false, def value = null) {
         this.id = id
         this.required = required

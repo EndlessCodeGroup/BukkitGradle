@@ -2,41 +2,38 @@ package ru.endlesscode.bukkitgradle.meta
 
 import org.gradle.api.Project
 
-@SuppressWarnings("GroovyUnusedDeclaration")
+@SuppressWarnings("unused")
 class PluginMeta {
-    final MetaItem name
-    final MetaItem description
-    final MetaItem main
-    final MetaItem version
-    final MetaItem url
-    final MetaItem authors
+    private final MetaItem name = new MetaItem("name", true)
+    private final MetaItem description = new MetaItem("description")
+    private final MetaItem main = new MetaItem("main", true)
+    private final MetaItem version = new MetaItem("version", true)
+    private final MetaItem url = new MetaItem("website")
+    private final MetaItem authors = new MetaItem("authors")
 
-    private final Project project
-    private final List<MetaItem> metaItems = []
+    final List<MetaItem> items = [name, description, main, version, url, authors]
 
-    PluginMeta(Project project) {
-        this.project = project
-
-        this.name = new MetaItem("name", true, project.name)
-        this.description = new MetaItem("description", { project.description })
-        this.main = new MetaItem("main", true, { "${project.group}.${getName().toLowerCase()}.${getName()}" })
-        this.version = new MetaItem("version", true, { project.version })
-        this.url = new MetaItem("website", { project.findProperty("url") })
-        this.authors = new MetaItem("authors")
-
-        metaItems.addAll(name, description, main, version, url, authors)
+    PluginMeta() {
+        // Nothing by default
     }
 
-    void setName(def name) {
+    PluginMeta(Project project) {
+        setName(project.name)
+        setDescription({ project.description })
+        setMain({ "${project.group}.${getName().toLowerCase()}.${getName()}" })
+        setVersion({ project.version })
+        setUrl({ project.findProperty("url") })
+    }
+
+    void setName(name) {
         this.name.value = name
-        project.archivesBaseName = getName()
     }
 
     String getName() {
         return this.name.value
     }
 
-    void setDescription(def description) {
+    void setDescription(description) {
         this.description.value = description
     }
 
@@ -44,7 +41,7 @@ class PluginMeta {
         return this.description.value
     }
 
-    void setMain(def main) {
+    void setMain(main) {
         this.main.value = main
     }
 
@@ -52,7 +49,7 @@ class PluginMeta {
         return this.main.value
     }
 
-    void setVersion(def version) {
+    void setVersion(version) {
         this.version.value = version
     }
 
@@ -60,7 +57,7 @@ class PluginMeta {
         return this.version.value
     }
 
-    void setUrl(def url) {
+    void setUrl(url) {
         this.url.value = url
     }
 
@@ -68,16 +65,12 @@ class PluginMeta {
         return this.url.value
     }
 
-    void setAuthors(List<String> authors) {
+    void setAuthors(authors) {
         this.authors.value = authors
     }
 
     String getAuthors() {
         return this.authors.value
-    }
-
-    List<MetaItem> getItems() {
-        return metaItems
     }
 
     /**
@@ -86,7 +79,7 @@ class PluginMeta {
      * @param value The value
      * @return Value with single quotes around
      */
-    def q(value) {
+    static String q(value) {
         return "'$value'"
     }
 
@@ -96,7 +89,7 @@ class PluginMeta {
      * @param value The value
      * @return Value with double quotes around
      */
-    def qq(value) {
+    static String qq(value) {
         return "\"$value\""
     }
 }
