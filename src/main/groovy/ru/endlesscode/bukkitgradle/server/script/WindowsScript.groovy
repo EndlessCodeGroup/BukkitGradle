@@ -1,8 +1,9 @@
-package ru.endlesscode.bukkitgradle.server
+package ru.endlesscode.bukkitgradle.server.script
 
 import ru.endlesscode.bukkitgradle.extension.RunConfiguration
 
-class WindowsScript extends SystemScript {
+class WindowsScript extends RunningScript {
+
     WindowsScript(RunConfiguration configuration, String version) {
         super(configuration, version)
     }
@@ -14,10 +15,13 @@ class WindowsScript extends SystemScript {
 
     @Override
     protected String getScriptText() {
-        """@echo off
-${this.buildRunCommand()}
-pause
-exit"""
+        //language=bat
+        $/
+        @echo off
+        ${buildRunCommand()}
+        pause
+        exit
+        /$.stripIndent()
     }
 
     @Override
