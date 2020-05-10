@@ -2,7 +2,7 @@ package ru.endlesscode.bukkitgradle.server.script
 
 import org.gradle.internal.os.OperatingSystem
 import ru.endlesscode.bukkitgradle.extension.RunConfiguration
-import ru.endlesscode.bukkitgradle.server.ServerCore
+import ru.endlesscode.bukkitgradle.server.ServerConstants
 
 import java.nio.file.Files
 import java.nio.file.Path
@@ -61,7 +61,7 @@ abstract class RunningScript {
      * @return Server run command
      */
     protected String buildRunCommand() {
-        "java ${configuration.buildJvmArgs()} -jar ${ServerCore.CORE_NAME} ${configuration.bukkitArgs}"
+        "java ${configuration.buildJvmArgs()} -jar ${ServerConstants.FILE_CORE} ${configuration.bukkitArgs}"
     }
 
     /**

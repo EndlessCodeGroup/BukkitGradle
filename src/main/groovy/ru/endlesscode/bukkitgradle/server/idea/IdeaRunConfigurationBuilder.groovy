@@ -1,8 +1,8 @@
-package ru.endlesscode.bukkitgradle.idea
+package ru.endlesscode.bukkitgradle.server.idea
 
 import groovy.xml.MarkupBuilder
 import ru.endlesscode.bukkitgradle.extension.RunConfiguration
-import ru.endlesscode.bukkitgradle.server.ServerCore
+import ru.endlesscode.bukkitgradle.server.ServerConstants
 
 import java.nio.file.Files
 import java.nio.file.Path
@@ -35,7 +35,7 @@ class IdeaRunConfigurationBuilder {
                     factoryName: 'JAR Application',
                     singleton: 'true'
             ) {
-                option(name: 'JAR_PATH', value: "${serverDir.resolve(ServerCore.CORE_NAME)}")
+                option(name: 'JAR_PATH', value: "${serverDir.resolve(ServerConstants.FILE_CORE)}")
                 option(name: 'VM_PARAMETERS', value: jvmArgs)
                 option(name: 'PROGRAM_PARAMETERS', value: args)
                 option(name: 'WORKING_DIRECTORY', value: serverDir)

@@ -3,8 +3,8 @@ package ru.endlesscode.bukkitgradle
 import org.gradle.api.GradleException
 import org.gradle.api.Plugin
 import org.gradle.api.Project
-import ru.endlesscode.bukkitgradle.idea.IdeaRunConfigurationBuilder
 import ru.endlesscode.bukkitgradle.server.ServerCore
+import ru.endlesscode.bukkitgradle.server.idea.IdeaRunConfigurationBuilder
 import ru.endlesscode.bukkitgradle.task.PrepareServer
 import ru.endlesscode.bukkitgradle.task.RunServer
 
