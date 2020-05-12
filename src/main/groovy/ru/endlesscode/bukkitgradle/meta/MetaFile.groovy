@@ -3,6 +3,8 @@ package ru.endlesscode.bukkitgradle.meta
 import org.gradle.api.GradleException
 import org.gradle.api.Project
 import org.gradle.api.plugins.JavaPluginConvention
+import org.gradle.api.tasks.Input
+import org.gradle.api.tasks.Nested
 import ru.endlesscode.bukkitgradle.meta.extension.MetaItem
 import ru.endlesscode.bukkitgradle.meta.extension.PluginMeta
 
@@ -19,7 +21,9 @@ class MetaFile {
     private final List<String> metaLines = []
     private final List<String> extraLines = []
 
+    @Nested
     private final PluginMeta meta
+    @Input
     private final Path metaFile
 
     MetaFile(Project project) {

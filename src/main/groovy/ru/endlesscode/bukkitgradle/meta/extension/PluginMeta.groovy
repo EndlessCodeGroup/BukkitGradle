@@ -1,6 +1,8 @@
 package ru.endlesscode.bukkitgradle.meta.extension
 
 import org.gradle.api.Project
+import org.gradle.api.tasks.Input
+import ru.endlesscode.bukkitgradle.meta.util.StringUtils
 
 @SuppressWarnings("unused")
 class PluginMeta {
@@ -29,6 +31,7 @@ class PluginMeta {
         this.name.value = name
     }
 
+    @Input
     String getName() {
         return this.name.value
     }
@@ -37,6 +40,7 @@ class PluginMeta {
         this.description.value = description
     }
 
+    @Input
     String getDescription() {
         return this.description.value
     }
@@ -45,6 +49,7 @@ class PluginMeta {
         this.main.value = main
     }
 
+    @Input
     String getMain() {
         return this.main.value
     }
@@ -53,6 +58,7 @@ class PluginMeta {
         this.version.value = version
     }
 
+    @Input
     String getVersion() {
         return this.version.value
     }
@@ -61,6 +67,7 @@ class PluginMeta {
         this.url.value = url
     }
 
+    @Input
     String getUrl() {
         return this.url.value
     }
@@ -69,6 +76,7 @@ class PluginMeta {
         this.authors.value = authors
     }
 
+    @Input
     String getAuthors() {
         return this.authors.value
     }
