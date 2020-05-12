@@ -30,4 +30,9 @@ class StringUtils {
 
         return obj.toString()
     }
+
+    static String toCamelCase(String text) {
+        def camelCaseText = text.replaceAll(/[ _-]([A-Za-z0-9])/) { _, letter -> letter.toUpperCase() }
+        return camelCaseText.capitalize()
+    }
 }

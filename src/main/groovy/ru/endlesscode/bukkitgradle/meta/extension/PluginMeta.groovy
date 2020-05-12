@@ -22,7 +22,7 @@ class PluginMeta {
     PluginMeta(Project project) {
         setName(project.name)
         setDescription({ project.description })
-        setMain({ "${project.group}.${getName().toLowerCase()}.${getName()}" })
+        setMain({ "${project.group}.${StringUtils.toCamelCase(getName())}" })
         setVersion({ project.version })
         setUrl({ project.findProperty("url") })
     }
