@@ -57,7 +57,7 @@ class ServerProperties {
         def value = get(property)
         if (value == null) return null
 
-        def dir = Paths.get()
+        def dir = Paths.get(value)
         Files.createDirectories(dir)
 
         return dir
