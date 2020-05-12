@@ -19,6 +19,13 @@ dependencies {
     implementation localGroovy()
     implementation "de.undercouch:gradle-download-task:4.0.4"
     testImplementation "junit:junit:4.13"
+    testImplementation platform("org.spockframework:spock-bom:2.0-M2-groovy-2.5")
+    testImplementation "org.spockframework:spock-core"
+    testImplementation "org.spockframework:spock-junit4"
+}
+
+test {
+    useJUnitPlatform()
 }
 
 pluginBundle {
