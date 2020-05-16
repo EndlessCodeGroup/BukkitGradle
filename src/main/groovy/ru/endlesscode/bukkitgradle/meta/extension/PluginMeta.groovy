@@ -1,8 +1,6 @@
 package ru.endlesscode.bukkitgradle.meta.extension
 
-import org.gradle.api.Project
 import org.gradle.api.tasks.Input
-import ru.endlesscode.bukkitgradle.meta.util.StringUtils
 
 @SuppressWarnings("unused")
 class PluginMeta {
@@ -14,18 +12,6 @@ class PluginMeta {
     private final MetaItem authors = new MetaItem("authors")
 
     final List<MetaItem> items = [name, description, main, version, url, authors]
-
-    PluginMeta() {
-        // Nothing by default
-    }
-
-    PluginMeta(Project project) {
-        setName(project.name)
-        setDescription({ project.description })
-        setMain({ "${project.group}.${StringUtils.toCamelCase(getName())}" })
-        setVersion({ project.version })
-        setUrl({ project.findProperty("url") })
-    }
 
     void setName(name) {
         this.name.value = name
