@@ -18,8 +18,8 @@ class MetaFileTest {
     @Rule
     public TemporaryFolder tempFolder = new TemporaryFolder()
 
-    private Path source
-    private Path target
+    private File source
+    private File target
     private PluginMeta meta
 
     // SUT
@@ -27,8 +27,8 @@ class MetaFileTest {
 
     @Before
     void setUp() {
-        source = tempFolder.newFile("source-$MetaFile.NAME").toPath()
-        target = tempFolder.newFile(MetaFile.NAME).toPath()
+        source = tempFolder.newFile("source-$MetaFile.NAME")
+        target = tempFolder.newFile(MetaFile.NAME)
         meta = new PluginMeta()
         metaFile = new MetaFile(meta, source)
 

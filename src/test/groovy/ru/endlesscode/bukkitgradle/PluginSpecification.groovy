@@ -1,5 +1,7 @@
 package ru.endlesscode.bukkitgradle
 
+import org.gradle.api.Project
+import org.gradle.testfixtures.ProjectBuilder
 import org.gradle.testkit.runner.GradleRunner
 import org.junit.Rule
 import org.junit.rules.TemporaryFolder
@@ -39,6 +41,12 @@ class PluginSpecification extends Specification {
             return testProjectDir.newFile(path)
         }
         return file
+    }
+
+    Project getProject() {
+        ProjectBuilder.builder()
+                .withProjectDir(testProjectDir.root)
+                .build()
     }
 
     GradleRunner getRunner() {

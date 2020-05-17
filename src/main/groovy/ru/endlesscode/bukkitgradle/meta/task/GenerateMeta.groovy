@@ -27,6 +27,6 @@ class GenerateMeta extends DefaultTask {
      */
     @TaskAction
     def generateMeta() {
-        metaFile.get().writeTo(target.asFile.get().toPath())
+        metaFile.get().writeTo(target.asFile.get())
     }
 }

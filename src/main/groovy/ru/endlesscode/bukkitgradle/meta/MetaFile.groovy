@@ -1,15 +1,11 @@
 package ru.endlesscode.bukkitgradle.meta
 
-import org.gradle.api.GradleException
 import org.gradle.api.Project
 import org.gradle.api.plugins.JavaPluginConvention
-import org.gradle.api.tasks.Input
+import org.gradle.api.tasks.InputFile
 import org.gradle.api.tasks.Nested
-import ru.endlesscode.bukkitgradle.meta.extension.MetaItem
+import org.gradle.api.tasks.Optional
 import ru.endlesscode.bukkitgradle.meta.extension.PluginMeta
-
-import java.nio.file.Files
-import java.nio.file.Path
 
 class MetaFile {
     public static final String NAME = "plugin.yml"
@@ -22,56 +18,39 @@ class MetaFile {
     private final List<String> extraLines = []
 
     @Nested
-    private final PluginMeta meta
-    @Input
-    private final Path metaFile
+    final PluginMeta meta
+
+    @Optional
+    @InputFile
+    final File metaFile
 
     MetaFile(Project project) {
         this(project.bukkit.meta as PluginMeta, findMetaFile(project))
     }
 
-    MetaFile(PluginMeta meta, Path file) {
+    MetaFile(PluginMeta meta, File file) {
         this.meta = meta
-        this.metaFile = file
+        this.metaFile = file?.exists() ? file : null
     }
 
-    /**
-     * Finds and returns project metaFile even if it doesn't exist
-     *
-     * @return The File
-     */
-    private static Path findMetaFile(Project project) {
+    /** Finds and returns project metaFile even if it doesn't exist. */
+    private static File findMetaFile(Project project) {
         def javaPlugin = project.convention.getPlugin(JavaPluginConvention)
         def mainSourceSet = javaPlugin.sourceSets.main
-        def resourceDir = mainSourceSet.resources.srcDirs[0].toPath()
+        def resourceDir = mainSourceSet.resources.srcDirs[0]
 
-        return resourceDir.resolve(NAME)
+        return new File(resourceDir, NAME)
     }
 
     /**
      * Validates and writes meta and static lines to target file
      * @param target
      */
-    void writeTo(Path target) {
-        validateMeta()
+    void writeTo(File target) {
         filterMetaLines()
         generateMetaLines()
 
         writeLinesTo(target, metaLines, extraLines)
-    }
-
-    /**
-     * Validates that meta contains all required fields
-     * If it isn't throw GradleException
-     *
-     * @param metaItems List of MetaItem
-     */
-    private validateMeta() {
-        for (MetaItem item in meta.items) {
-            if (!item.valid) {
-                throw new GradleException("Plugin metadata parse error: '$item.id' must not be null")
-            }
-        }
     }
 
     /**
@@ -80,7 +59,7 @@ class MetaFile {
      */
     private void filterMetaLines() {
         extraLines.clear()
-        if (Files.notExists(metaFile)) {
+        if (!metaFile?.exists()) {
             return
         }
 
@@ -133,7 +112,7 @@ class MetaFile {
      * @param target The target to write
      * @param lineLists Lines to write
      */
-    private static void writeLinesTo(Path target, List<String>... lineLists) {
+    private static void writeLinesTo(File target, List<String>... lineLists) {
         target.withWriter("UTF-8") { writer ->
             lineLists.flatten().each { line -> writer.println line }
         }
