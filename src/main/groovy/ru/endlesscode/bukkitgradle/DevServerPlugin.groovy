@@ -1,8 +1,8 @@
 package ru.endlesscode.bukkitgradle
 
-import org.gradle.api.GradleException
 import org.gradle.api.Plugin
 import org.gradle.api.Project
+import org.gradle.api.tasks.TaskProvider
 import ru.endlesscode.bukkitgradle.server.ServerCore
 import ru.endlesscode.bukkitgradle.server.idea.IdeaRunConfigurationBuilder
 import ru.endlesscode.bukkitgradle.server.task.PrepareServer
@@ -16,39 +16,39 @@ class DevServerPlugin implements Plugin<Project> {
     @Override
     void apply(Project project) {
         ServerCore serverCore = new ServerCore(project)
-        project.task('runServer', type: RunServer, dependsOn: 'prepareServer') {
+        project.tasks.register('runServer', RunServer) {
             group = BukkitGradlePlugin.GROUP
             description = 'Run dev server'
             core = serverCore
+            dependsOn('prepareServer')
         }
 
-        PrepareServer prepareServer = project.task(
-                'prepareServer',
-                type: PrepareServer,
-                dependsOn: ['build', 'copyServerCore']
-        ) {
+        def prepareServer = project.tasks.register('prepareServer', PrepareServer) {
             group = BukkitGradlePlugin.GROUP
             description = 'Prepare server ro run. Configure server and copy compiled plugin to plugins dir'
             core = serverCore
-        } as PrepareServer
+            dependsOn('build', 'copyServerCore')
+        } as TaskProvider<PrepareServer>
 
-        Path runConfigurationsDir = project.rootProject.projectDir.toPath().resolve(".idea/runConfigurations")
-        project.task('buildIdeaRun', dependsOn: 'prepareServer') {
+        Path runConfigurationsDir = project.rootDir.toPath().resolve(".idea/runConfigurations")
+        project.tasks.register('buildIdeaRun') {
             group = BukkitGradlePlugin.GROUP
             description = 'Configure IDEA server run configuration'
-        }.doLast {
-            if (Files.notExists(runConfigurationsDir.parent)) {
-                throw new GradleException("This task only for IntelliJ IDEA.")
-            }
 
-            Files.createDirectories(runConfigurationsDir)
-            def serverDir = prepareServer.serverDir.toRealPath()
-            IdeaRunConfigurationBuilder.build(runConfigurationsDir, serverDir, prepareServer.run)
+            onlyIf { Files.exists(runConfigurationsDir.parent) }
+
+            dependsOn(prepareServer)
+
+            doLast {
+                Files.createDirectories(runConfigurationsDir)
+                def serverDir = prepareServer.get().serverDir.toRealPath()
+                IdeaRunConfigurationBuilder.build(runConfigurationsDir, serverDir, prepareServer.get().run)
+            }
         }
 
         project.afterEvaluate {
-            def serverDir = prepareServer.serverDir.toRealPath()
-            IdeaRunConfigurationBuilder.build(runConfigurationsDir, serverDir, prepareServer.run)
+            def serverDir = prepareServer.get().serverDir.toRealPath()
+            IdeaRunConfigurationBuilder.build(runConfigurationsDir, serverDir, prepareServer.get().run)
         }
     }
 }
