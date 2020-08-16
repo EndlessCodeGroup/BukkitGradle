@@ -9,8 +9,6 @@ import org.junit.rules.TemporaryFolder
 import ru.endlesscode.bukkitgradle.meta.extension.PluginMeta
 import ru.endlesscode.bukkitgradle.util.CharsetUtils
 
-import java.lang.reflect.Field
-import java.nio.charset.Charset
 import java.nio.file.Path
 
 class MetaFileTest {
@@ -36,27 +34,23 @@ class MetaFileTest {
     }
 
     @Test
-    void 'when write meta to file - should keep only unsupported lines in source file'() {
+    void 'when write meta to file - and source contains meta - should write existing not overloaded meta lines'() {
         // Given
         source << $/
-            name: TestPlugin
             description: Test plugin description
-            version: 0.1
-            
-            main: com.example.plugin.Plugin
-            author: OsipXD
-            website: www.example.com
-            
-            depend: [Vault, ProtocolLib]
-            command:
-              example
+            version: 0.3
             /$.stripIndent()
 
         // When
         metaFile.writeTo(target)
 
         // Then
-        assert ["depend: [Vault, ProtocolLib]", "command:", "  example"] == source.readLines()
+        assert [
+                "name: TestPlugin",
+                "description: Test plugin description",
+                "main: com.example.plugin.Plugin",
+                "version: 0.1"
+        ] == target.readLines()
     }
 
     @Test

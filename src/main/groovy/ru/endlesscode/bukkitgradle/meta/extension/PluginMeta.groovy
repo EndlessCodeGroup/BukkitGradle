@@ -10,6 +10,8 @@ class PluginMeta {
     private final MetaItem version = new MetaItem("version", true)
     private final MetaItem url = new MetaItem("website")
     private final MetaItem authors = new MetaItem("authors")
+    private final MetaItem apiVersion = new EnumeratedMetaItem("api-version", false, null,
+            "1.13", "1.14", "1.15", "1.16")
 
     final List<MetaItem> items = [name, description, main, version, url, authors]
 
@@ -73,7 +75,14 @@ class PluginMeta {
         return this.authors.value
     }
 
-    /**
+    void setApiVersion(String apiVersion) {
+        this.apiVersion.value = apiVersion
+    }
+
+    String getApiVersion() {
+        return this.apiVersion.value
+    }
+/**
      * Enclose value in single quotes.
      *
      * @param value The value

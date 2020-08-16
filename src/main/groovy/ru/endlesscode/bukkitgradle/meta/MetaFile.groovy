@@ -1,6 +1,5 @@
 package ru.endlesscode.bukkitgradle.meta
 
-import org.gradle.api.GradleException
 import org.gradle.api.Project
 import org.gradle.api.plugins.JavaPluginConvention
 import ru.endlesscode.bukkitgradle.meta.extension.MetaItem
@@ -13,10 +12,11 @@ class MetaFile {
     public static final String NAME = "plugin.yml"
 
     private static final String[] KNOWN_FIELDS = [
-            "name", "description", "version", "author", "authors", "website", "main"
+            "name", "description", "version", "author", "authors", "website", "main", "api-version"
     ]
 
     private final List<String> metaLines = []
+    private final Map<String, String> existingMetaLines = [:]
     private final List<String> extraLines = []
 
     private final PluginMeta meta
@@ -64,8 +64,8 @@ class MetaFile {
      */
     private validateMeta() {
         for (MetaItem item in meta.items) {
-            if (!item.valid) {
-                throw new GradleException("Plugin metadata parse error: '$item.id' must not be null")
+            if (!item.validate()) {
+                break
             }
         }
     }
@@ -76,19 +76,23 @@ class MetaFile {
      */
     private void filterMetaLines() {
         extraLines.clear()
+        existingMetaLines.clear()
         if (Files.notExists(metaFile)) {
             return
         }
 
         metaFile.eachLine("UTF-8") { line ->
-            if (isExtraLine(line)) {
+            if (isMetaLine(line)) {
+                def type = extractMetaId(line)
+                existingMetaLines.put(type, line)
+            } else if (!(line.empty && extraLines.empty)) {
                 extraLines << line
             }
 
             return
         }
 
-        writeLinesTo(metaFile, extraLines)
+        return
     }
 
     /**
@@ -119,8 +123,25 @@ class MetaFile {
         meta.items.each { item ->
             if (item.value != null) {
                 metaLines << item.entry
+            } else if (existingMetaLines.containsKey(item.id)){
+                metaLines << existingMetaLines.get(item.id)
             }
         }
+    }
+
+    /**
+     * Extracts meta id from meta line
+     * Example: "version: 1.1.1" -> "version"
+     * @param metaLine
+     * @return meta id
+     * @throws IllegalArgumentException if meta line is not correctly formatted
+     */
+    private static String extractMetaId(String metaLine) {
+        def parts = metaLine.split(":")
+        if (parts.length != 2) {
+            throw new IllegalArgumentException("Invalid meta line: $metaLine")
+        }
+        return parts[0]
     }
 
     /**
