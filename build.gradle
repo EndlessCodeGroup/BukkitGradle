@@ -17,7 +17,7 @@ repositories {
 dependencies {
     implementation gradleApi()
     implementation localGroovy()
-    implementation "de.undercouch:gradle-download-task:4.0.4"
+    implementation "de.undercouch:gradle-download-task:4.1.1"
     testImplementation "junit:junit:4.13"
     testImplementation platform("org.spockframework:spock-bom:2.0-M2-groovy-2.5")
     testImplementation "org.spockframework:spock-core"
@@ -32,7 +32,7 @@ pluginBundle {
     website = "https://github.com/EndlessCodeGroup/BukkitGradle"
     vcsUrl = "${website}.git"
     description = this.description
-    tags = ["minecraft", "bukkit", "plugin"]
+    tags = ["minecraft", "bukkit", "plugin", "spigot", "paper"]
 
     plugins {
         bukkitGradle {
