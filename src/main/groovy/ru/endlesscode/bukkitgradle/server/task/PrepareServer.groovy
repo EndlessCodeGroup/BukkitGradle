@@ -1,26 +1,35 @@
 package ru.endlesscode.bukkitgradle.server.task
 
 import org.gradle.api.DefaultTask
+import org.gradle.api.file.DirectoryProperty
+import org.gradle.api.provider.Property
 import org.gradle.api.tasks.Input
+import org.gradle.api.tasks.InputDirectory
 import org.gradle.api.tasks.TaskAction
 import org.gradle.jvm.tasks.Jar
-import ru.endlesscode.bukkitgradle.server.extension.RunConfiguration
 import ru.endlesscode.bukkitgradle.server.ServerCore
-
-import java.nio.file.Files
-import java.nio.file.Path
-import java.nio.file.StandardCopyOption
+import ru.endlesscode.bukkitgradle.server.extension.RunConfiguration
 
 class PrepareServer extends DefaultTask {
     @Input
     ServerCore core
 
-    Closure<Path> serverDir
+    @InputDirectory
+    final DirectoryProperty serverDir = project.objects.directoryProperty()
+
+    @Input
+    final Property<Jar> jarTask = project.objects.property(Jar)
+
     RunConfiguration run
+
+    PrepareServer() {
+        def jarTaskName = project.plugins.hasPlugin('com.github.johnrengelman.shadow') ? 'shadowJar' : 'jar'
+        jarTask.convention(project.tasks.named(jarTaskName, Jar))
+    }
 
     void setCore(ServerCore core) {
         this.core = core
-        this.serverDir = { Files.createDirectories(core.serverDir) }
+        this.serverDir.fileProvider(project.provider { project.mkdir(core.serverDir.toFile()) })
         this.run = project.bukkit.run
     }
 
@@ -32,9 +41,9 @@ class PrepareServer extends DefaultTask {
     }
 
     void resolveEula() {
-        Path eulaFile = getServerDir().resolve("eula.txt")
-        if (Files.notExists(eulaFile)) {
-            Files.createFile(eulaFile)
+        def eulaFile = serverDir.file("eula.txt").get().asFile
+        if (!eulaFile.exists()) {
+            eulaFile.createNewFile()
         }
 
         Properties properties = new Properties()
@@ -44,9 +53,9 @@ class PrepareServer extends DefaultTask {
     }
 
     void resolveOnlineMode() {
-        Path propsFile = getServerDir().resolve("server.properties")
-        if (Files.notExists(propsFile)) {
-            Files.createFile(propsFile)
+        def propsFile = serverDir.file("server.properties").get().asFile
+        if (!propsFile.exists()) {
+            propsFile.createNewFile()
         }
 
         Properties properties = new Properties()
@@ -56,21 +65,10 @@ class PrepareServer extends DefaultTask {
     }
 
     void copyPluginsToServerDir() {
-        String pluginName = "${project.bukkit.meta.name}.jar"
-        List<Path> paths = project.tasks.withType(Jar).collect { jar ->
-            if (jar.archiveClassifier.get() in ["src", "source", "sources", "javadoc"]) return
-            jar.archiveFile.get().asFile.toPath()
+        project.copy {
+            from(jarTask)
+            into(project.mkdir(serverDir.dir('plugins')))
+            rename { "${project.bukkit.meta.name}.jar" }
         }
-
-        Path pluginsDir = getServerDir().resolve("plugins")
-        Files.createDirectories(pluginsDir)
-        paths.forEach { jar ->
-            if (jar == null || Files.notExists(jar)) return
-            Files.copy(jar, pluginsDir.resolve(pluginName), StandardCopyOption.REPLACE_EXISTING)
-        }
-    }
-
-    Path getServerDir() {
-        return serverDir.call()
     }
 }
