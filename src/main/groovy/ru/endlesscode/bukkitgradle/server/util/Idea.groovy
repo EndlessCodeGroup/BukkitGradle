@@ -2,12 +2,12 @@ package ru.endlesscode.bukkitgradle.server.util
 
 class Idea {
 
-    static final IDEA_ENABLED = 'idea.enabled'
+    static final IDEA_ACTIVE = 'idea.active'
 
     private Idea() {}
 
-    static boolean isEnabled() {
-        return System.getProperty(IDEA_ENABLED) == 'true'
+    static boolean isActive() {
+        return System.getProperty(IDEA_ACTIVE) == 'true'
     }
 
     static String fileNameSlug(String name) {

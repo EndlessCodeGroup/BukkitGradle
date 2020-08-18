@@ -43,6 +43,15 @@ class PluginSpecification extends Specification {
         return file
     }
 
+    File dir(String path) {
+        def file = new File(testProjectDir.root, path)
+        if (!file.exists()) {
+            file.parentFile.mkdirs()
+            return testProjectDir.newFolder(path)
+        }
+        return file
+    }
+
     Project getProject() {
         ProjectBuilder.builder()
                 .withProjectDir(testProjectDir.root)

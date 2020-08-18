@@ -3,13 +3,11 @@ package ru.endlesscode.bukkitgradle
 import org.gradle.api.Plugin
 import org.gradle.api.Project
 import org.gradle.api.tasks.TaskProvider
+import ru.endlesscode.bukkitgradle.server.ServerConstants
 import ru.endlesscode.bukkitgradle.server.ServerCore
-import ru.endlesscode.bukkitgradle.server.idea.IdeaRunConfigurationBuilder
+import ru.endlesscode.bukkitgradle.server.task.CreateIdeaJarRunConfiguration
 import ru.endlesscode.bukkitgradle.server.task.PrepareServer
 import ru.endlesscode.bukkitgradle.server.task.RunServer
-
-import java.nio.file.Files
-import java.nio.file.Path
 
 class DevServerPlugin implements Plugin<Project> {
 
@@ -30,25 +28,12 @@ class DevServerPlugin implements Plugin<Project> {
             dependsOn('build', 'copyServerCore')
         } as TaskProvider<PrepareServer>
 
-        Path runConfigurationsDir = project.rootDir.toPath().resolve(".idea/runConfigurations")
-        project.tasks.register('buildIdeaRun') {
-            group = BukkitGradlePlugin.GROUP
-            description = 'Configure IDEA server run configuration'
-
-            onlyIf { Files.exists(runConfigurationsDir.parent) }
-
-            dependsOn(prepareServer)
-
-            doLast {
-                Files.createDirectories(runConfigurationsDir)
-                def serverDir = prepareServer.get().serverDir.toRealPath()
-                IdeaRunConfigurationBuilder.build(runConfigurationsDir, serverDir, prepareServer.get().run)
-            }
-        }
-
-        project.afterEvaluate {
-            def serverDir = prepareServer.get().serverDir.toRealPath()
-            IdeaRunConfigurationBuilder.build(runConfigurationsDir, serverDir, prepareServer.get().run)
+        project.tasks.register('buildIdeaRun', CreateIdeaJarRunConfiguration) {
+            configurationName.set("$project.name: Run server")
+            beforeRunTask.set('prepareServer')
+            configurationsDir.set(project.rootProject.layout.projectDirectory.dir('.idea/runConfigurations'))
+            jarPath.set(prepareServer.get().serverDir
+                    .map { it.file(ServerConstants.FILE_CORE).asFile.path })
         }
     }
 }
