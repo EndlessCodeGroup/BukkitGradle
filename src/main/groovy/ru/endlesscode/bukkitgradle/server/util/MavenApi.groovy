@@ -2,20 +2,16 @@ package ru.endlesscode.bukkitgradle.server.util
 
 import org.gradle.api.Project
 
-import java.nio.file.Files
-import java.nio.file.Path
-import java.nio.file.Paths
-
 class MavenApi {
 
     private static Project project
-    private static Path mavenLocal
+    private static File mavenLocal
 
     private MavenApi() {}
 
     static void init(Project project) {
         this.project = project
-        mavenLocal = Paths.get(project.repositories.mavenLocal().url)
+        mavenLocal = new File(project.repositories.mavenLocal().url)
     }
 
     static boolean hasSpigot(String version) {
@@ -26,14 +22,14 @@ class MavenApi {
 
     static boolean hasArtifact(String groupId, String artifactId, String version) {
         def artifactDir = getArtifactDir(groupId, artifactId, version)
-        return Files.exists(artifactDir)
+        return artifactDir.exists()
     }
 
-    static Path getSpigotDir(String version) {
+    static File getSpigotDir(String version) {
         return getArtifactDir('org.spigotmc', 'spigot', version)
     }
 
-    static Path getArtifactDir(String groupId, String artifactId, String version) {
-        return mavenLocal.resolve("${groupId.replace('.', '/')}/$artifactId/$version/")
+    static File getArtifactDir(String groupId, String artifactId, String version) {
+        return new File(mavenLocal, "${groupId.replace('.', '/')}/$artifactId/$version/")
     }
 }

@@ -29,7 +29,7 @@ class PrepareServer extends DefaultTask {
 
     void setCore(ServerCore core) {
         this.core = core
-        this.serverDir.fileProvider(project.provider { project.mkdir(core.serverDir.toFile()) })
+        this.serverDir.fileProvider(project.provider { project.mkdir(core.serverDir) })
         this.run = project.bukkit.run
     }
 

@@ -11,8 +11,6 @@ import ru.endlesscode.bukkitgradle.BukkitGradlePlugin
 import ru.endlesscode.bukkitgradle.server.util.MavenApi
 
 import javax.annotation.Nullable
-import java.nio.file.Files
-import java.nio.file.Path
 
 class ServerCore {
 
@@ -21,7 +19,7 @@ class ServerCore {
 
     private final Project project
 
-    private Path bukkitGradleDir
+    private File bukkitGradleDir
     private boolean forceRebuild = false
     private ServerProperties serverProperties
 
@@ -30,7 +28,7 @@ class ServerCore {
 
     ServerCore(Project project) {
         this.project = project
-        serverProperties = new ServerProperties(project.rootDir.toPath())
+        serverProperties = new ServerProperties(project.rootDir)
 
         MavenApi.init(project)
         this.initDir()
@@ -44,8 +42,8 @@ class ServerCore {
      * Initializes Bukkit Gradle dir
      */
     private void initDir() {
-        this.bukkitGradleDir = project.buildDir.toPath().resolve("bukkit-gradle")
-        Files.createDirectories(bukkitGradleDir)
+        this.bukkitGradleDir = new File(project.buildDir, "bukkit-gradle")
+        bukkitGradleDir.mkdirs()
     }
 
     /**
@@ -75,7 +73,7 @@ class ServerCore {
             try {
                 download {
                     src ServerConstants.URL_BUKKIT_METADATA
-                    dest bukkitGradleDir.toFile()
+                    dest bukkitGradleDir
                     quiet true
                 }
             } catch (Exception e) {
@@ -125,7 +123,7 @@ class ServerCore {
             try {
                 download {
                     src PaperConstants.URL_PAPER_VERSIONS
-                    dest bukkitGradleDir.toFile()
+                    dest bukkitGradleDir
                     quiet true
                     onlyIfModified true
                 }
@@ -133,14 +131,13 @@ class ServerCore {
                 logger.error("Error on paperclip versions list downloading: ${e.toString()}")
             }
 
-            Path destDir = serverDir
-            if (destDir == null) {
+            if (serverDir == null) {
                 enabled = false
                 return
             }
 
             src paperUrl
-            dest bukkitGradleDir.toString()
+            dest bukkitGradleDir
             onlyIfModified true
         }
     }
@@ -168,18 +165,17 @@ class ServerCore {
                     return
                 }
 
-                def path = serverProperties.buildToolsDir.resolve(ServerConstants.FILE_BUILDTOOLS)
-                def absolutePath = path.toAbsolutePath().toString()
-                if (Files.notExists(path) || Files.isDirectory(path)) {
-                    logger.warn("BuildTools not found on path: '$absolutePath'\n" +
+                def buildToolsFile = new File(serverProperties.buildToolsDir, ServerConstants.FILE_BUILDTOOLS)
+                if (!buildToolsFile.isFile()) {
+                    logger.warn("BuildTools not found on path: '$buildToolsFile'\n" +
                             'BuildTools directory should contains BuildTools.jar file.')
                     enabled = false
                     return
                 }
 
                 main = '-jar'
-                args(absolutePath, '--rev', getSimpleVersion())
-                workingDir = path.getParent().toAbsolutePath().toString()
+                args(buildToolsFile.path, '--rev', getSimpleVersion())
+                workingDir = buildToolsFile.parentFile.path
                 standardInput = System.in
             }
 
@@ -202,7 +198,7 @@ class ServerCore {
                 group = BukkitGradlePlugin.GROUP
                 description = 'Copy server core to server directory'
 
-                def srcDir
+                File srcDir
                 def fileName
                 if (getCoreType() == CoreType.SPIGOT) {
                     srcDir = MavenApi.getSpigotDir(coreVersion)
@@ -215,7 +211,7 @@ class ServerCore {
                 from srcDir
                 include fileName
                 rename(fileName, ServerConstants.FILE_CORE)
-                into serverDir.toString()
+                into serverDir
             }
         }
     }
@@ -244,8 +240,8 @@ class ServerCore {
      * @return Server directory or null if dev server location not defined
      */
     @Nullable
-    Path getServerDir() {
-        return serverProperties.devServerDir?.resolve(simpleVersion)
+    File getServerDir() {
+        return serverProperties.devServerDir?.with { new File(it, simpleVersion) }
     }
 
     /**
@@ -269,8 +265,8 @@ class ServerCore {
             return version
         }
 
-        Path metaFile = bukkitGradleDir.resolve(ServerConstants.FILE_MAVEN_METADATA)
-        if (Files.notExists(metaFile)) {
+        def metaFile = new File(bukkitGradleDir, ServerConstants.FILE_MAVEN_METADATA)
+        if (!metaFile.exists()) {
             if (BukkitGradlePlugin.isTesting()) return '1.11.0'
 
             project.logger.warn(
@@ -282,23 +278,22 @@ class ServerCore {
             return FALLBACK_VERSION
         }
 
-        def metadata = new XmlSlurper().parse(metaFile.toFile())
+        def metadata = new XmlSlurper().parse(metaFile)
         return metadata.versioning.latest.toString()
     }
 
     private String getPaperCoreVersion() {
-        Path versionsFile = bukkitGradleDir.resolve(PaperConstants.FILE_PAPER_VERSIONS)
-        if (Files.notExists(versionsFile)) {
-            project.logger.warn(
-                    'Paper versions file not downloaded, make sure that Gradle ' +
-                            'isn\'t running in offline mode.\n' +
-                            "Using '$PAPER_FALLBACK_VERSION' by default."
-            )
+        def versionsFile = new File(bukkitGradleDir, PaperConstants.FILE_PAPER_VERSIONS)
+        if (!versionsFile.isFile()) {
+            project.logger.warn("""
+                    Paper versions file not downloaded, make sure that Gradle isn\'t running in offline mode.
+                    Using '$PAPER_FALLBACK_VERSION' by default.
+            """.stripIndent())
 
             return PAPER_FALLBACK_VERSION
         }
 
-        def object = new JsonSlurper().parse(versionsFile.toFile())
+        def object = new JsonSlurper().parse(versionsFile)
 
         String version = simplifyVersion(project.bukkit.version)
         if (version == Bukkit.LATEST) {
