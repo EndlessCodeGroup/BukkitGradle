@@ -21,11 +21,14 @@ class RunConfiguration {
 
     void setCore(String core) {
         try {
-            coreType = CoreType.valueOf(core.toUpperCase())
+            coreType = CoreType.valueOf(core.toUpperCase(Locale.ENGLISH))
         } catch (IllegalArgumentException ignored) {
-            logger.warn("Core type '$core' not found. May be it doesn't supported by BukkitGradle yet. " +
-                    "You may write issue on GitHub to request supporting.\n" +
-                    "Fallback core type is '${coreType.name().toLowerCase()}'")
+            logger.warn("""
+                Core type '$core' not found. May be it doesn't supported by BukkitGradle yet. 
+                Fallback core type is '${coreType.name()}'.
+                Supported types: ${CoreType.values().join(', ')}
+                Write an issue on GitHub to request support of other cores.
+            """.stripIndent())
         }
     }
 
@@ -37,7 +40,7 @@ class RunConfiguration {
      * Returns arguments for JVM
      */
     String buildJvmArgs(boolean debug = this.debug) {
-        return "${debug ? "$DEBUG_ARGS " : ''}-Dfile.encoding=$encoding ${this.javaArgs}"
+        return "${debug ? "$DEBUG_ARGS " : ''}-Dfile.encoding=$encoding $javaArgs"
     }
 
     /**
