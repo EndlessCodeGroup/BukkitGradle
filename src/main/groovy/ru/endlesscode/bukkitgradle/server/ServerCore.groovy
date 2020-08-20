@@ -14,9 +14,6 @@ import javax.annotation.Nullable
 
 class ServerCore {
 
-    private static final String FALLBACK_VERSION = "1.15.2"
-    private static final String PAPER_FALLBACK_VERSION = "1.15.2"
-
     private final Project project
 
     private File bukkitGradleDir
@@ -272,10 +269,10 @@ class ServerCore {
             project.logger.warn(
                     'Server core meta not downloaded, make sure that Gradle ' +
                             'isn\'t running in offline mode.\n' +
-                            "Using '$FALLBACK_VERSION' by default."
+                            "Using '$ServerConstants.FALLBACK_VERSION' by default."
             )
 
-            return FALLBACK_VERSION
+            return ServerConstants.FALLBACK_VERSION
         }
 
         def metadata = new XmlSlurper().parse(metaFile)
@@ -287,10 +284,10 @@ class ServerCore {
         if (!versionsFile.isFile()) {
             project.logger.warn("""
                     Paper versions file not downloaded, make sure that Gradle isn\'t running in offline mode.
-                    Using '$PAPER_FALLBACK_VERSION' by default.
+                    Using '$PaperConstants.FALLBACK_VERSION' by default.
             """.stripIndent())
 
-            return PAPER_FALLBACK_VERSION
+            return PaperConstants.FALLBACK_VERSION
         }
 
         def object = new JsonSlurper().parse(versionsFile)
@@ -306,10 +303,10 @@ class ServerCore {
             project.logger.warn(
                     "Paper v$version not found.\n" +
                             "Supported paper versions: ${versionsUrls.keySet()}\n" +
-                            "Using '$FALLBACK_VERSION' by default."
+                            "Using '$PaperConstants.FALLBACK_VERSION' by default."
             )
 
-            return FALLBACK_VERSION
+            return PaperConstants.FALLBACK_VERSION
         }
 
         paperUrl = versionUrl

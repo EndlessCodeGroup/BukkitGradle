@@ -1,6 +1,7 @@
 package ru.endlesscode.bukkitgradle.server
 
 class ServerConstants {
+    public static final String FALLBACK_VERSION = "1.16.2"
     public static final String FILE_CORE = "core.jar"
 
     public static final String FILE_BUILDTOOLS = "BuildTools.jar"
@@ -10,6 +11,8 @@ class ServerConstants {
 }
 
 class PaperConstants {
+    public static final String FALLBACK_VERSION = "1.16.1"
+
     public static final String FILE_PAPERCLIP = "paperclip.jar"
     public static final String FILE_PAPER_VERSIONS = "paper-versions.json"
 
