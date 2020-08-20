@@ -6,7 +6,7 @@ class ServerConstants {
     public static final String FILE_BUILDTOOLS = "BuildTools.jar"
     public static final String FILE_MAVEN_METADATA = "maven-metadata.xml"
 
-    public static final String URL_BUKKIT_METADATA = "https://hub.spigotmc.org/nexus/content/repositories/snapshots/org/bukkit/bukkit/$FILE_MAVEN_METADATA"
+    public static final String URL_SPIGOT_METADATA = "https://hub.spigotmc.org/nexus/content/repositories/snapshots/org/spigotmc/spigot-api/$FILE_MAVEN_METADATA"
 }
 
 class PaperConstants {

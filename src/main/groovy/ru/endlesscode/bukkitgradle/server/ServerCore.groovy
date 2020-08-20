@@ -72,7 +72,7 @@ class ServerCore {
             extensions.create("download", DownloadExtension, project)
             try {
                 download {
-                    src ServerConstants.URL_BUKKIT_METADATA
+                    src ServerConstants.URL_SPIGOT_METADATA
                     dest bukkitGradleDir
                     quiet true
                 }
