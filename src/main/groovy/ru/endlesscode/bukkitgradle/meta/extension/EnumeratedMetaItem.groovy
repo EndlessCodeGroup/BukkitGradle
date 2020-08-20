@@ -13,12 +13,11 @@ class EnumeratedMetaItem extends MetaItem {
     }
 
     @Override
-    boolean validate() {
+    void validate() {
         if (super.validate()) {
             if (value != null && !allowedValues.contains(value)) {
                 throw new GradleException("Plugin metadata parse error: '$id' allowed values is $allowedValues")
             }
         }
-        return true
     }
 }

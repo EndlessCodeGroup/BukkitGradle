@@ -64,9 +64,7 @@ class MetaFile {
      */
     private validateMeta() {
         for (MetaItem item in meta.items) {
-            if (!item.validate()) {
-                break
-            }
+            item.validate()
         }
     }
 

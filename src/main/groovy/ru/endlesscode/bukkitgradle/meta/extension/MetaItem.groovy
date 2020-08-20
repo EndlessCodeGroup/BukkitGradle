@@ -31,13 +31,11 @@ class MetaItem {
     /**
      * Validates meta item
      *
-     * @return true if meta item valid, otherwise false
-     * @throws GradleException when item invalid
+     * @throws GradleException if item is invalid
      */
-    boolean validate() {
+    void validate() {
         if (this.required && getValue() == null) {
             throw new GradleException("Plugin metadata parse error: '$id' must not be null")
         }
-        return true
     }
 }
