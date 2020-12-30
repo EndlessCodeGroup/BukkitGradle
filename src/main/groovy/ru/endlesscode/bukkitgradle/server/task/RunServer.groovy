@@ -3,8 +3,8 @@ package ru.endlesscode.bukkitgradle.server.task
 import org.gradle.api.DefaultTask
 import org.gradle.api.tasks.Input
 import org.gradle.api.tasks.TaskAction
-import ru.endlesscode.bukkitgradle.server.extension.RunConfiguration
 import ru.endlesscode.bukkitgradle.server.ServerCore
+import ru.endlesscode.bukkitgradle.server.extension.RunConfiguration
 import ru.endlesscode.bukkitgradle.server.script.RunningScript
 
 class RunServer extends DefaultTask {
@@ -31,7 +31,7 @@ class RunServer extends DefaultTask {
     void runScript(RunningScript script) {
         new ProcessBuilder(script.command)
                 .redirectErrorStream(true)
-                .directory(core.serverDir.toFile())
+                .directory(core.serverDir)
                 .start()
     }
 }

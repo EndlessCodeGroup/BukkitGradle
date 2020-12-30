@@ -1,19 +1,24 @@
 package ru.endlesscode.bukkitgradle.meta.task
 
 import org.gradle.api.DefaultTask
-import org.gradle.api.tasks.Input
+import org.gradle.api.file.RegularFileProperty
+import org.gradle.api.provider.Property
+import org.gradle.api.tasks.Nested
+import org.gradle.api.tasks.OutputFile
 import org.gradle.api.tasks.TaskAction
 import ru.endlesscode.bukkitgradle.meta.MetaFile
 
-import java.nio.file.Path
-
 class GenerateMeta extends DefaultTask {
-    @Input
-    MetaFile metaFile
-    Path target
 
-    Path getTarget() {
-        return this.target ?: temporaryDir.toPath().resolve(MetaFile.NAME)
+    @Nested
+    final Property<MetaFile> metaFile = project.objects.property(MetaFile)
+
+    @OutputFile
+    final RegularFileProperty target = project.objects.fileProperty()
+
+    GenerateMeta() {
+        def defaultTargetProvider = project.provider { new File(temporaryDir, MetaFile.NAME) }
+        target.convention(project.layout.file(defaultTargetProvider))
     }
 
     /**
@@ -22,6 +27,6 @@ class GenerateMeta extends DefaultTask {
      */
     @TaskAction
     def generateMeta() {
-        metaFile.writeTo(getTarget())
+        metaFile.get().writeTo(target.asFile.get())
     }
 }

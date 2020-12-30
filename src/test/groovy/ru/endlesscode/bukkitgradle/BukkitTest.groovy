@@ -26,7 +26,7 @@ class BukkitTest extends PluginTestBase {
             assert description == meta.description
             assert version == meta.version
             assert ext.url == meta.url
-            assert "com.example.plugin.testproject.TestProject" == meta.main
+            assert "com.example.plugin.TestProject" == meta.main
             assert meta.authors == null
         }
     }

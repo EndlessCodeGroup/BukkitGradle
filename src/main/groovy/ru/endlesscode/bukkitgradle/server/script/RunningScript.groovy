@@ -1,11 +1,8 @@
 package ru.endlesscode.bukkitgradle.server.script
 
 import org.gradle.internal.os.OperatingSystem
-import ru.endlesscode.bukkitgradle.server.extension.RunConfiguration
 import ru.endlesscode.bukkitgradle.server.ServerConstants
-
-import java.nio.file.Files
-import java.nio.file.Path
+import ru.endlesscode.bukkitgradle.server.extension.RunConfiguration
 
 abstract class RunningScript {
 
@@ -22,10 +19,10 @@ abstract class RunningScript {
      *
      * @param dir The directory
      */
-    void buildOn(Path dir) {
-        def scriptFile = dir.resolve(getFileName())
-        if (Files.notExists(scriptFile)) {
-            Files.createFile(scriptFile)
+    void buildOn(File dir) {
+        def scriptFile = new File(dir, getFileName())
+        if (!scriptFile.exists()) {
+            scriptFile.createNewFile()
         }
 
         scriptFile.text = this.getScriptText()

@@ -3,10 +3,6 @@ package ru.endlesscode.bukkitgradle.server
 import org.slf4j.Logger
 import org.slf4j.LoggerFactory
 
-import java.nio.file.Files
-import java.nio.file.Path
-import java.nio.file.Paths
-
 class ServerProperties {
 
     private static final String NAME = "local.properties"
@@ -17,22 +13,22 @@ class ServerProperties {
     private Logger logger = LoggerFactory.getLogger("RunConfiguration")
     private Properties properties = new Properties()
 
-    private Path propertiesFile
+    private File propertiesFile
 
-    ServerProperties(Path projectPath) {
-        propertiesFile = projectPath.resolve(NAME)
-        if (Files.exists(propertiesFile)) {
+    ServerProperties(File projectPath) {
+        propertiesFile = new File(projectPath, NAME)
+        if (propertiesFile.exists()) {
             properties.load(propertiesFile.newReader("UTF-8"))
         } else {
-            loadDefaults(projectPath.resolve("build").toAbsolutePath())
+            loadDefaults("$projectPath.absolutePath/build")
         }
     }
 
-    private void loadDefaults(Path defaultPath) {
+    private void loadDefaults(String defaultPath) {
         logger.info("$NAME file not found. Creating default...")
 
-        setDefault(devServerDir, defaultPath.resolve("server").toString())
-        setDefault(buildToolsDir, defaultPath.resolve("buildtools").toString())
+        setDefault(devServerDir, "$defaultPath/server")
+        setDefault(buildToolsDir, "$defaultPath/buildtools")
 
         properties.store(propertiesFile.newWriter("UTF-8"), $/
  This file should *NOT* be checked into Version Control Systems,
@@ -45,20 +41,20 @@ class ServerProperties {
         }
     }
 
-    Path getBuildToolsDir() {
+    File getBuildToolsDir() {
         return getDir(buildToolsDir)
     }
 
-    Path getDevServerDir() {
+    File getDevServerDir() {
         return getDir(devServerDir)
     }
 
-    private Path getDir(Property property) {
+    private File getDir(Property property) {
         def value = get(property)
         if (value == null) return null
 
-        def dir = Paths.get()
-        Files.createDirectories(dir)
+        def dir = new File(value).absoluteFile
+        dir.mkdirs()
 
         return dir
     }
