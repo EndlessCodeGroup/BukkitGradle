@@ -165,7 +165,7 @@ class ServerCore {
                 def buildToolsFile = new File(serverProperties.buildToolsDir, ServerConstants.FILE_BUILDTOOLS)
                 if (!buildToolsFile.isFile()) {
                     logger.warn("BuildTools not found on path: '$buildToolsFile'\n" +
-                            'BuildTools directory should contains BuildTools.jar file.')
+                            'BuildTools directory should contain BuildTools.jar file.')
                     enabled = false
                     return
                 }

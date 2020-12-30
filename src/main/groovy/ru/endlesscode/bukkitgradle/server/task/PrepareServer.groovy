@@ -20,6 +20,7 @@ class PrepareServer extends DefaultTask {
     @Input
     final Property<Jar> jarTask = project.objects.property(Jar)
 
+    @Input
     RunConfiguration run
 
     PrepareServer() {
