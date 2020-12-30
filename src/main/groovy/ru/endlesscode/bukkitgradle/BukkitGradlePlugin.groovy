@@ -57,7 +57,7 @@ class BukkitGradlePlugin implements Plugin<Project> {
         return new PluginMeta().tap {
             name = project.name
             description = { project.description }
-            main = { "${project.group}.${StringUtils.toCamelCase(name)}" }
+            main = { "${project.group}.${StringUtils.toPascalCase(name)}" }
             version = { project.version }
             url = { project.findProperty("url") }
         }
