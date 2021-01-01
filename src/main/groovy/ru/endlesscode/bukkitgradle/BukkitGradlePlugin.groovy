@@ -54,12 +54,12 @@ class BukkitGradlePlugin implements Plugin<Project> {
     }
 
     private PluginMeta configurePluginMeta() {
-        return new PluginMeta().tap {
-            name = project.name
-            description = { project.description }
-            main = { "${project.group}.${StringUtils.toPascalCase(name)}" }
-            version = { project.version }
-            url = { project.findProperty("url") }
+        return new PluginMeta(project.objects).tap {
+            name.convention(project.name)
+            description.convention(project.provider { project.description })
+            main.convention(name.map { "${project.group}.${StringUtils.toPascalCase(it)}" })
+            version.convention(project.provider { project.version.toString() })
+            url.convention(project.provider { project.findProperty("url")?.toString() })
         }
     }
 

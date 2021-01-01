@@ -2,6 +2,8 @@ package ru.endlesscode.bukkitgradle.meta
 
 import org.gradle.api.Project
 import org.gradle.api.plugins.JavaPluginConvention
+import org.gradle.api.provider.ListProperty
+import org.gradle.api.provider.Provider
 import org.gradle.api.tasks.InputFile
 import org.gradle.api.tasks.Nested
 import org.gradle.api.tasks.Optional
@@ -99,11 +101,19 @@ class MetaFile {
      */
     private void generateMetaLines() {
         metaLines.clear()
-        meta.items.each { item ->
-            if (item.value != null) {
-                metaLines << item.entry
+        meta.items.each { id, property ->
+            if (isPropertyFilled(property)) {
+                metaLines << "$id: ${property.get()}".toString()
             }
         }
+    }
+
+    private static boolean isPropertyFilled(Provider<?> property) {
+        if (property instanceof ListProperty) {
+            return !(property as ListProperty<?>).get().isEmpty()
+        }
+
+        return property.isPresent()
     }
 
     /**
