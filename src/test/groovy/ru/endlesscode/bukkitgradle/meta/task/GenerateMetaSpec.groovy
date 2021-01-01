@@ -144,6 +144,39 @@ class GenerateMetaSpec extends PluginSpecification {
         """.stripIndent()
     }
 
+    void 'when generate meta - and all properties configured old way - should write all lines'() {
+        given: "configured all meta properties in old way"
+        //language=gradle
+        buildFile << """
+            bukkit {
+                meta {
+                    name = 'TestPlugin'
+                    description = 'Test plugin description'
+                    main = 'com.example.plugin.Plugin'
+                    version = '0.1'
+                    url = 'http://www.example.com/'
+                    authors = ["OsipXD", "Contributors"]
+                }
+            }
+        """.stripIndent()
+
+        when: "run processResources"
+        def result = generatePluginMeta()
+
+        then: "the task is successful"
+        result.task(TASK_PATH).outcome == TaskOutcome.SUCCESS
+
+        and: "should write all lines"
+        metaFile.text == """\
+            name: TestPlugin
+            description: Test plugin description
+            main: com.example.plugin.Plugin
+            version: 0.1
+            website: http://www.example.com/
+            authors: [OsipXD, Contributors]
+        """.stripIndent()
+    }
+
     void 'when generate meta - and there are extra fields in source - should write all lines'() {
         given: "source meta file with extra fields"
         sourceMetaFile << """
