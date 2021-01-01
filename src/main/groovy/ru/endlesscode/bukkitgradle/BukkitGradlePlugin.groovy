@@ -5,6 +5,7 @@ import org.gradle.api.Plugin
 import org.gradle.api.Project
 import org.gradle.api.plugins.JavaPluginConvention
 import org.gradle.api.tasks.compile.JavaCompile
+import ru.endlesscode.bukkitgradle.meta.PluginMetaPlugin
 import ru.endlesscode.bukkitgradle.meta.extension.PluginMeta
 import ru.endlesscode.bukkitgradle.meta.util.StringUtils
 import ru.endlesscode.bukkitgradle.server.extension.RunConfiguration
@@ -39,7 +40,7 @@ class BukkitGradlePlugin implements Plugin<Project> {
      */
     private void addPlugins() {
         project.with {
-            extensions.create(Bukkit.NAME, Bukkit, configurePluginMeta(), new RunConfiguration())
+            extensions.create("bukkit", BukkitGroovy, configurePluginMeta(), new RunConfiguration())
 
             plugins.with {
                 apply('java')

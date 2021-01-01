@@ -4,8 +4,7 @@ import org.gradle.util.ConfigureUtil
 import ru.endlesscode.bukkitgradle.meta.extension.PluginMeta
 import ru.endlesscode.bukkitgradle.server.extension.RunConfiguration
 
-class Bukkit {
-    public static final String NAME = "bukkit"
+class BukkitGroovy implements Bukkit {
     public static final String LATEST = "+"
     public static final String REVISION_SUFFIX = "-R0.1-SNAPSHOT"
 
@@ -14,7 +13,7 @@ class Bukkit {
     final PluginMeta meta
     final RunConfiguration run
 
-    Bukkit(PluginMeta meta, RunConfiguration run) {
+    BukkitGroovy(PluginMeta meta, RunConfiguration run) {
         this.meta = meta
         this.run = run
     }
