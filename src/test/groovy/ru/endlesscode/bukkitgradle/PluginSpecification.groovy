@@ -20,14 +20,14 @@ class PluginSpecification extends Specification {
         settingsFile = file('settings.gradle')
 
         //language=gradle
-        buildFile << """
+        buildFile << '''
             plugins {
                 id 'ru.endlesscode.bukkitgradle'
             }
 
             version = '1.0'
             group = 'com.example.testplugin'
-        """.stripIndent()
+        '''.stripIndent()
 
         settingsFile << '''
             rootProject.name = 'test-plugin'
