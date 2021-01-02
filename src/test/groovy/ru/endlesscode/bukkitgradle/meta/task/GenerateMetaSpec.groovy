@@ -64,7 +64,7 @@ class GenerateMetaSpec extends PluginSpecification {
         result.task(TASK_PATH).outcome == TaskOutcome.SUCCESS
 
         when: "change description"
-        buildFile.append('description = "Plugin can has description"')
+        buildFile << 'description = "Plugin can has description"'
 
         and: "run generate meta task again"
         result = generatePluginMeta()
