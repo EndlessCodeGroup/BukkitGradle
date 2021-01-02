@@ -59,17 +59,17 @@ You can clone [this example project](https://github.com/EndlessCodeGroup/BukkitG
 Simple `build.gradle` file that use BukkitGradle:
 ```groovy
 plugins {
-    id "ru.endlesscode.bukkitgradle" version "0.8.2"
+    id("ru.endlesscode.bukkitgradle") version "0.8.2"
 }
  
 // Project information
-group "com.example"
-description "My first Bukkit plugin with Gradle"
-version "0.1"
+group = "com.example"
+description = "My first Bukkit plugin with Gradle"
+version = "0.1"
 
 // Let's add needed API to project
 dependencies {
-    compileOnly bukkit() 
+    compileOnly(bukkit())
     // see section 'Dependencies' for more info
 }
 ```
@@ -93,12 +93,12 @@ bukkit {
  
     // Attributes for plugin.yml
     meta {
-        name = "MyPlugin"
-        description = "My amazing plugin, that doing nothing"
-        main = "com.example.plugin.MyPlugin"
-        version = "1.0"
-        url = "http://www.example.com" // Attribute website
-        authors = ["OsipXD", "Contributors"]
+        name.set("MyPlugin")
+        description.set("My amazing plugin, that doing nothing")
+        main.set("com.example.plugin.MyPlugin")
+        version.set("1.0")
+        url.set("http://www.example.com") // Attribute website
+        authors.set(["OsipXD", "Contributors"])
     }
 }
 ```
@@ -119,12 +119,12 @@ Just create `plugin.yml` file and put custom attributes into.
 #### Quotes around values
 In some cases you may need put meta value in quotes. For this you can use `q` and `qq` functions.
 
-For example we have meta:
+For example, we have meta:
 ```groovy
 meta {
-    name = qq "Double Quoted Name"
-    description = q "Single quoted description"
-    url = "http://without.quot.es/"
+    name.set(qq("Double Quoted Name"))
+    description.set(q("Single quoted description"))
+    url.set("http://without.quot.es/")
 }
 ```
 
@@ -165,7 +165,7 @@ dependencies {
  aikar          | https://repo.aikar.co/content/groups/aikar/
 
 ##### Dependencies:
-Some dependencies also applies repo that needed for them.
+Some dependencies also applies repo needed for them.
 
  Name        | Signature                                     | Applies repo
 -------------|-----------------------------------------------|---------------
