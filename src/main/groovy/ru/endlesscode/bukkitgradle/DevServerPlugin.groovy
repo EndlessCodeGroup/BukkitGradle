@@ -32,8 +32,7 @@ class DevServerPlugin implements Plugin<Project> {
             configurationName.set("$project.name: Run server")
             beforeRunTask.set('prepareServer')
             configurationsDir.set(project.rootProject.layout.projectDirectory.dir('.idea/runConfigurations'))
-            jarPath.set(prepareServer.get().serverDir
-                    .map { it.file(ServerConstants.FILE_CORE).asFile.path })
+            jarPath.set(prepareServer.map { it.serverDir.file(ServerConstants.FILE_CORE).get().asFile })
         }
     }
 }
