@@ -5,6 +5,7 @@ import org.gradle.api.Plugin
 import org.gradle.api.Project
 import org.gradle.api.plugins.JavaPluginConvention
 import org.gradle.api.tasks.compile.JavaCompile
+import ru.endlesscode.bukkitgradle.meta.PluginMetaPlugin
 import ru.endlesscode.bukkitgradle.meta.extension.PluginMeta
 import ru.endlesscode.bukkitgradle.meta.util.StringUtils
 import ru.endlesscode.bukkitgradle.server.extension.RunConfiguration
@@ -39,7 +40,7 @@ class BukkitGradlePlugin implements Plugin<Project> {
      */
     private void addPlugins() {
         project.with {
-            extensions.create(Bukkit.NAME, Bukkit, configurePluginMeta(), new RunConfiguration())
+            extensions.create("bukkit", BukkitGroovy, configurePluginMeta(), new RunConfiguration())
 
             plugins.with {
                 apply('java')
@@ -54,12 +55,12 @@ class BukkitGradlePlugin implements Plugin<Project> {
     }
 
     private PluginMeta configurePluginMeta() {
-        return new PluginMeta().tap {
-            name = project.name
-            description = { project.description }
-            main = { "${project.group}.${StringUtils.toCamelCase(name)}" }
-            version = { project.version }
-            url = { project.findProperty("url") }
+        return new PluginMeta(project.objects).tap {
+            name.convention(project.name)
+            description.convention(project.provider { project.description })
+            main.convention(name.map { "${project.group}.${StringUtils.toPascalCase(it)}" })
+            version.convention(project.provider { project.version.toString() })
+            url.convention(project.provider { project.findProperty("url")?.toString() })
         }
     }
 
