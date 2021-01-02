@@ -34,7 +34,7 @@ public class PluginMeta(objects: ObjectFactory) {
     @Input
     public val authors: ListProperty<String> = objects.listProperty()
 
-    @Internal
+    @get:Internal
     internal val items: Map<String, Provider<*>> = mapOf(
         "name" to name,
         "description" to description,
