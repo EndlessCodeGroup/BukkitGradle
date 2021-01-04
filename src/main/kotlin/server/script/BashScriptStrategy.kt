@@ -1,16 +1,16 @@
 package ru.endlesscode.bukkitgradle.server.script
 
-public object BashScriptStrategy : RunningScriptStrategy() {
+internal object BashScriptStrategy : RunningScriptStrategy() {
 
     override val ext: String = "sh"
 
-    override fun getScriptText(jvmArgs: String, bukkitArgs: String): String {
+    override fun getScriptText(jvmArgs: String, coreFileName: String, bukkitArgs: String): String {
         //language=bash
         return """
           #!/usr/bin/env bash
 
           cd "$( dirname "$0" )"
-          ${buildJavaCommand(jvmArgs, bukkitArgs)}
+          ${buildJavaCommand(jvmArgs, coreFileName, bukkitArgs)}
           """.trimIndent()
     }
 

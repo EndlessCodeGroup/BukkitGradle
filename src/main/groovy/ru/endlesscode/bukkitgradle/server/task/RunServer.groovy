@@ -12,18 +12,11 @@ class RunServer extends DefaultTask {
 
     @TaskAction
     void runServer() {
-        RunningScriptStrategy script = this.createStartScript()
+        RunningScriptStrategy script = RunningScriptStrategy.get()
         logger.lifecycle("Running script built!")
         logger.lifecycle("Starting Server...")
         this.runScript(script)
         logger.lifecycle("Server started successfully!")
-    }
-
-    RunningScriptStrategy createStartScript() {
-        RunningScriptStrategy script = RunningScriptStrategy.get()
-        script.buildOn(this.core.serverDir)
-
-        return script
     }
 
     void runScript(RunningScriptStrategy script) {

@@ -1,8 +1,6 @@
 package ru.endlesscode.bukkitgradle.server.script
 
 import org.gradle.internal.os.OperatingSystem
-import ru.endlesscode.bukkitgradle.server.ServerConstants
-import java.io.File
 
 public abstract class RunningScriptStrategy {
 
@@ -10,21 +8,10 @@ public abstract class RunningScriptStrategy {
     protected abstract val ext: String
 
     /** Returns script file name. */
-    protected val fileName: String get() = "start.$ext"
-
-    /** Generates script file in the given [directory]. */
-    public fun buildOn(directory: File) {
-        val scriptFile = File(directory, fileName)
-        if (!scriptFile.exists()) {
-            scriptFile.createNewFile()
-        }
-
-        // FIXME
-        //scriptFile.writeText(this.getScriptText(, ))
-    }
+    public val fileName: String get() = "start.$ext"
 
     /** Returns script file content as multiline string. */
-    protected abstract fun getScriptText(jvmArgs: String, bukkitArgs: String): String
+    public abstract fun getScriptText(jvmArgs: String, coreFileName: String, bukkitArgs: String): String
 
     /**
      * Builds and returns server run command
@@ -32,18 +19,17 @@ public abstract class RunningScriptStrategy {
      *
      * @return Server run command
      */
-    protected fun buildJavaCommand(jvmArgs: String, bukkitArgs: String): String {
-        return "java $jvmArgs -jar ${ServerConstants.FILE_CORE} $bukkitArgs"
+    protected fun buildJavaCommand(jvmArgs: String, coreFileName: String, bukkitArgs: String): String {
+        return "java $jvmArgs -jar $coreFileName $bukkitArgs"
     }
 
     /** Returns command for ProcessBuilder. */
     public abstract fun getCommand(title: String): List<String>
 
-    public companion object {
+    internal companion object {
 
-        /** Returns start script for current system. */
-        @JvmStatic
-        public fun get(): RunningScriptStrategy {
+        /** Returns script strategy for current system. */
+        fun get(): RunningScriptStrategy {
             if (OperatingSystem.current().isWindows) {
                 return WindowsScriptStrategy
             }
