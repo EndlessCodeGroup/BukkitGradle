@@ -6,17 +6,22 @@ import ru.endlesscode.bukkitgradle.server.extension.RunConfiguration
 import java.io.File
 
 public abstract class RunningScript(
-    protected val configuration: RunConfiguration,
-    private val version: String
+    private val configuration: RunConfiguration,
+    version: String
 ) {
 
-    /**
-     * Generates script file on given directory
-     *
-     * @param dir The directory
-     */
-    public fun buildOn(dir: File) {
-        val scriptFile = File(dir, getFileName())
+    /** Returns title for console window. */
+    protected val title: String = "Dev Server (v$version)"
+
+    /** Returns script file extension. */
+    protected abstract val ext: String
+
+    /** Returns script file name. */
+    protected val fileName: String get() = "start.$ext"
+
+    /** Generates script file in the given [directory]. */
+    public fun buildOn(directory: File) {
+        val scriptFile = File(directory, fileName)
         if (!scriptFile.exists()) {
             scriptFile.createNewFile()
         }
@@ -24,25 +29,7 @@ public abstract class RunningScript(
         scriptFile.writeText(this.getScriptText())
     }
 
-    /**
-     * Returns script file name
-     *
-     * @return Script name
-     */
-    protected fun getFileName(): String = "start.${getExt()}"
-
-    /**
-     * Returns script file extension
-     *
-     * @return File extension
-     */
-    protected abstract fun getExt(): String
-
-    /**
-     * Returns script file content as multiline string
-     *
-     * @return Script text
-     */
+    /** Returns script file content as multiline string. */
     protected abstract fun getScriptText(): String
 
     /**
@@ -57,9 +44,6 @@ public abstract class RunningScript(
 
     /** Returns command for ProcessBuilder. */
     public abstract fun getCommand(): List<String>
-
-    /** Gets title for console window. */
-    protected fun getTitle(): String = "Dev Server (v$version)"
 
     public companion object {
 
