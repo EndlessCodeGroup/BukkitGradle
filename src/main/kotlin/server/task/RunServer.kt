@@ -4,6 +4,7 @@ import org.gradle.api.DefaultTask
 import org.gradle.api.file.RegularFileProperty
 import org.gradle.api.model.ObjectFactory
 import org.gradle.api.provider.Property
+import org.gradle.api.tasks.Input
 import org.gradle.api.tasks.Internal
 import org.gradle.api.tasks.TaskAction
 import org.gradle.internal.os.OperatingSystem
@@ -17,7 +18,7 @@ public open class RunServer @Inject constructor(objects: ObjectFactory) : Defaul
     @Internal
     public val title: Property<String> = objects.property()
 
-    @Internal
+    @Input
     public val scriptFile: RegularFileProperty = objects.fileProperty()
 
     @Internal
@@ -34,7 +35,6 @@ public open class RunServer @Inject constructor(objects: ObjectFactory) : Defaul
 
     @TaskAction
     internal fun runServer() {
-        logger.lifecycle("Running script built!")
         logger.lifecycle("Starting Server...")
         ProcessBuilder(scriptStrategy.getCommand(title.get()))
             .redirectErrorStream(true)

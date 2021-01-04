@@ -8,6 +8,7 @@ internal object BashScriptStrategy : RunningScriptStrategy() {
         //language=bash
         return """
           #!/usr/bin/env bash
+          set -e
 
           cd "$( dirname "$0" )"
           ${buildJavaCommand(jvmArgs, coreFileName, bukkitArgs)}
@@ -15,6 +16,6 @@ internal object BashScriptStrategy : RunningScriptStrategy() {
     }
 
     override fun getCommand(title: String): List<String> {
-        return listOf("chmod +x $fileName", "&&", "./$fileName")
+        return listOf("bash", "-c", "chmod +x $fileName && ./$fileName")
     }
 }

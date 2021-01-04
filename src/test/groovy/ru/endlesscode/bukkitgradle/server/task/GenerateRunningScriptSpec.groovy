@@ -73,6 +73,7 @@ class GenerateRunningScriptSpec extends PluginSpecification {
         //language=sh
         scriptFile.text == """\
             #!/usr/bin/env bash
+            set -e
 
             cd "\$( dirname "\$0" )"
             java -Dfile.encoding=UTF-8 -Xmx1G -jar core.jar
