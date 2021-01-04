@@ -12,7 +12,7 @@ import org.gradle.api.tasks.OutputFile
 import org.gradle.api.tasks.TaskAction
 import org.gradle.internal.os.OperatingSystem
 import org.gradle.kotlin.dsl.property
-import ru.endlesscode.bukkitgradle.server.ServerConstants
+import ru.endlesscode.bukkitgradle.TASKS_GROUP_BUKKIT
 import ru.endlesscode.bukkitgradle.server.script.RunningScriptStrategy
 import javax.inject.Inject
 
@@ -40,7 +40,7 @@ public open class GenerateRunningScript @Inject constructor(objects: ObjectFacto
     private val scriptStrategy = RunningScriptStrategy.get(OperatingSystem.forName(osName))
 
     init {
-        group = TASK_GROUP
+        group = TASKS_GROUP_BUKKIT
         description = "Generates script to run server without IDE."
 
         coreFileName.convention(ServerConstants.FILE_CORE)

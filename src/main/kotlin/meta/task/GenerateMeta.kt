@@ -5,7 +5,7 @@ import org.gradle.api.file.RegularFileProperty
 import org.gradle.api.tasks.Nested
 import org.gradle.api.tasks.OutputFile
 import org.gradle.api.tasks.TaskAction
-import ru.endlesscode.bukkitgradle.PLUGINS_GROUP
+import ru.endlesscode.bukkitgradle.TASKS_GROUP_BUKKIT
 import ru.endlesscode.bukkitgradle.meta.MetaFile
 import java.io.File
 import javax.inject.Inject
@@ -23,7 +23,7 @@ public open class GenerateMeta @Inject internal constructor(
     public val target: RegularFileProperty = project.objects.fileProperty()
 
     init {
-        group = PLUGINS_GROUP
+        group = TASKS_GROUP_BUKKIT
         description = "Generate plugin.yml file"
 
         val defaultTargetProvider = project.provider { File(temporaryDir, MetaFile.NAME) }

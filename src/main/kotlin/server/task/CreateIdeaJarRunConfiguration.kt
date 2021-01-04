@@ -9,13 +9,11 @@ import org.gradle.api.tasks.OutputDirectory
 import org.gradle.api.tasks.TaskAction
 import org.gradle.kotlin.dsl.property
 import org.gradle.kotlin.dsl.withGroovyBuilder
-import ru.endlesscode.bukkitgradle.PLUGINS_GROUP
+import ru.endlesscode.bukkitgradle.TASKS_GROUP_BUKKIT
 import ru.endlesscode.bukkitgradle.server.util.Idea
 import java.io.File
 
-/**
- * Builds and writes to file run configuration in IDEA .xml format
- */
+/** Builds and writes to file run configuration in IDEA .xml format. */
 public open class CreateIdeaJarRunConfiguration : DefaultTask() {
 
     @Input
@@ -37,7 +35,7 @@ public open class CreateIdeaJarRunConfiguration : DefaultTask() {
     public val configurationsDir: DirectoryProperty = project.objects.directoryProperty()
 
     init {
-        group = PLUGINS_GROUP
+        group = TASKS_GROUP_BUKKIT
         description = "Configure server run configuration for IDEA"
 
         vmParameters.convention("")

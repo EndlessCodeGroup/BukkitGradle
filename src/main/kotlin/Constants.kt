@@ -2,5 +2,5 @@
 
 package ru.endlesscode.bukkitgradle
 
-/** Plugins group name. */
-internal const val PLUGINS_GROUP: String = "Bukkit"
+/** Bukkit tasks group name. */
+internal const val TASKS_GROUP_BUKKIT: String = "Bukkit"
