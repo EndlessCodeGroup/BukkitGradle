@@ -1,4 +1,4 @@
-package ru.endlesscode.bukkitgradle.server.task
+package ru.endlesscode.bukkitgradle.server.legacy.task
 
 import groovy.transform.Internal
 import org.gradle.api.DefaultTask
@@ -10,8 +10,8 @@ import org.gradle.api.tasks.InputDirectory
 import org.gradle.api.tasks.InputFile
 import org.gradle.api.tasks.TaskAction
 import org.gradle.jvm.tasks.Jar
-import ru.endlesscode.bukkitgradle.server.ServerCore
 import ru.endlesscode.bukkitgradle.server.extension.RunConfiguration
+import ru.endlesscode.bukkitgradle.server.legacy.ServerCore
 
 class PrepareServer extends DefaultTask {
     @Internal

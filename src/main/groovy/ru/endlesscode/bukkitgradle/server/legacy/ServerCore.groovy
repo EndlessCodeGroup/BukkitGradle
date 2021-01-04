@@ -1,4 +1,4 @@
-package ru.endlesscode.bukkitgradle.server
+package ru.endlesscode.bukkitgradle.server.legacy
 
 import de.undercouch.gradle.tasks.download.Download
 import de.undercouch.gradle.tasks.download.DownloadExtension
@@ -6,10 +6,12 @@ import groovy.json.JsonSlurper
 import org.gradle.api.Project
 import org.gradle.api.tasks.Copy
 import org.gradle.api.tasks.JavaExec
-import ru.endlesscode.bukkitgradle.BukkitGroovy
 import ru.endlesscode.bukkitgradle.BukkitGradlePlugin
-import ru.endlesscode.bukkitgradle.server.util.MavenApi
+import ru.endlesscode.bukkitgradle.BukkitGroovy
+import ru.endlesscode.bukkitgradle.server.PaperConstants
+import ru.endlesscode.bukkitgradle.server.ServerConstants
 import ru.endlesscode.bukkitgradle.server.extension.CoreType
+import ru.endlesscode.bukkitgradle.server.legacy.util.MavenApi
 
 import javax.annotation.Nullable
 

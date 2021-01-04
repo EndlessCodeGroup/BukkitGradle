@@ -9,6 +9,7 @@ import ru.endlesscode.bukkitgradle.meta.PluginMetaPlugin
 import ru.endlesscode.bukkitgradle.meta.extension.PluginMeta
 import ru.endlesscode.bukkitgradle.meta.util.StringUtils
 import ru.endlesscode.bukkitgradle.server.extension.RunConfiguration
+import ru.endlesscode.bukkitgradle.server.legacy.LegacyDevServerPlugin
 
 class BukkitGradlePlugin implements Plugin<Project> {
     final static String GROUP = 'Bukkit'
@@ -45,7 +46,7 @@ class BukkitGradlePlugin implements Plugin<Project> {
             plugins.with {
                 apply('java')
                 apply(PluginMetaPlugin)
-                apply(DevServerPlugin)
+                apply(LegacyDevServerPlugin)
             }
 
             convention.getPlugin(JavaPluginConvention).with {

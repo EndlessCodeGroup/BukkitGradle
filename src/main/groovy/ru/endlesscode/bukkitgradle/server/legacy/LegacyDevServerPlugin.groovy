@@ -1,17 +1,17 @@
-package ru.endlesscode.bukkitgradle
+package ru.endlesscode.bukkitgradle.server.legacy
 
 import org.gradle.api.Plugin
 import org.gradle.api.Project
 import org.gradle.api.tasks.TaskProvider
+import ru.endlesscode.bukkitgradle.BukkitGradlePlugin
 import ru.endlesscode.bukkitgradle.server.ServerConstants
-import ru.endlesscode.bukkitgradle.server.ServerCore
 import ru.endlesscode.bukkitgradle.server.extension.RunConfiguration
+import ru.endlesscode.bukkitgradle.server.legacy.task.PrepareServer
 import ru.endlesscode.bukkitgradle.server.task.CreateIdeaJarRunConfiguration
 import ru.endlesscode.bukkitgradle.server.task.GenerateRunningScript
-import ru.endlesscode.bukkitgradle.server.task.PrepareServer
 import ru.endlesscode.bukkitgradle.server.task.RunServer
 
-class DevServerPlugin implements Plugin<Project> {
+class LegacyDevServerPlugin implements Plugin<Project> {
 
     @Override
     void apply(Project project) {

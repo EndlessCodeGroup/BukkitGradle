@@ -1,4 +1,4 @@
-package ru.endlesscode.bukkitgradle.server.util
+package ru.endlesscode.bukkitgradle.server.legacy.util
 
 import org.gradle.api.Project
 
