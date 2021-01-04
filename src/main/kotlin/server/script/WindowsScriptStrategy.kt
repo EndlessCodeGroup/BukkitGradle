@@ -1,23 +1,20 @@
 package ru.endlesscode.bukkitgradle.server.script
 
-import ru.endlesscode.bukkitgradle.server.extension.RunConfiguration
-
-public class WindowsScript(configuration: RunConfiguration, version: String) : RunningScript(configuration, version) {
+public object WindowsScriptStrategy : RunningScriptStrategy() {
 
     override val ext: String = "bat"
 
-    override fun getScriptText(): String {
+    override fun getScriptText(jvmArgs: String, bukkitArgs: String): String {
         //language=bat
         return """
             @echo off
-            ${buildRunCommand()}
+            ${buildJavaCommand(jvmArgs, bukkitArgs)}
             pause
             exit
             """.trimIndent()
     }
 
-    @Override
-    override fun getCommand(): List<String> {
+    override fun getCommand(title: String): List<String> {
         val title = "\"${title}\""
         return listOf("cmd", "/c", "start", title, fileName)
     }
