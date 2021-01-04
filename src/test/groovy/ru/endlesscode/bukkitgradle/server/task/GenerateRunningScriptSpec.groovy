@@ -43,8 +43,8 @@ class GenerateRunningScriptSpec extends PluginSpecification {
         result.task(TASK_NAME).outcome == TaskOutcome.UP_TO_DATE
     }
 
-    def "when run script generation - and os is windows - should generate bat file"() {
-        when: "run script generation"
+    def "when run script generation - and os is windows - should generate .bat file"() {
+        when: "run script generation with os windows"
         def result = generateRunningScript('windows')
 
         then: "task should be successful"
@@ -57,7 +57,26 @@ class GenerateRunningScriptSpec extends PluginSpecification {
             @echo off
             java -Dfile.encoding=UTF-8 -Xmx1G -jar core.jar
             pause
-            exit""".stripIndent()
+            exit
+        """.stripIndent().trim()
+    }
+
+    def "when run script generation - and os is linux - should generate .sh file"() {
+        when: "run script generation with os linux"
+        def result = generateRunningScript('linux')
+
+        then: "task should be successful"
+        result.task(TASK_NAME).outcome == TaskOutcome.SUCCESS
+
+        and: "should generate bat script"
+        def scriptFile = new File(scriptDir, "start.sh")
+        //language=sh
+        scriptFile.text == """\
+            #!/usr/bin/env bash
+
+            cd "\$( dirname "\$0" )"
+            java -Dfile.encoding=UTF-8 -Xmx1G -jar core.jar
+        """.stripIndent().trim()
     }
 
     private BuildResult generateRunningScript(String osName = null) {
