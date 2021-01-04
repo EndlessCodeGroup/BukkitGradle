@@ -10,7 +10,9 @@ import org.gradle.api.tasks.Input
 import org.gradle.api.tasks.Internal
 import org.gradle.api.tasks.OutputFile
 import org.gradle.api.tasks.TaskAction
+import org.gradle.internal.os.OperatingSystem
 import org.gradle.kotlin.dsl.property
+import ru.endlesscode.bukkitgradle.server.ServerConstants
 import ru.endlesscode.bukkitgradle.server.script.RunningScriptStrategy
 import javax.inject.Inject
 
@@ -27,20 +29,22 @@ public open class GenerateRunningScript @Inject constructor(objects: ObjectFacto
     public val coreFileName: Property<String> = objects.property()
 
     @Input
-    public val scriptStrategy: Property<RunningScriptStrategy> =
-        objects.property<RunningScriptStrategy>().convention(RunningScriptStrategy.get())
+    public var osName: String = System.getProperty("os.name")
 
     @Internal
     public val scriptDir: DirectoryProperty = objects.directoryProperty()
 
     @OutputFile
-    public val scriptFile: Provider<RegularFile> = scriptDir.zip(scriptStrategy) { scriptDir, strategy ->
-        scriptDir.file(strategy.fileName)
-    }
+    public val scriptFile: Provider<RegularFile>
+
+    private val scriptStrategy = RunningScriptStrategy.get(OperatingSystem.forName(osName))
 
     init {
         group = TASK_GROUP
         description = "Generates script to run server without IDE."
+
+        coreFileName.convention(ServerConstants.FILE_CORE)
+        scriptFile = scriptDir.map { it.file(scriptStrategy.fileName) }
     }
 
     @TaskAction
@@ -51,7 +55,7 @@ public open class GenerateRunningScript @Inject constructor(objects: ObjectFacto
         }
 
         scriptFile.writeText(
-            scriptStrategy.get().getScriptText(
+            scriptStrategy.getScriptText(
                 jvmArgs = jvmArgs.get(),
                 coreFileName = coreFileName.get(),
                 bukkitArgs = bukkitArgs.get()
