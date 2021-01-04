@@ -22,12 +22,12 @@ class BukkitTest extends PluginTestBase {
     void testDefaultMetaMustInheritMeta() throws Exception {
         project.with {
             PluginMeta meta = bukkit.meta
-            assert name == meta.name
-            assert description == meta.description
-            assert version == meta.version
-            assert ext.url == meta.url
-            assert "com.example.plugin.TestProject" == meta.main
-            assert meta.authors == null
+            assert name == meta.name.get()
+            assert description == meta.description.get()
+            assert version == meta.version.get()
+            assert ext.url == meta.url.get()
+            assert "com.example.plugin.TestProject" == meta.main.get()
+            assert [] == meta.authors.get()
         }
     }
 
@@ -36,11 +36,11 @@ class BukkitTest extends PluginTestBase {
         this.initBukkitMeta()
 
         PluginMeta meta = this.project.bukkit.meta
-        assert "TestPlugin" == meta.name
-        assert "Test plugin description" == meta.description
-        assert "0.1" == meta.version
-        assert "com.example.plugin.Plugin" == meta.main
-        assert "http://www.example.com/" == meta.url
-        assert "[OsipXD, Contributors]" == meta.authors
+        assert "TestPlugin" == meta.name.get()
+        assert "Test plugin description" == meta.description.get()
+        assert "0.1" == meta.version.get()
+        assert "com.example.plugin.Plugin" == meta.main.get()
+        assert "http://www.example.com/" == meta.url.get()
+        assert ['OsipXD', 'Contributors'] == meta.authors.get()
     }
 }
