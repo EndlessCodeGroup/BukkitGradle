@@ -18,7 +18,7 @@ class DevServerPlugin implements Plugin<Project> {
         ServerCore serverCore = new ServerCore(project)
         def configuration = project.bukkit.run as RunConfiguration
         def generateRunningScript = project.tasks.register('generateRunningScript', GenerateRunningScript) {
-            jvmArgs.set(configuration.javaArgs)
+            jvmArgs.set(configuration.buildJvmArgs())
             bukkitArgs.set(configuration.bukkitArgs)
             scriptDir.set(serverCore.serverDir)
         }

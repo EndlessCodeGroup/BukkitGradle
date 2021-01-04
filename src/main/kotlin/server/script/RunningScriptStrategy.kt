@@ -20,7 +20,7 @@ internal abstract class RunningScriptStrategy {
      * @return Server run command
      */
     protected fun buildJavaCommand(jvmArgs: String, coreFileName: String, bukkitArgs: String): String {
-        return "java $jvmArgs -jar $coreFileName $bukkitArgs"
+        return "java $jvmArgs -jar $coreFileName $bukkitArgs".trimEnd()
     }
 
     /** Returns command for ProcessBuilder. */
