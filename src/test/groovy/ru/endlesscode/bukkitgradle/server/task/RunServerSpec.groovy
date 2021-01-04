@@ -10,13 +10,14 @@ class RunServerSpec extends PluginSpecification {
 
     def "when run runServer - should also task dependencies"() {
         when: "run server"
-        def result = runServer()
+        def result = runServer('-x', 'prepareServer')
 
         then: "task should be successful"
+        result.task(':generateRunningScript').outcome == TaskOutcome.SUCCESS
         result.task(TASK_NAME).outcome == TaskOutcome.SUCCESS
     }
 
-    private BuildResult runServer() {
-        return runner.withArguments(TASK_NAME, "--stacktrace").build()
+    private BuildResult runServer(String... args) {
+        return runner.withArguments([TASK_NAME] + args.toList()).build()
     }
 }

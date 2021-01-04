@@ -1,26 +1,32 @@
 package ru.endlesscode.bukkitgradle.server.task
 
+import groovy.transform.Internal
 import org.gradle.api.DefaultTask
 import org.gradle.api.file.DirectoryProperty
+import org.gradle.api.file.RegularFile
 import org.gradle.api.provider.Property
-import org.gradle.api.tasks.Input
+import org.gradle.api.provider.Provider
 import org.gradle.api.tasks.InputDirectory
+import org.gradle.api.tasks.InputFile
 import org.gradle.api.tasks.TaskAction
 import org.gradle.jvm.tasks.Jar
 import ru.endlesscode.bukkitgradle.server.ServerCore
 import ru.endlesscode.bukkitgradle.server.extension.RunConfiguration
 
 class PrepareServer extends DefaultTask {
-    @Input
+    @Internal
     ServerCore core
 
     @InputDirectory
     final DirectoryProperty serverDir = project.objects.directoryProperty()
 
-    @Input
+    @Internal
     final Property<Jar> jarTask = project.objects.property(Jar)
 
-    @Input
+    @InputFile
+    final Provider<RegularFile> jarFile = jarTask.map {it.archiveFile.get() }
+
+    @Internal
     RunConfiguration run
 
     PrepareServer() {

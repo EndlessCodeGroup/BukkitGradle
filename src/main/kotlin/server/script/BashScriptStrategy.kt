@@ -15,7 +15,7 @@ internal object BashScriptStrategy : RunningScriptStrategy() {
           """.trimIndent()
     }
 
-    override fun getCommand(title: String): List<String> {
+    override fun getCommand(fileName: String, title: String): List<String> {
         return listOf("bash", "-c", "chmod +x $fileName && ./$fileName")
     }
 }

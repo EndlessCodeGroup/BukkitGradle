@@ -24,7 +24,7 @@ internal abstract class RunningScriptStrategy {
     }
 
     /** Returns command for ProcessBuilder. */
-    abstract fun getCommand(title: String): List<String>
+    abstract fun getCommand(fileName: String, title: String): List<String>
 
     companion object {
 

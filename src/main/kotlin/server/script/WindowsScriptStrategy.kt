@@ -14,7 +14,7 @@ internal object WindowsScriptStrategy : RunningScriptStrategy() {
             """.trimIndent()
     }
 
-    override fun getCommand(title: String): List<String> {
+    override fun getCommand(fileName: String, title: String): List<String> {
         return listOf("cmd", "/c", "start", "\"${title}\"", fileName)
     }
 }

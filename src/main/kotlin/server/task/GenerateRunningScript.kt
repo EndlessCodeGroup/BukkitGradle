@@ -13,6 +13,7 @@ import org.gradle.api.tasks.TaskAction
 import org.gradle.internal.os.OperatingSystem
 import org.gradle.kotlin.dsl.property
 import ru.endlesscode.bukkitgradle.TASKS_GROUP_BUKKIT
+import ru.endlesscode.bukkitgradle.server.ServerConstants
 import ru.endlesscode.bukkitgradle.server.script.RunningScriptStrategy
 import javax.inject.Inject
 

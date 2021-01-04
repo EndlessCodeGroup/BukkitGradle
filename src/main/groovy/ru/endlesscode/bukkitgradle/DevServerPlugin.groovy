@@ -31,7 +31,7 @@ class DevServerPlugin implements Plugin<Project> {
         } as TaskProvider<PrepareServer>
 
         project.tasks.register('runServer', RunServer) {
-            scriptFile.set(generateRunningScript.map { it.scriptFile.get() })
+            scriptFile.set(generateRunningScript.map { it.scriptFile.get().asFile })
             dependsOn(prepareServer)
         }
 
