@@ -9,6 +9,7 @@ import org.gradle.api.tasks.JavaExec
 import ru.endlesscode.bukkitgradle.BukkitGroovy
 import ru.endlesscode.bukkitgradle.BukkitGradlePlugin
 import ru.endlesscode.bukkitgradle.server.util.MavenApi
+import ru.endlesscode.bukkitgradle.server.extension.CoreType
 
 import javax.annotation.Nullable
 

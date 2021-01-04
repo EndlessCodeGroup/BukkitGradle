@@ -1,6 +1,5 @@
 package ru.endlesscode.bukkitgradle.server.extension
 
-import ru.endlesscode.bukkitgradle.server.CoreType
 import spock.lang.Specification
 
 class RunConfigurationSpec extends Specification {
