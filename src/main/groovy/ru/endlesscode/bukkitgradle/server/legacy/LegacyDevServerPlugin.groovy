@@ -36,18 +36,18 @@ class LegacyDevServerPlugin implements Plugin<Project> {
         ServerProperties properties = new ServerProperties(project.rootDir)
         // FIXME: Should be calculated on task configuration
         def coreVersion = serverConfiguration.version ?: bukkit.apiVersion
-        ServerCore serverCore = new ServerCore(project, properties, coreVersion)
+        def serverDir = properties.devServerDir?.with { new File(it, coreVersion) }
 
         // Register tasks
         def buildServerCore = registerBuildServerCoreTask(properties.buildToolsDir, coreVersion)
         def downloadPaperclip = registerDownloadPaperclip(coreVersion)
-        registerCopyServerCoreTask(buildServerCore, downloadPaperclip, serverCore.serverDir)
+        registerCopyServerCoreTask(buildServerCore, downloadPaperclip, serverDir)
 
-        def generateRunningScript = registerGenerateRunningScriptTask(serverCore.serverDir)
-        def prepareServer = registerPrepareServerTask(serverCore.serverDir)
+        def generateRunningScript = registerGenerateRunningScriptTask(serverDir)
+        def prepareServer = registerPrepareServerTask(serverDir)
         registerRunServerTask(generateRunningScript, prepareServer)
 
-        registerBuildIdeRunTask(serverCore.serverDir)
+        registerBuildIdeRunTask(serverDir)
     }
 
     private TaskProvider<BuildServerCore> registerBuildServerCoreTask(File buildToolsDir, String coreVersion) {
