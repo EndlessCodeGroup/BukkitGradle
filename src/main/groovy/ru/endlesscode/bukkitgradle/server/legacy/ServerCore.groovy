@@ -26,9 +26,9 @@ class ServerCore {
     private Closure<CoreType> getCoreType = { project.bukkit.run.coreType }
     private String paperUrl = PaperConstants.URL_PAPER_DEFAULT
 
-    ServerCore(Project project) {
+    ServerCore(Project project, ServerProperties serverProperties) {
         this.project = project
-        serverProperties = new ServerProperties(project.rootDir)
+        this.serverProperties = serverProperties
 
         MavenApi.init(project)
         this.initDir()
