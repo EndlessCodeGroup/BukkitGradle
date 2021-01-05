@@ -1,10 +1,11 @@
 package ru.endlesscode.bukkitgradle.server
 
+import org.gradle.api.tasks.StopExecutionException
 import org.slf4j.LoggerFactory
 import java.io.File
 import java.util.*
 
-public class ServerProperties(projectPath: File) {
+internal class ServerProperties(projectPath: File) {
 
     private val logger = LoggerFactory.getLogger("ServerProperties")
     private val properties = Properties()
@@ -22,14 +23,15 @@ public class ServerProperties(projectPath: File) {
     private fun loadDefaults(defaultPath: String) {
         logger.info("$NAME file not found. Creating default...")
 
-        setDefault(devServerDir, "$defaultPath/server")
-        setDefault(buildToolsDir, "$defaultPath/buildtools")
+        setDefault(DEV_SERVER_DIR, "$defaultPath/server")
+        setDefault(BUILD_TOOLS_DIR, "$defaultPath/buildtools")
 
         properties.store(
             propertiesFile.writer(),
             """
-            This file should * NOT * be checked into Version Control Systems,
-            as it contains information specific to your local configuration.""".trimIndent()
+            This file should *NOT* be checked into Version Control Systems,
+            as it contains information specific to your local configuration.
+            """.trimIndent().trimEnd()
         )
     }
 
@@ -39,12 +41,14 @@ public class ServerProperties(projectPath: File) {
         }
     }
 
-    public fun getBuildToolsDir(): File? = getDir(buildToolsDir)
+    val devServerDir: File
+        get() = getDir(DEV_SERVER_DIR)
 
-    public fun getDevServerDir(): File? = getDir(devServerDir)
+    val buildToolsDir: File
+        get() = getDir(BUILD_TOOLS_DIR)
 
-    private fun getDir(property: Property): File? {
-        val value = get(property) ?: return null
+    private fun getDir(property: Property): File {
+        val value = get(property) ?: throw StopExecutionException()
 
         val dir = File(value).absoluteFile
         dir.mkdirs()
@@ -74,12 +78,12 @@ public class ServerProperties(projectPath: File) {
     private companion object {
         private const val NAME: String = "local.properties"
 
-        private val buildToolsDir: Property = Property(
+        private val BUILD_TOOLS_DIR: Property = Property(
             name = "buildtools.dir",
             envVariable = "BUKKIT_BUILDTOOLS_HOME",
             description = "Path to BuildTools"
         )
-        private val devServerDir: Property = Property(
+        private val DEV_SERVER_DIR: Property = Property(
             name = "server.dir",
             envVariable = "BUKKIT_DEV_SERVER_HOME",
             description = "Path to Dev Server"

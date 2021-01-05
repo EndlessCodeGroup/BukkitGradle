@@ -8,17 +8,12 @@ import org.gradle.api.tasks.compile.JavaCompile
 import ru.endlesscode.bukkitgradle.meta.PluginMetaPlugin
 import ru.endlesscode.bukkitgradle.meta.extension.PluginMeta
 import ru.endlesscode.bukkitgradle.meta.util.StringUtils
+import ru.endlesscode.bukkitgradle.server.DevServerPlugin
 import ru.endlesscode.bukkitgradle.server.extension.ServerConfigurationImpl
-import ru.endlesscode.bukkitgradle.server.legacy.LegacyDevServerPlugin
 
 class BukkitGradlePlugin implements Plugin<Project> {
-    final static String GROUP = 'Bukkit'
 
     Project project
-
-    static boolean isTesting() {
-        System.properties['test'] == 'true'
-    }
 
     @Override
     void apply(Project project) {
@@ -46,7 +41,7 @@ class BukkitGradlePlugin implements Plugin<Project> {
             plugins.with {
                 apply('java')
                 apply(PluginMetaPlugin)
-                apply(LegacyDevServerPlugin)
+                apply(DevServerPlugin)
             }
 
             convention.getPlugin(JavaPluginConvention).with {
