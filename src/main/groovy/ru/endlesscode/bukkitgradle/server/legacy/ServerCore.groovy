@@ -26,30 +26,18 @@ class ServerCore {
     private Closure<CoreType> getCoreType = { project.bukkit.run.coreType }
     private String paperUrl = PaperConstants.URL_PAPER_DEFAULT
 
-    ServerCore(Project project, ServerProperties serverProperties) {
+    ServerCore(Project project, ServerProperties serverProperties, File bukkitGradleDir) {
         this.project = project
         this.serverProperties = serverProperties
+        this.bukkitGradleDir = bukkitGradleDir
 
         MavenApi.init(project)
-        this.initDir()
-
-        project.afterEvaluate {
-            this.registerTasks()
-        }
-    }
-
-    /**
-     * Initializes Bukkit Gradle dir
-     */
-    private void initDir() {
-        this.bukkitGradleDir = new File(project.buildDir, "bukkit-gradle")
-        bukkitGradleDir.mkdirs()
     }
 
     /**
      * Registers needed tasks
      */
-    private void registerTasks() {
+    void registerTasks() {
         registerBukkitMetaTask()
         registerDownloadBuildToolsTask()
         registerBuildServerCoreTask()

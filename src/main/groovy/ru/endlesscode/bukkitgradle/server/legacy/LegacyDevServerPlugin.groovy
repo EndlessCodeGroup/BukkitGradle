@@ -19,14 +19,21 @@ class LegacyDevServerPlugin implements Plugin<Project> {
 
     private Project project
     private Bukkit bukkit
+    private File bukkitGradleDir
 
     @Override
     void apply(Project project) {
         this.project = project
         bukkit = project.bukkit as Bukkit
 
+        bukkitGradleDir = new File(project.buildDir, "bukkit-gradle")
+        bukkitGradleDir.mkdirs()
+
         ServerProperties properties = new ServerProperties(project.rootDir)
-        ServerCore serverCore = new ServerCore(project, properties)
+        ServerCore serverCore = new ServerCore(project, properties, bukkitGradleDir)
+
+        // Register tasks
+        project.afterEvaluate { serverCore.registerTasks() }
 
         def generateRunningScript = registerGenerateRunningScriptTask(serverCore.serverDir)
         def prepareServer = registerPrepareServerTask(serverCore.serverDir)

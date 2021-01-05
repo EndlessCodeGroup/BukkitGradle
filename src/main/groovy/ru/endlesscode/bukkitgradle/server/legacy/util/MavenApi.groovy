@@ -4,13 +4,11 @@ import org.gradle.api.Project
 
 class MavenApi {
 
-    private static Project project
     private static File mavenLocal
 
     private MavenApi() {}
 
     static void init(Project project) {
-        this.project = project
         mavenLocal = new File(project.repositories.mavenLocal().url)
     }
 
