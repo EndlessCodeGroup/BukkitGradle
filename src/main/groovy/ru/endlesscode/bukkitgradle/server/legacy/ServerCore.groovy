@@ -6,6 +6,7 @@ import groovy.json.JsonSlurper
 import org.gradle.api.Project
 import org.gradle.api.tasks.Copy
 import org.gradle.api.tasks.JavaExec
+import org.gradle.api.tasks.StopExecutionException
 import ru.endlesscode.bukkitgradle.BukkitExtension
 import ru.endlesscode.bukkitgradle.BukkitGradlePlugin
 import ru.endlesscode.bukkitgradle.server.BuildToolsConstants
@@ -24,14 +25,20 @@ class ServerCore {
     private File bukkitGradleDir
     private boolean forceRebuild = false
     private ServerProperties serverProperties
+    private String coreVersion
 
     private Closure<CoreType> getCoreType = { project.bukkit.run.coreType }
-    private String paperUrl = PaperConstants.URL_PAPER_DEFAULT
 
-    ServerCore(Project project, ServerProperties serverProperties, File bukkitGradleDir) {
+    ServerCore(
+            Project project,
+            ServerProperties serverProperties,
+            File bukkitGradleDir,
+            String version
+    ) {
         this.project = project
         this.serverProperties = serverProperties
         this.bukkitGradleDir = bukkitGradleDir
+        this.coreVersion = version
 
         MavenApi.init(project)
     }
@@ -40,36 +47,10 @@ class ServerCore {
      * Registers needed tasks
      */
     void registerTasks() {
-        registerBukkitMetaTask()
         registerDownloadBuildToolsTask()
         registerBuildServerCoreTask()
         registerDownloadPaperclipTask()
         registerCoreCopyTask()
-    }
-
-    /**
-     * Registers Bukkit metadata downloading task
-     */
-    private void registerBukkitMetaTask() {
-        project.task('downloadBukkitMeta') {
-            group = BukkitGradlePlugin.GROUP
-            description = 'Download Bukkit metadata'
-
-            def skip = project.gradle.startParameter.isOffline() || BukkitGradlePlugin.isTesting()
-            onlyIf { !skip }
-            if (skip) return
-
-            extensions.create("download", DownloadExtension, project)
-            try {
-                download {
-                    src ServerConstants.URL_SPIGOT_METADATA
-                    dest bukkitGradleDir
-                    quiet true
-                }
-            } catch (Exception e) {
-                logger.error("Error on bukkit meta downloading: ${e.toString()}")
-            }
-        }
     }
 
     private void registerDownloadBuildToolsTask() {
@@ -78,7 +59,7 @@ class ServerCore {
             description = 'Download BuildTools'
 
             // Skip it for not spigot
-            if (getCoreType() != CoreType.SPIGOT) {
+            if (getCoreType.call() != CoreType.SPIGOT) {
                 enabled = false
                 return
             }
@@ -126,7 +107,7 @@ class ServerCore {
                 return
             }
 
-            src paperUrl
+            src resolvePaperclipUrl()
             dest bukkitGradleDir
             onlyIfModified true
         }
@@ -147,7 +128,7 @@ class ServerCore {
                         return true
                     }
 
-                    return !MavenApi.hasSpigot(getCoreVersion())
+                    return !MavenApi.hasSpigot(fullVersion)
                 }
 
                 if (!tasks.downloadBuildTools.enabled || serverDir == null) {
@@ -164,7 +145,7 @@ class ServerCore {
                 }
 
                 main = '-jar'
-                args(buildToolsFile.path, '--rev', getSimpleVersion())
+                args(buildToolsFile.path, '--rev', coreVersion)
                 workingDir = buildToolsFile.parentFile.path
                 standardInput = System.in
             }
@@ -190,8 +171,8 @@ class ServerCore {
 
                 File srcDir
                 def fileName
-                if (getCoreType() == CoreType.SPIGOT) {
-                    srcDir = MavenApi.getSpigotDir(coreVersion)
+                if (getCoreType.call() == CoreType.SPIGOT) {
+                    srcDir = MavenApi.getSpigotDir(fullVersion)
                     fileName = getSpigotCoreName()
                 } else {
                     srcDir = bukkitGradleDir
@@ -216,96 +197,40 @@ class ServerCore {
     }
 
     /**
-     * Returns version without revision suffix
-     *
-     * @return Simple version
-     */
-    String getSimpleVersion() {
-        return simplifyVersion(coreVersion)
-    }
-
-    /**
      * Returns server directory
      *
      * @return Server directory or null if dev server location not defined
      */
     @Nullable
     File getServerDir() {
-        return serverProperties.devServerDir?.with { new File(it, simpleVersion) }
+        return serverProperties.devServerDir?.with { new File(it, coreVersion) }
     }
 
-    /**
-     * Resolves and returns dynamic version
-     *
-     * @return Real Bukkit version
-     */
-    private String getCoreVersion() {
-        switch (getCoreType()) {
-            case CoreType.SPIGOT:
-                return getSpigotCoreVersion()
-            case CoreType.PAPER:
-                return getPaperCoreVersion()
-        }
-    }
-
-    private String getSpigotCoreVersion() {
-        String version = project.bukkit.fullVersion
-        if (version != BukkitExtension.LATEST) {
-            return version
-        }
-
-        def metaFile = new File(bukkitGradleDir, ServerConstants.FILE_MAVEN_METADATA)
-        if (!metaFile.exists()) {
-            if (BukkitGradlePlugin.isTesting()) return '1.11.0'
-
-            project.logger.warn(
-                    'Server core meta not downloaded, make sure that Gradle ' +
-                            'isn\'t running in offline mode.\n' +
-                            "Using '$ServerConstants.FALLBACK_VERSION' by default."
-            )
-
-            return ServerConstants.FALLBACK_VERSION
-        }
-
-        def metadata = new XmlSlurper().parse(metaFile)
-        return metadata.versioning.latest.toString()
-    }
-
-    private String getPaperCoreVersion() {
+    private String resolvePaperclipUrl() {
         def versionsFile = new File(bukkitGradleDir, PaperConstants.FILE_PAPER_VERSIONS)
         if (!versionsFile.isFile()) {
             project.logger.warn("""
                     Paper versions file not downloaded, make sure that Gradle isn\'t running in offline mode.
-                    Using '$PaperConstants.FALLBACK_VERSION' by default.
             """.stripIndent())
-
-            return PaperConstants.FALLBACK_VERSION
+            throw new StopExecutionException()
         }
 
         def object = new JsonSlurper().parse(versionsFile)
 
-        String version = simplifyVersion(project.bukkit.version)
-        if (version == BukkitExtension.LATEST) {
-            version = object.latest
-        }
-
         def versionsUrls = object.versions as Map
-        def versionUrl = versionsUrls."$version"
+        def versionUrl = versionsUrls."$coreVersion"
         if (versionUrl == null) {
             project.logger.warn(
-                    "Paper v$version not found.\n" +
-                            "Supported paper versions: ${versionsUrls.keySet()}\n" +
-                            "Using '$PaperConstants.FALLBACK_VERSION' by default."
+                    "Paper v$coreVersion not found.\n" +
+                            "Supported paper versions: ${versionsUrls.keySet()}."
             )
-
-            return PaperConstants.FALLBACK_VERSION
+            throw new StopExecutionException()
         }
 
-        paperUrl = versionUrl
-        return version
+        return versionUrl
     }
 
-    private static def simplifyVersion(version) {
-        return version.replace(BukkitExtension.REVISION_SUFFIX, '')
+    private String getFullVersion() {
+        return coreVersion + BukkitExtension.REVISION_SUFFIX
     }
 }

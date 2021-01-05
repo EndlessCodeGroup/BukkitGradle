@@ -31,7 +31,9 @@ class LegacyDevServerPlugin implements Plugin<Project> {
         bukkitGradleDir.mkdirs()
 
         ServerProperties properties = new ServerProperties(project.rootDir)
-        ServerCore serverCore = new ServerCore(project, properties, bukkitGradleDir)
+        // FIXME: Should be calculated on task configuration
+        def coreVersion = runConfiguration.version ?: bukkit.apiVersion
+        ServerCore serverCore = new ServerCore(project, properties, bukkitGradleDir, coreVersion)
 
         // Register tasks
         project.afterEvaluate { serverCore.registerTasks() }

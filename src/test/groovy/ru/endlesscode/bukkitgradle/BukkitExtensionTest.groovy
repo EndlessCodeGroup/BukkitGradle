@@ -8,7 +8,7 @@ class BukkitExtensionTest extends PluginTestBase {
 
     @Test
     void testDefaultVersionMustBeFallback() throws Exception {
-        assert ServerConstants.FALLBACK_VERSION == project.bukkit.version
+        assert ServerConstants.DEFAULT_VERSION == project.bukkit.version
     }
 
     @Test

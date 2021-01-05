@@ -13,10 +13,10 @@ public open class BukkitExtension(
     public override val run: RunConfigurationImpl
 ) : Bukkit {
 
-    public override var version: String = ServerConstants.FALLBACK_VERSION
+    public override var apiVersion: String = ServerConstants.DEFAULT_VERSION
 
     public override val fullVersion: String
-        get() = "$version$REVISION_SUFFIX"
+        get() = "$apiVersion$REVISION_SUFFIX"
 
     public fun run(body: Closure<out RunConfigurationImpl>) {
         ConfigureUtil.configure(body, run)
@@ -34,8 +34,13 @@ public open class BukkitExtension(
         meta.run(body)
     }
 
+    // TODO 1.0: Remove on release
+    @Deprecated("Use apiVersion instead of version.", ReplaceWith("apiVersion.set(version)"))
+    public fun setVersion(version: String) {
+        apiVersion = version
+    }
+
     public companion object {
-        public const val LATEST: String = "+"
         public const val REVISION_SUFFIX: String = "-R0.1-SNAPSHOT"
     }
 }

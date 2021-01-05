@@ -37,14 +37,14 @@ class PrepareServerSpec extends PluginSpecification {
         given: "configured eula and online-mode"
         buildFile << """
             bukkit {
-                version = '1.16.4'
+                version = '1.16.2'
                 run {
                     eula = true
                     onlineMode = false
                 }
             }
         """.stripIndent()
-        def serverDir = "build/server/1.16.4/"
+        def serverDir = "build/server/1.16.2/"
 
         when: "run prepareServer"
         run(TASK_NAME, '-x', 'copyServer')

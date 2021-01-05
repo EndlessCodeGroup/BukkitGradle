@@ -12,8 +12,8 @@ public interface Bukkit {
     public val run: RunConfiguration
 
     /** Bukkit version. */
-    public val version: String
+    public val apiVersion: String
 
-    /** Bukkit version in format "[version]-R0.1-SNAPSHOT". */
+    /** Bukkit version in format "[apiVersion]-R0.1-SNAPSHOT". */
     public val fullVersion: String
 }

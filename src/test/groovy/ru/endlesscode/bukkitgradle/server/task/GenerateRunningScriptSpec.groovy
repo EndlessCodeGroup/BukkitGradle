@@ -13,11 +13,11 @@ class GenerateRunningScriptSpec extends PluginSpecification {
     def setup() {
         buildFile << """
             bukkit {
-                version = '1.16.4'
+                version = '1.16.2'
                 run.debug = false
             }
         """.stripIndent()
-        scriptDir = dir("build/server/1.16.4/")
+        scriptDir = dir("build/server/1.16.2/")
     }
 
     def "when run script generation - task should generate script"() {
