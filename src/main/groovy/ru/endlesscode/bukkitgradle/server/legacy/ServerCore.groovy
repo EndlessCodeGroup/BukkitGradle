@@ -8,6 +8,7 @@ import org.gradle.api.tasks.Copy
 import org.gradle.api.tasks.JavaExec
 import ru.endlesscode.bukkitgradle.BukkitExtension
 import ru.endlesscode.bukkitgradle.BukkitGradlePlugin
+import ru.endlesscode.bukkitgradle.server.BuildToolsConstants
 import ru.endlesscode.bukkitgradle.server.PaperConstants
 import ru.endlesscode.bukkitgradle.server.ServerConstants
 import ru.endlesscode.bukkitgradle.server.ServerProperties
@@ -88,7 +89,7 @@ class ServerCore {
                 return
             }
 
-            src ServerConstants.URL_BUILDTOOLS
+            src BuildToolsConstants.URL
             dest destDir.toString()
             onlyIfModified true
         }
@@ -154,7 +155,7 @@ class ServerCore {
                     return
                 }
 
-                def buildToolsFile = new File(serverProperties.buildToolsDir, ServerConstants.FILE_BUILDTOOLS)
+                def buildToolsFile = new File(serverProperties.buildToolsDir, BuildToolsConstants.FILE)
                 if (!buildToolsFile.isFile()) {
                     logger.warn("BuildTools not found on path: '$buildToolsFile'\n" +
                             'BuildTools directory should contain BuildTools.jar file.')

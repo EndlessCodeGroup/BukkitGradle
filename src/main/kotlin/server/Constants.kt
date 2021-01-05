@@ -13,6 +13,12 @@ public object ServerConstants {
         "https://hub.spigotmc.org/jenkins/job/BuildTools/lastSuccessfulBuild/artifact/target/BuildTools.jar"
 }
 
+public object BuildToolsConstants {
+    public const val FILE: String = "BuildTools.jar"
+    public const val URL: String =
+        "https://hub.spigotmc.org/jenkins/job/BuildTools/lastSuccessfulBuild/artifact/target/BuildTools.jar"
+}
+
 public object PaperConstants {
     public const val FALLBACK_VERSION: String = "1.16.4"
 
