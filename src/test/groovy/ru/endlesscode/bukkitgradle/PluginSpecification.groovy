@@ -2,7 +2,9 @@ package ru.endlesscode.bukkitgradle
 
 import org.gradle.api.Project
 import org.gradle.testfixtures.ProjectBuilder
+import org.gradle.testkit.runner.BuildResult
 import org.gradle.testkit.runner.GradleRunner
+import org.gradle.testkit.runner.TaskOutcome
 import org.junit.Rule
 import org.junit.rules.TemporaryFolder
 import spock.lang.Specification
@@ -14,6 +16,10 @@ class PluginSpecification extends Specification {
 
     File buildFile
     File settingsFile
+
+    protected Project project
+    protected GradleRunner runner
+    protected BuildResult result
 
     def setup() {
         buildFile = file('build.gradle')
@@ -53,15 +59,29 @@ class PluginSpecification extends Specification {
     }
 
     Project getProject() {
-        ProjectBuilder.builder()
-                .withProjectDir(testProjectDir.root)
-                .build()
+        if (project == null) {
+            project = ProjectBuilder.builder()
+                    .withProjectDir(testProjectDir.root)
+                    .build()
+        }
+        return project
     }
 
     GradleRunner getRunner() {
-        GradleRunner.create()
-                .withProjectDir(testProjectDir.root)
-                .forwardOutput()
-                .withPluginClasspath()
+        if (runner == null) {
+            runner = GradleRunner.create()
+                    .withProjectDir(testProjectDir.root)
+                    .forwardOutput()
+                    .withPluginClasspath()
+        }
+        return runner
+    }
+
+    protected def run(String... args) {
+        result = getRunner().withArguments(args.toList()).build()
+    }
+
+    protected TaskOutcome taskOutcome(String task) {
+        return result.task(task).outcome
     }
 }

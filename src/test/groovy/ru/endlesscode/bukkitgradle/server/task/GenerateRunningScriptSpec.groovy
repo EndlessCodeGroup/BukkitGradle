@@ -1,13 +1,12 @@
 package ru.endlesscode.bukkitgradle.server.task
 
-import org.gradle.testkit.runner.BuildResult
+
 import org.gradle.testkit.runner.TaskOutcome
 import ru.endlesscode.bukkitgradle.PluginSpecification
 
 class GenerateRunningScriptSpec extends PluginSpecification {
 
     private final static TASK_NAME = ':generateRunningScript'
-    private final static OS_NAME_ARG = '-Dos.name='
 
     private File scriptDir
 
@@ -23,32 +22,32 @@ class GenerateRunningScriptSpec extends PluginSpecification {
 
     def "when run script generation - task should generate script"() {
         when: "run script generation"
-        def result = generateRunningScript()
+        run(TASK_NAME)
 
         then: "task should be successful"
-        result.task(TASK_NAME).outcome == TaskOutcome.SUCCESS
+        taskOutcome(TASK_NAME) == TaskOutcome.SUCCESS
     }
 
     def "when rerun script generation - and not changing any inputs - task should be up-to-date"() {
         when: "run script generation"
-        def result = generateRunningScript()
+        run(TASK_NAME)
 
         then: "task should be successful"
-        result.task(TASK_NAME).outcome == TaskOutcome.SUCCESS
+        taskOutcome(TASK_NAME) == TaskOutcome.SUCCESS
 
         when: "run script generation again"
-        result = generateRunningScript()
+        run(TASK_NAME)
 
         then: "task should be up-to-date"
-        result.task(TASK_NAME).outcome == TaskOutcome.UP_TO_DATE
+        taskOutcome(TASK_NAME) == TaskOutcome.UP_TO_DATE
     }
 
     def "when run script generation - and os is windows - should generate .bat file"() {
         when: "run script generation with os windows"
-        def result = generateRunningScript('windows')
+        run(TASK_NAME, "-Dos.name=windows")
 
         then: "task should be successful"
-        result.task(TASK_NAME).outcome == TaskOutcome.SUCCESS
+        taskOutcome(TASK_NAME) == TaskOutcome.SUCCESS
 
         and: "should generate bat script"
         def scriptFile = new File(scriptDir, "start.bat")
@@ -63,10 +62,10 @@ class GenerateRunningScriptSpec extends PluginSpecification {
 
     def "when run script generation - and os is linux - should generate .sh file"() {
         when: "run script generation with os linux"
-        def result = generateRunningScript('linux')
+        run(TASK_NAME, "-Dos.name=linux")
 
         then: "task should be successful"
-        result.task(TASK_NAME).outcome == TaskOutcome.SUCCESS
+        taskOutcome(TASK_NAME) == TaskOutcome.SUCCESS
 
         and: "should generate bat script"
         def scriptFile = new File(scriptDir, "start.sh")
@@ -78,11 +77,5 @@ class GenerateRunningScriptSpec extends PluginSpecification {
             cd "\$( dirname "\$0" )"
             java -Dfile.encoding=UTF-8 -Xmx1G -jar core.jar
         """.stripIndent().trim()
-    }
-
-    private BuildResult generateRunningScript(String osName = null) {
-        def arguments = [TASK_NAME]
-        if (osName != null) arguments += "$OS_NAME_ARG$osName".toString()
-        return runner.withArguments(arguments).build()
     }
 }

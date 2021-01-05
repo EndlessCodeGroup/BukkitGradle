@@ -4,7 +4,7 @@ plugins {
     id("groovy")
     id("maven-publish")
     id("com.gradle.plugin-publish") version "0.12.0"
-    id("com.github.ben-manes.versions") version "0.28.0"
+    id("com.github.ben-manes.versions") version "0.36.0"
 }
 
 java {

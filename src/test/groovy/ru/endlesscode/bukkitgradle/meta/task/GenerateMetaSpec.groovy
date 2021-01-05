@@ -1,6 +1,6 @@
 package ru.endlesscode.bukkitgradle.meta.task
 
-import org.gradle.testkit.runner.BuildResult
+
 import org.gradle.testkit.runner.TaskOutcome
 import ru.endlesscode.bukkitgradle.PluginSpecification
 import ru.endlesscode.bukkitgradle.meta.MetaFile
@@ -20,19 +20,18 @@ class GenerateMetaSpec extends PluginSpecification {
 
     def 'when run processResources - should also run generatePluginMeta'() {
         when: "run processResources"
-        def result = runner.withArguments(':processResources').build()
+        run(':processResources')
 
         then: "task generatePluginMeta completed successfully"
-        result.task(TASK_PATH).outcome == TaskOutcome.SUCCESS
+        taskOutcome(TASK_PATH) == TaskOutcome.SUCCESS
     }
 
     def 'when generate meta - should generate default plugin meta successfully'() {
         when: "run generate meta task"
-        def result = generatePluginMeta()
+        run(TASK_PATH)
 
         then: "the task is successful"
-
-        result.task(TASK_PATH).outcome == TaskOutcome.SUCCESS
+        taskOutcome(TASK_PATH) == TaskOutcome.SUCCESS
 
         and: "meta file content corresponds to default config"
         metaFile.text == """\
@@ -44,33 +43,33 @@ class GenerateMetaSpec extends PluginSpecification {
 
     def 'when generate meta - and generate it again - should skip second task run'() {
         when: "run generate meta task"
-        def result = generatePluginMeta()
+        run(TASK_PATH)
 
         then: "the task is successful"
-        result.task(TASK_PATH).outcome == TaskOutcome.SUCCESS
+        taskOutcome(TASK_PATH) == TaskOutcome.SUCCESS
 
         when: "run generate meta again"
-        result = generatePluginMeta()
+        run(TASK_PATH)
 
         then: "the task is skipped due to up-to-date"
-        result.task(TASK_PATH).outcome == TaskOutcome.UP_TO_DATE
+        taskOutcome(TASK_PATH) == TaskOutcome.UP_TO_DATE
     }
 
     def 'when generate meta - and generate changed meta - should generate new meta'() {
         when: "run generate meta task"
-        def result = generatePluginMeta()
+        run(TASK_PATH)
 
         then: "the task is successful"
-        result.task(TASK_PATH).outcome == TaskOutcome.SUCCESS
+        taskOutcome(TASK_PATH) == TaskOutcome.SUCCESS
 
         when: "change description"
         buildFile << 'description = "Plugin can has description"'
 
         and: "run generate meta task again"
-        result = generatePluginMeta()
+        run(TASK_PATH)
 
         then: "the task is successful"
-        result.task(TASK_PATH).outcome == TaskOutcome.SUCCESS
+        taskOutcome(TASK_PATH) == TaskOutcome.SUCCESS
 
         and: "meta generated with new description"
         metaFile.text == """\
@@ -98,10 +97,10 @@ class GenerateMetaSpec extends PluginSpecification {
         """.stripIndent()
 
         when: "run processResources"
-        def result = generatePluginMeta()
+        run(TASK_PATH)
 
         then: "the task is successful"
-        result.task(TASK_PATH).outcome == TaskOutcome.SUCCESS
+        taskOutcome(TASK_PATH) == TaskOutcome.SUCCESS
 
         and: "should keep only unsupported lines in source file"
         sourceMetaFile.text == """\
@@ -128,10 +127,10 @@ class GenerateMetaSpec extends PluginSpecification {
         """.stripIndent()
 
         when: "run processResources"
-        def result = generatePluginMeta()
+        run(TASK_PATH)
 
         then: "the task is successful"
-        result.task(TASK_PATH).outcome == TaskOutcome.SUCCESS
+        taskOutcome(TASK_PATH) == TaskOutcome.SUCCESS
 
         and: "should write all lines"
         metaFile.text == """\
@@ -161,10 +160,10 @@ class GenerateMetaSpec extends PluginSpecification {
         """.stripIndent()
 
         when: "run processResources"
-        def result = generatePluginMeta()
+        run(TASK_PATH)
 
         then: "the task is successful"
-        result.task(TASK_PATH).outcome == TaskOutcome.SUCCESS
+        taskOutcome(TASK_PATH) == TaskOutcome.SUCCESS
 
         and: "should write all lines"
         metaFile.text == """\
@@ -186,10 +185,10 @@ class GenerateMetaSpec extends PluginSpecification {
         """.stripIndent()
 
         when: "run processResources"
-        def result = generatePluginMeta()
+        run(TASK_PATH)
 
         then: "the task is successful"
-        result.task(TASK_PATH).outcome == TaskOutcome.SUCCESS
+        taskOutcome(TASK_PATH) == TaskOutcome.SUCCESS
 
         and: "should write meta with the extra fields"
         metaFile.text == """\
@@ -215,11 +214,11 @@ class GenerateMetaSpec extends PluginSpecification {
         CharsetUtils.setDefaultCharset('CP866')
 
         when: "run processResources"
-        def result = generatePluginMeta()
+        run(TASK_PATH)
         CharsetUtils.setDefaultCharset('UTF-8')
 
         then: "the task is successful"
-        result.task(TASK_PATH).outcome == TaskOutcome.SUCCESS
+        taskOutcome(TASK_PATH) == TaskOutcome.SUCCESS
 
         and:
         metaFile.text == """\
@@ -230,9 +229,5 @@ class GenerateMetaSpec extends PluginSpecification {
               퀘스트:
                 description: 퀘스트 명령어 입니다.
         """.stripIndent()
-    }
-
-    private BuildResult generatePluginMeta() {
-        return runner.withArguments(TASK_PATH).build()
     }
 }
