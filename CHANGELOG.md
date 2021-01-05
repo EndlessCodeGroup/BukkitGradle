@@ -1,19 +1,12 @@
 ## Unreleased
 
 ### Property syntax to configure meta fields
-Instead of:
-```kotlin
+Use `.set` instead of `=`:
+```diff
 bukkit {
     meta {
-        desctiption = "My plugin's description"
-    }
-}
-```
-You should use:
-```kotlin
-bukkit {
-    meta {
-        description.set("My plugin's description")
+-        desctiption = "My plugin's description"
++        description.set("My plugin's description")
     }
 }
 ```
@@ -42,6 +35,9 @@ now it is friendly to Kotlin DSL.
 
 ### Added
 - Configuration avoidance and build cache for task `generateMetaData`
+
+### Removed
+- Task `:rebuildServerCore`, use `:buildServerCore --rerun-tasks` instead
 
 ### Housekeeping
 - Default bukkit version now is 1.16.4

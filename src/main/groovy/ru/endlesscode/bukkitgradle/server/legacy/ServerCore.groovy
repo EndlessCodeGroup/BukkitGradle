@@ -5,11 +5,9 @@ import de.undercouch.gradle.tasks.download.DownloadExtension
 import groovy.json.JsonSlurper
 import org.gradle.api.Project
 import org.gradle.api.tasks.Copy
-import org.gradle.api.tasks.JavaExec
 import org.gradle.api.tasks.StopExecutionException
 import ru.endlesscode.bukkitgradle.BukkitExtension
 import ru.endlesscode.bukkitgradle.BukkitGradlePlugin
-import ru.endlesscode.bukkitgradle.server.BuildToolsConstants
 import ru.endlesscode.bukkitgradle.server.PaperConstants
 import ru.endlesscode.bukkitgradle.server.ServerConstants
 import ru.endlesscode.bukkitgradle.server.ServerProperties
@@ -23,7 +21,6 @@ class ServerCore {
     private final Project project
 
     private File bukkitGradleDir
-    private boolean forceRebuild = false
     private ServerProperties serverProperties
     private String coreVersion
 
@@ -47,33 +44,8 @@ class ServerCore {
      * Registers needed tasks
      */
     void registerTasks() {
-        registerDownloadBuildToolsTask()
-        registerBuildServerCoreTask()
         registerDownloadPaperclipTask()
         registerCoreCopyTask()
-    }
-
-    private void registerDownloadBuildToolsTask() {
-        project.task('downloadBuildTools', type: Download) {
-            group = BukkitGradlePlugin.GROUP
-            description = 'Download BuildTools'
-
-            // Skip it for not spigot
-            if (getCoreType.call() != CoreType.SPIGOT) {
-                enabled = false
-                return
-            }
-
-            def destDir = serverProperties.buildToolsDir
-            if (destDir == null) {
-                enabled = false
-                return
-            }
-
-            src BuildToolsConstants.URL
-            dest destDir.toString()
-            onlyIfModified true
-        }
     }
 
     private void registerDownloadPaperclipTask() {
@@ -110,52 +82,6 @@ class ServerCore {
             src resolvePaperclipUrl()
             dest bukkitGradleDir
             onlyIfModified true
-        }
-    }
-
-    /**
-     * Registers core building task
-     */
-    private void registerBuildServerCoreTask() {
-        project.with {
-            task('buildServerCore', type: JavaExec, dependsOn: ['downloadBuildTools', 'downloadBukkitMeta']) {
-                group = BukkitGradlePlugin.GROUP
-                description = 'Build server core, but only if it not contains in local maven repo'
-
-                onlyIf {
-                    if (forceRebuild) {
-                        forceRebuild = false
-                        return true
-                    }
-
-                    return !MavenApi.hasSpigot(fullVersion)
-                }
-
-                if (!tasks.downloadBuildTools.enabled || serverDir == null) {
-                    enabled = false
-                    return
-                }
-
-                def buildToolsFile = new File(serverProperties.buildToolsDir, BuildToolsConstants.FILE)
-                if (!buildToolsFile.isFile()) {
-                    logger.warn("BuildTools not found on path: '$buildToolsFile'\n" +
-                            'BuildTools directory should contain BuildTools.jar file.')
-                    enabled = false
-                    return
-                }
-
-                main = '-jar'
-                args(buildToolsFile.path, '--rev', coreVersion)
-                workingDir = buildToolsFile.parentFile.path
-                standardInput = System.in
-            }
-
-            task('rebuildServerCore') {
-                group = BukkitGradlePlugin.GROUP
-                description = 'Force rebuild server core'
-            }.doLast {
-                forceRebuild = true
-            }.finalizedBy tasks.buildServerCore
         }
     }
 

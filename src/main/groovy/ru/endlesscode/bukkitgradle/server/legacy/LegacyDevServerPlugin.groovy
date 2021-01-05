@@ -1,5 +1,6 @@
 package ru.endlesscode.bukkitgradle.server.legacy
 
+import de.undercouch.gradle.tasks.download.Download
 import org.gradle.api.Plugin
 import org.gradle.api.Project
 import org.gradle.api.tasks.Copy
@@ -7,14 +8,13 @@ import org.gradle.api.tasks.TaskContainer
 import org.gradle.api.tasks.TaskProvider
 import org.gradle.jvm.tasks.Jar
 import ru.endlesscode.bukkitgradle.Bukkit
+import ru.endlesscode.bukkitgradle.BukkitGradlePlugin
 import ru.endlesscode.bukkitgradle.meta.extension.PluginMeta
+import ru.endlesscode.bukkitgradle.server.BuildToolsConstants
 import ru.endlesscode.bukkitgradle.server.ServerConstants
 import ru.endlesscode.bukkitgradle.server.ServerProperties
 import ru.endlesscode.bukkitgradle.server.extension.ServerConfiguration
-import ru.endlesscode.bukkitgradle.server.task.CreateIdeaJarRunConfiguration
-import ru.endlesscode.bukkitgradle.server.task.GenerateRunningScript
-import ru.endlesscode.bukkitgradle.server.task.PrepareServer
-import ru.endlesscode.bukkitgradle.server.task.RunServer
+import ru.endlesscode.bukkitgradle.server.task.*
 
 class LegacyDevServerPlugin implements Plugin<Project> {
 
@@ -36,13 +36,31 @@ class LegacyDevServerPlugin implements Plugin<Project> {
         ServerCore serverCore = new ServerCore(project, properties, bukkitGradleDir, coreVersion)
 
         // Register tasks
-        project.afterEvaluate { serverCore.registerTasks() }
+        registerBuildServerCoreTask(properties.buildToolsDir, coreVersion)
+
+        project.afterEvaluate { serverCore.registerTasks() } // TODO: Remove
 
         def generateRunningScript = registerGenerateRunningScriptTask(serverCore.serverDir)
         def prepareServer = registerPrepareServerTask(serverCore.serverDir)
         registerRunServerTask(generateRunningScript, prepareServer)
 
         registerBuildIdeRunTask(serverCore.serverDir)
+    }
+
+    private TaskProvider<BuildServerCore> registerBuildServerCoreTask(File buildToolsDir, String coreVersion) {
+        def downloadBuildTools = tasks.register('downloadBuildTools', Download) {
+            group = BukkitGradlePlugin.GROUP
+            description = 'Download BuildTools'
+
+            src(BuildToolsConstants.URL)
+            dest(buildToolsDir)
+            onlyIfModified(true)
+        }
+
+        return tasks.register('buildServerCore', BuildServerCore) {
+            buildToolsFile.set(downloadBuildTools.map { it.outputFiles.first() })
+            version.set(coreVersion)
+        }
     }
 
     private TaskProvider<GenerateRunningScript> registerGenerateRunningScriptTask(File serverDir) {
