@@ -3,8 +3,10 @@ package ru.endlesscode.bukkitgradle.server.legacy
 import org.gradle.api.Plugin
 import org.gradle.api.Project
 import org.gradle.api.tasks.Copy
+import org.gradle.api.tasks.TaskContainer
 import org.gradle.api.tasks.TaskProvider
 import org.gradle.jvm.tasks.Jar
+import ru.endlesscode.bukkitgradle.Bukkit
 import ru.endlesscode.bukkitgradle.meta.extension.PluginMeta
 import ru.endlesscode.bukkitgradle.server.ServerConstants
 import ru.endlesscode.bukkitgradle.server.extension.RunConfiguration
@@ -15,23 +17,28 @@ import ru.endlesscode.bukkitgradle.server.task.RunServer
 
 class LegacyDevServerPlugin implements Plugin<Project> {
 
+    private Project project
+    private Bukkit bukkit
+
     @Override
     void apply(Project project) {
+        this.project = project
+        bukkit = project.bukkit as Bukkit
+
         ServerCore serverCore = new ServerCore(project)
-        def configuration = project.bukkit.run as RunConfiguration
         def generateRunningScript = project.tasks.register('generateRunningScript', GenerateRunningScript) {
-            jvmArgs.set(configuration.buildJvmArgs())
-            bukkitArgs.set(configuration.bukkitArgs)
+            jvmArgs.set(runConfiguration.buildJvmArgs())
+            bukkitArgs.set(runConfiguration.bukkitArgs)
             scriptDir.set(serverCore.serverDir)
         }
 
-        def prepareServer = configurePrepareServerTask(project, serverCore)
-        project.tasks.register('runServer', RunServer) {
+        def prepareServer = configurePrepareServerTask(serverCore)
+        tasks.register('runServer', RunServer) {
             scriptFile.set(generateRunningScript.map { it.scriptFile.get().asFile })
             dependsOn(prepareServer)
         }
 
-        project.tasks.register('buildIdeaRun', CreateIdeaJarRunConfiguration) {
+        tasks.register('buildIdeaRun', CreateIdeaJarRunConfiguration) {
             configurationName.set("$project.name: Run server")
             beforeRunTask.set('prepareServer')
             configurationsDir.set(project.rootProject.layout.projectDirectory.dir('.idea/runConfigurations'))
@@ -39,22 +46,32 @@ class LegacyDevServerPlugin implements Plugin<Project> {
         }
     }
 
-    private static TaskProvider<PrepareServer> configurePrepareServerTask(Project project, ServerCore serverCore) {
+    private TaskProvider<PrepareServer> configurePrepareServerTask(ServerCore serverCore) {
         def jarTaskName = project.plugins.hasPlugin("com.github.johnrengelman.shadow") ? "shadowJar" : "jar"
-        def jarTask = project.tasks.named(jarTaskName, Jar) as TaskProvider<Jar>
-        def meta = project.bukkit.meta as PluginMeta
-        def copyPlugins = project.tasks.register("copyPlugins", Copy) {
+        def jarTask = tasks.named(jarTaskName, Jar) as TaskProvider<Jar>
+        def copyPlugins = tasks.register("copyPlugins", Copy) {
             from(jarTask)
             into(project.mkdir(new File(serverCore.serverDir, "plugins")))
-            rename { "${meta.name.get()}.jar" }
+            rename { "${pluginMeta.name.get()}.jar" }
         }
 
-        def run = project.bukkit.run as RunConfiguration
-        return project.tasks.register('prepareServer', PrepareServer) {
+        return tasks.register('prepareServer', PrepareServer) {
             serverDir.set(serverCore.serverDir)
-            eula = run.eula
-            onlineMode = run.onlineMode
+            eula = runConfiguration.eula
+            onlineMode = runConfiguration.onlineMode
             dependsOn('copyServerCore', copyPlugins)
         }
+    }
+
+    private RunConfiguration getRunConfiguration() {
+        return bukkit.run
+    }
+
+    private PluginMeta getPluginMeta() {
+        return bukkit.meta
+    }
+
+    private TaskContainer getTasks() {
+        return project.tasks
     }
 }
