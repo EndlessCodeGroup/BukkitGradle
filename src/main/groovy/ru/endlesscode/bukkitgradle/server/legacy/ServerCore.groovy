@@ -99,7 +99,7 @@ class ServerCore {
                 return
             }
 
-            src "https://hub.spigotmc.org/jenkins/job/BuildTools/lastSuccessfulBuild/artifact/target/BuildTools.jar"
+            src ServerConstants.URL_BUILDTOOLS
             dest destDir.toString()
             onlyIfModified true
         }
