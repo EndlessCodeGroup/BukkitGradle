@@ -1,11 +1,17 @@
 package ru.endlesscode.bukkitgradle.server
 
-import org.gradle.api.tasks.StopExecutionException
+import org.gradle.api.InvalidUserDataException
 import org.slf4j.LoggerFactory
 import java.io.File
 import java.util.*
 
 internal class ServerProperties(projectPath: File) {
+
+    val devServerDir: File
+        get() = getDir(DEV_SERVER_DIR)
+
+    val buildToolsDir: File
+        get() = getDir(BUILD_TOOLS_DIR)
 
     private val logger = LoggerFactory.getLogger("ServerProperties")
     private val properties = Properties()
@@ -41,33 +47,24 @@ internal class ServerProperties(projectPath: File) {
         }
     }
 
-    val devServerDir: File
-        get() = getDir(DEV_SERVER_DIR)
-
-    val buildToolsDir: File
-        get() = getDir(BUILD_TOOLS_DIR)
-
     private fun getDir(property: Property): File {
-        val value = get(property) ?: throw StopExecutionException()
-
-        val dir = File(value).absoluteFile
-        dir.mkdirs()
-
-        return dir
+        return File(get(property))
+            .absoluteFile
+            .also { it.mkdirs() }
     }
 
-    private fun get(property: Property): String? {
+    private fun get(property: Property): String {
         val localProp = properties.getProperty(property.name)
         val globalEnv = System.getenv(property.envVariable)
         if (localProp == null && globalEnv == null) {
-            logger.warn(
+            logger.error(
                 """
                 ${property.description} not found. It can be fixed by two ways:
                 1.Define variable "${property.name}" in the $NAME file
                 2.Define ${property.envVariable} environment variable
                 """.trimIndent()
             )
-            return null
+            throw InvalidUserDataException()
         }
 
         return localProp ?: globalEnv

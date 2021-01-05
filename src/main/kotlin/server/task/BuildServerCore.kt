@@ -32,14 +32,9 @@ public open class BuildServerCore @Inject constructor(objects: ObjectFactory) : 
 
         mainClass.set("-jar")
         argumentProviders.add(BuildToolsArgumentsProvider())
-        setWorkingDir(buildToolsFile.map { it.parentFile })
         standardInput = System.`in`
 
         outputs.upToDateWhen { spigotFile.get().isFile }
-    }
-
-    final override fun setWorkingDir(dir: Any) {
-        super.setWorkingDir(dir)
     }
 
     private inner class BuildToolsArgumentsProvider : CommandLineArgumentProvider {
