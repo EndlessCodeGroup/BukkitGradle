@@ -2,19 +2,20 @@ package ru.endlesscode.bukkitgradle
 
 import org.junit.Test
 import ru.endlesscode.bukkitgradle.meta.extension.PluginMeta
+import ru.endlesscode.bukkitgradle.server.ServerConstants
 
-class BukkitTest extends PluginTestBase {
+class BukkitExtensionTest extends PluginTestBase {
 
     @Test
-    void testDefaultVersionMustBeLatest() throws Exception {
-        assert "+" == project.bukkit.version
+    void testDefaultVersionMustBeFallback() throws Exception {
+        assert ServerConstants.FALLBACK_VERSION == project.bukkit.version
     }
 
     @Test
     void testChangedVersionMustBeRight() throws Exception {
         project.with {
             bukkit.version = '1.7.10'
-            assert '1.7.10-R0.1-SNAPSHOT' == "$bukkit.version".toString()
+            assert '1.7.10-R0.1-SNAPSHOT' == "$bukkit.fullVersion".toString()
         }
     }
 

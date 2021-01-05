@@ -24,14 +24,14 @@ class BukkitGradlePluginTest extends PluginTestBase {
     }
 
     @Test
-    void 'when use bukkit extension - and bukkit version not set - should return bukkit dependency without version'() {
+    void 'when use bukkit extension - and bukkit version not set - should return bukkit dependency with default version'() {
         // When
         Dependency dependency = project.dependencies.bukkit()
 
         // Then
         assert 'org.bukkit' == dependency.group
         assert 'bukkit' == dependency.name
-        assert '+' == dependency.version
+        assert '1.16.4-R0.1-SNAPSHOT' == dependency.version
     }
 
     @Test

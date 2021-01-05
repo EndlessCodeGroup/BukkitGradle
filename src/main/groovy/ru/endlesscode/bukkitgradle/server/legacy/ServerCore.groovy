@@ -6,8 +6,8 @@ import groovy.json.JsonSlurper
 import org.gradle.api.Project
 import org.gradle.api.tasks.Copy
 import org.gradle.api.tasks.JavaExec
+import ru.endlesscode.bukkitgradle.BukkitExtension
 import ru.endlesscode.bukkitgradle.BukkitGradlePlugin
-import ru.endlesscode.bukkitgradle.BukkitGroovy
 import ru.endlesscode.bukkitgradle.server.PaperConstants
 import ru.endlesscode.bukkitgradle.server.ServerConstants
 import ru.endlesscode.bukkitgradle.server.ServerProperties
@@ -248,9 +248,8 @@ class ServerCore {
     }
 
     private String getSpigotCoreVersion() {
-        String version = project.bukkit.version
-
-        if (version != BukkitGroovy.LATEST) {
+        String version = project.bukkit.fullVersion
+        if (version != BukkitExtension.LATEST) {
             return version
         }
 
@@ -285,7 +284,7 @@ class ServerCore {
         def object = new JsonSlurper().parse(versionsFile)
 
         String version = simplifyVersion(project.bukkit.version)
-        if (version == BukkitGroovy.LATEST) {
+        if (version == BukkitExtension.LATEST) {
             version = object.latest
         }
 
@@ -306,6 +305,6 @@ class ServerCore {
     }
 
     private static def simplifyVersion(version) {
-        return version.replace(BukkitGroovy.REVISION_SUFFIX, '')
+        return version.replace(BukkitExtension.REVISION_SUFFIX, '')
     }
 }

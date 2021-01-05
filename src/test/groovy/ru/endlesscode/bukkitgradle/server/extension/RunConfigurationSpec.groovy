@@ -5,10 +5,10 @@ import spock.lang.Specification
 class RunConfigurationSpec extends Specification {
 
     // SUT
-    RunConfiguration runConfiguration
+    RunConfigurationImpl runConfiguration
 
     void setup() {
-        runConfiguration = new RunConfiguration()
+        runConfiguration = new RunConfigurationImpl()
     }
 
     void 'when build args - should return args with debug flags'() {
@@ -25,14 +25,6 @@ class RunConfigurationSpec extends Specification {
 
         when:
         def args = runConfiguration.buildJvmArgs()
-
-        then:
-        "-Dfile.encoding=UTF-8 -Xmx1G" == args
-    }
-
-    void 'when build args with debug mode override - should return args without debug flags'() {
-        when:
-        def args = runConfiguration.buildJvmArgs(false)
 
         then:
         "-Dfile.encoding=UTF-8 -Xmx1G" == args

@@ -18,5 +18,10 @@ bukkit {
 }
 ```
 
+### Re-written in Kotlin
+The plugin has been converted to Kotlin to make support easier.
+The plugin still can be configured with Groovy DSL but
+now it is friendly to Kotlin DSL.
+
 ### Added
 - Configuration avoidance and build cache for task `generateMetaData`

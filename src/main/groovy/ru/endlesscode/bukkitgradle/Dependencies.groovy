@@ -65,7 +65,7 @@ class Dependencies {
     }
 
     private static Dependency api(String groupId, String artifactId, String... requiredRepos) {
-        String version = project.bukkit.version
+        String version = project.bukkit.fullVersion
         return dep(groupId, artifactId, version, requiredRepos)
     }
 

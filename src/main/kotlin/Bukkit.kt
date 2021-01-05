@@ -1,13 +1,19 @@
 package ru.endlesscode.bukkitgradle
 
-import org.gradle.api.Project
-import org.gradle.kotlin.dsl.getByType
 import ru.endlesscode.bukkitgradle.meta.extension.PluginMeta
 import ru.endlesscode.bukkitgradle.server.extension.RunConfiguration
 
 public interface Bukkit {
-    public val meta: PluginMeta
-    public val run: RunConfiguration
-}
 
-internal val Project.bukkit: Bukkit get() = extensions.getByType()
+    /** Plugin meta. */
+    public val meta: PluginMeta
+
+    /** Dev server run configuration. */
+    public val run: RunConfiguration
+
+    /** Bukkit version. */
+    public val version: String
+
+    /** Bukkit version in format "[version]-R0.1-SNAPSHOT". */
+    public val fullVersion: String
+}
