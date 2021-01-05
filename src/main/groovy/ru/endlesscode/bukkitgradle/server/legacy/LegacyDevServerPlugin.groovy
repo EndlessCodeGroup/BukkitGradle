@@ -3,6 +3,7 @@ package ru.endlesscode.bukkitgradle.server.legacy
 import de.undercouch.gradle.tasks.download.Download
 import org.gradle.api.Plugin
 import org.gradle.api.Project
+import org.gradle.api.provider.Provider
 import org.gradle.api.tasks.Copy
 import org.gradle.api.tasks.TaskContainer
 import org.gradle.api.tasks.TaskProvider
@@ -14,6 +15,7 @@ import ru.endlesscode.bukkitgradle.server.BuildToolsConstants
 import ru.endlesscode.bukkitgradle.server.PaperConstants
 import ru.endlesscode.bukkitgradle.server.ServerConstants
 import ru.endlesscode.bukkitgradle.server.ServerProperties
+import ru.endlesscode.bukkitgradle.server.extension.CoreType
 import ru.endlesscode.bukkitgradle.server.extension.ServerConfiguration
 import ru.endlesscode.bukkitgradle.server.task.*
 
@@ -34,13 +36,12 @@ class LegacyDevServerPlugin implements Plugin<Project> {
         ServerProperties properties = new ServerProperties(project.rootDir)
         // FIXME: Should be calculated on task configuration
         def coreVersion = serverConfiguration.version ?: bukkit.apiVersion
-        ServerCore serverCore = new ServerCore(project, properties, bukkitGradleDir, coreVersion)
+        ServerCore serverCore = new ServerCore(project, properties, coreVersion)
 
         // Register tasks
-        registerBuildServerCoreTask(properties.buildToolsDir, coreVersion)
-        registerDownloadPaper()
-
-        project.afterEvaluate { serverCore.registerTasks() } // TODO: Remove
+        def buildServerCore = registerBuildServerCoreTask(properties.buildToolsDir, coreVersion)
+        def downloadPaperclip = registerDownloadPaperclip(coreVersion)
+        registerCopyServerCoreTask(buildServerCore, downloadPaperclip, serverCore.serverDir)
 
         def generateRunningScript = registerGenerateRunningScriptTask(serverCore.serverDir)
         def prepareServer = registerPrepareServerTask(serverCore.serverDir)
@@ -65,7 +66,7 @@ class LegacyDevServerPlugin implements Plugin<Project> {
         }
     }
 
-    private TaskProvider<DownloadPaperclip> registerDownloadPaper(String coreVersion) {
+    private TaskProvider<DownloadPaperclip> registerDownloadPaperclip(String coreVersion) {
         def downloadPaperVersions = tasks.register('downloadPaperVersions', Download) {
             src(PaperConstants.URL_PAPER_VERSIONS)
             dest(bukkitGradleDir)
@@ -88,9 +89,32 @@ class LegacyDevServerPlugin implements Plugin<Project> {
         }
     }
 
+    private def registerCopyServerCoreTask(
+            TaskProvider<BuildServerCore> buildServerCore,
+            TaskProvider<DownloadPaperclip> downloadPaperclip,
+            File serverDir
+    ) {
+        project.register('copyServerCore', Copy) {
+            group = BukkitGradlePlugin.GROUP
+            description = 'Copy server core to server directory'
+
+            Provider<File> source
+            if (serverConfiguration.coreType == CoreType.SPIGOT) {
+                source = buildServerCore.map { it.buildToolsFile.get() }
+            } else {
+                source = downloadPaperclip.map { it.paperclipFile.get() }
+            }
+
+            from(source.map { it.parentFile })
+            include(source.get().name) // FIXME: Check if it works properly
+            rename { ServerConstants.FILE_CORE }
+            into(serverDir)
+        }
+    }
+
     private TaskProvider<PrepareServer> registerPrepareServerTask(File serverDir) {
         def jarTaskName = project.plugins.hasPlugin("com.github.johnrengelman.shadow") ? "shadowJar" : "jar"
-        def jarTask = tasks.named(jarTaskName, Jar) as TaskProvider<Jar>
+        def jarTask = tasks.named(jarTaskName, Jar)
         def copyPlugins = tasks.register("copyPlugins", Copy) {
             from(jarTask)
             into(project.mkdir(new File(serverDir, "plugins")))

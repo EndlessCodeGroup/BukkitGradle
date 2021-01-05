@@ -6,15 +6,11 @@ public object ServerConstants {
 }
 
 public object BuildToolsConstants {
-    public const val FILE: String = "BuildTools.jar"
     public const val URL: String =
         "https://hub.spigotmc.org/jenkins/job/BuildTools/lastSuccessfulBuild/artifact/target/BuildTools.jar"
 }
 
 public object PaperConstants {
-    public const val FILE_PAPERCLIP: String = "paperclip.jar"
-    public const val FILE_PAPER_VERSIONS: String = "paper-versions.json"
-
     public const val URL_PAPER_VERSIONS: String =
-        "https://gist.githubusercontent.com/osipxd/6119732e30059241c2192c4a8d2218d9/raw/$FILE_PAPER_VERSIONS"
+        "https://gist.githubusercontent.com/osipxd/6119732e30059241c2192c4a8d2218d9/raw/paper-versions.jsonS"
 }

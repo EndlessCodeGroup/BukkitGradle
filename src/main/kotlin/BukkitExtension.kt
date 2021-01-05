@@ -45,8 +45,8 @@ public open class BukkitExtension(
         apiVersion = version
     }
 
-    public companion object {
-        public const val REVISION_SUFFIX: String = "-R0.1-SNAPSHOT"
+    private companion object {
+        const val REVISION_SUFFIX: String = "-R0.1-SNAPSHOT"
     }
 }
 
