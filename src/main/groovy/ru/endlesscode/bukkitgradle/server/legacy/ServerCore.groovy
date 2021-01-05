@@ -1,11 +1,7 @@
 package ru.endlesscode.bukkitgradle.server.legacy
 
-import de.undercouch.gradle.tasks.download.Download
-import de.undercouch.gradle.tasks.download.DownloadExtension
-import groovy.json.JsonSlurper
 import org.gradle.api.Project
 import org.gradle.api.tasks.Copy
-import org.gradle.api.tasks.StopExecutionException
 import ru.endlesscode.bukkitgradle.BukkitExtension
 import ru.endlesscode.bukkitgradle.BukkitGradlePlugin
 import ru.endlesscode.bukkitgradle.server.PaperConstants
@@ -44,45 +40,7 @@ class ServerCore {
      * Registers needed tasks
      */
     void registerTasks() {
-        registerDownloadPaperclipTask()
         registerCoreCopyTask()
-    }
-
-    private void registerDownloadPaperclipTask() {
-        project.task('downloadPaperclip', type: Download) {
-            group = BukkitGradlePlugin.GROUP
-            description = 'Download paperclip'
-
-            if (project.tasks.downloadBuildTools.enabled) {
-                enabled = false
-                return
-            }
-
-            def skip = project.gradle.startParameter.isOffline() || BukkitGradlePlugin.isTesting()
-            onlyIf { !skip }
-            if (skip) return
-
-            extensions.create("download", DownloadExtension, project)
-            try {
-                download {
-                    src PaperConstants.URL_PAPER_VERSIONS
-                    dest bukkitGradleDir
-                    quiet true
-                    onlyIfModified true
-                }
-            } catch (Exception e) {
-                logger.error("Error on paperclip versions list downloading: ${e.toString()}")
-            }
-
-            if (serverDir == null) {
-                enabled = false
-                return
-            }
-
-            src resolvePaperclipUrl()
-            dest bukkitGradleDir
-            onlyIfModified true
-        }
     }
 
     /**
@@ -130,30 +88,6 @@ class ServerCore {
     @Nullable
     File getServerDir() {
         return serverProperties.devServerDir?.with { new File(it, coreVersion) }
-    }
-
-    private String resolvePaperclipUrl() {
-        def versionsFile = new File(bukkitGradleDir, PaperConstants.FILE_PAPER_VERSIONS)
-        if (!versionsFile.isFile()) {
-            project.logger.warn("""
-                    Paper versions file not downloaded, make sure that Gradle isn\'t running in offline mode.
-            """.stripIndent())
-            throw new StopExecutionException()
-        }
-
-        def object = new JsonSlurper().parse(versionsFile)
-
-        def versionsUrls = object.versions as Map
-        def versionUrl = versionsUrls."$coreVersion"
-        if (versionUrl == null) {
-            project.logger.warn(
-                    "Paper v$coreVersion not found.\n" +
-                            "Supported paper versions: ${versionsUrls.keySet()}."
-            )
-            throw new StopExecutionException()
-        }
-
-        return versionUrl
     }
 
     private String getFullVersion() {

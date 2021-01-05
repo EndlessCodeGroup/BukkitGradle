@@ -11,6 +11,7 @@ import ru.endlesscode.bukkitgradle.Bukkit
 import ru.endlesscode.bukkitgradle.BukkitGradlePlugin
 import ru.endlesscode.bukkitgradle.meta.extension.PluginMeta
 import ru.endlesscode.bukkitgradle.server.BuildToolsConstants
+import ru.endlesscode.bukkitgradle.server.PaperConstants
 import ru.endlesscode.bukkitgradle.server.ServerConstants
 import ru.endlesscode.bukkitgradle.server.ServerProperties
 import ru.endlesscode.bukkitgradle.server.extension.ServerConfiguration
@@ -37,6 +38,7 @@ class LegacyDevServerPlugin implements Plugin<Project> {
 
         // Register tasks
         registerBuildServerCoreTask(properties.buildToolsDir, coreVersion)
+        registerDownloadPaper()
 
         project.afterEvaluate { serverCore.registerTasks() } // TODO: Remove
 
@@ -60,6 +62,21 @@ class LegacyDevServerPlugin implements Plugin<Project> {
         return tasks.register('buildServerCore', BuildServerCore) {
             buildToolsFile.set(downloadBuildTools.map { it.outputFiles.first() })
             version.set(coreVersion)
+        }
+    }
+
+    private TaskProvider<DownloadPaperclip> registerDownloadPaper(String coreVersion) {
+        def downloadPaperVersions = tasks.register('downloadPaperVersions', Download) {
+            src(PaperConstants.URL_PAPER_VERSIONS)
+            dest(bukkitGradleDir)
+            quiet(true)
+            onlyIfModified(true)
+        }
+
+        return tasks.register('downloadPaperclip', DownloadPaperclip) {
+            paperVersionsFile.set(downloadPaperVersions.map { it.outputFiles.first() })
+            version.set(coreVersion)
+            dest(bukkitGradleDir)
         }
     }
 
