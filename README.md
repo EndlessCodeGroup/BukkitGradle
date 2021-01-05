@@ -2,15 +2,18 @@ BukkitGradle [![Version](https://img.shields.io/github/release/EndlessCodeGroup/
 ============
 Gradle utilities for easier writing Bukkit plugins.
 
-## Table of Contents
-1. [Apply plugin](#apply-plugin)
-2. [Usage](#usage)
-    1. [First steps](#first-steps)
-    2. [Configuring plugin](#configuring-plugin)
-        1. [Quotes around values](#quotes-around-values)
-    3. [Repositories and Dependencies](#repositories-and-dependencies)
-    4. [Running Dev server](#running-dev-server)
-        1. [Server run configurations](#server-run-configurations)
+<!-- START doctoc generated TOC please keep comment here to allow auto update -->
+<!-- DON'T EDIT THIS SECTION, INSTEAD RE-RUN doctoc TO UPDATE -->
+
+
+- [Apply plugin](#apply-plugin)
+- [Usage](#usage)
+  - [First steps](#first-steps)
+  - [Configuring plugin](#configuring-plugin)
+  - [Repositories and Dependencies](#repositories-and-dependencies)
+  - [Running Dev server](#running-dev-server)
+
+<!-- END doctoc generated TOC please keep comment here to allow auto update -->
 
 #### Features:
 - Automatically applies plugin: java
@@ -188,7 +191,7 @@ You can define it in `local.properties` file (that was automatically created in 
 server.dir=/path/to/buildtools/
 ```
 
-If you use Spigot (see `bukkit.run.core`) you also should specify BuildTools location. For Paper no additional actions 
+If you use Spigot (see `bukkit.server.core`) you also should specify BuildTools location. For Paper no additional actions 
 needed.
 ```properties
 # Absolute path to directory that contains BuildTools.jar
@@ -208,12 +211,12 @@ server configurations.
 ##### On other IDEs
 Run `:startServer` task.
 
-#### Server run configurations
-To accept EULA and change settings use `bukkit.run` section:
+#### Dev server configuration
+To accept EULA and change settings use `bukkit.server` section:
 ```groovy
 bukkit {
     // INFO: Here used default values
-    run {
+    server {
         // Core type. It can be 'spigot' or 'paper'
         core = "spigot"
         // Accept EULA

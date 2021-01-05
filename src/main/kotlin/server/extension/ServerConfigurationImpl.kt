@@ -4,9 +4,9 @@ import org.slf4j.Logger
 import org.slf4j.LoggerFactory
 import java.util.*
 
-public class RunConfigurationImpl : RunConfiguration {
+public class ServerConfigurationImpl : ServerConfiguration {
 
-    private val logger: Logger = LoggerFactory.getLogger("RunConfiguration")
+    private val logger: Logger = LoggerFactory.getLogger("ServerConfigurationImpl")
 
     override var version: String? = null
     override var eula: Boolean = false
@@ -38,7 +38,7 @@ public class RunConfigurationImpl : RunConfiguration {
     }
 
     override fun toString(): String {
-        return "RunConfiguration{" +
+        return "ServerConfigurationImpl{" +
             "eula=$eula" +
             ", onlineMode=$onlineMode" +
             ", debug=$debug" +

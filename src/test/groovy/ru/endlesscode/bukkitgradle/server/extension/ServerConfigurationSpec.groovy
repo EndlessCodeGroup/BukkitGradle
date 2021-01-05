@@ -2,13 +2,13 @@ package ru.endlesscode.bukkitgradle.server.extension
 
 import spock.lang.Specification
 
-class RunConfigurationSpec extends Specification {
+class ServerConfigurationSpec extends Specification {
 
     // SUT
-    RunConfigurationImpl runConfiguration
+    ServerConfigurationImpl runConfiguration
 
     void setup() {
-        runConfiguration = new RunConfigurationImpl()
+        runConfiguration = new ServerConfigurationImpl()
     }
 
     void 'when build args - should return args with debug flags'() {

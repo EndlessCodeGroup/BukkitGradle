@@ -8,7 +8,7 @@ import org.gradle.api.tasks.compile.JavaCompile
 import ru.endlesscode.bukkitgradle.meta.PluginMetaPlugin
 import ru.endlesscode.bukkitgradle.meta.extension.PluginMeta
 import ru.endlesscode.bukkitgradle.meta.util.StringUtils
-import ru.endlesscode.bukkitgradle.server.extension.RunConfigurationImpl
+import ru.endlesscode.bukkitgradle.server.extension.ServerConfigurationImpl
 import ru.endlesscode.bukkitgradle.server.legacy.LegacyDevServerPlugin
 
 class BukkitGradlePlugin implements Plugin<Project> {
@@ -41,7 +41,7 @@ class BukkitGradlePlugin implements Plugin<Project> {
      */
     private void addPlugins() {
         project.with {
-            extensions.create("bukkit", BukkitExtension, configurePluginMeta(), new RunConfigurationImpl())
+            extensions.create("bukkit", BukkitExtension, configurePluginMeta(), new ServerConfigurationImpl())
 
             plugins.with {
                 apply('java')

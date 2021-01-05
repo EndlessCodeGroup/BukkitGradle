@@ -27,7 +27,7 @@ class ServerCore {
     private ServerProperties serverProperties
     private String coreVersion
 
-    private Closure<CoreType> getCoreType = { project.bukkit.run.coreType }
+    private Closure<CoreType> getCoreType = { project.bukkit.server.coreType }
 
     ServerCore(
             Project project,

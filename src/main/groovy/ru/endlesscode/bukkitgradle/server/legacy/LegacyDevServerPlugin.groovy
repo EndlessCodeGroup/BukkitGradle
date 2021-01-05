@@ -10,7 +10,7 @@ import ru.endlesscode.bukkitgradle.Bukkit
 import ru.endlesscode.bukkitgradle.meta.extension.PluginMeta
 import ru.endlesscode.bukkitgradle.server.ServerConstants
 import ru.endlesscode.bukkitgradle.server.ServerProperties
-import ru.endlesscode.bukkitgradle.server.extension.RunConfiguration
+import ru.endlesscode.bukkitgradle.server.extension.ServerConfiguration
 import ru.endlesscode.bukkitgradle.server.task.CreateIdeaJarRunConfiguration
 import ru.endlesscode.bukkitgradle.server.task.GenerateRunningScript
 import ru.endlesscode.bukkitgradle.server.task.PrepareServer
@@ -32,7 +32,7 @@ class LegacyDevServerPlugin implements Plugin<Project> {
 
         ServerProperties properties = new ServerProperties(project.rootDir)
         // FIXME: Should be calculated on task configuration
-        def coreVersion = runConfiguration.version ?: bukkit.apiVersion
+        def coreVersion = serverConfiguration.version ?: bukkit.apiVersion
         ServerCore serverCore = new ServerCore(project, properties, bukkitGradleDir, coreVersion)
 
         // Register tasks
@@ -47,8 +47,8 @@ class LegacyDevServerPlugin implements Plugin<Project> {
 
     private TaskProvider<GenerateRunningScript> registerGenerateRunningScriptTask(File serverDir) {
         return project.tasks.register('generateRunningScript', GenerateRunningScript) {
-            jvmArgs.set(runConfiguration.buildJvmArgs())
-            bukkitArgs.set(runConfiguration.bukkitArgs)
+            jvmArgs.set(serverConfiguration.buildJvmArgs())
+            bukkitArgs.set(serverConfiguration.bukkitArgs)
             scriptDir.set(serverDir)
         }
     }
@@ -64,8 +64,8 @@ class LegacyDevServerPlugin implements Plugin<Project> {
 
         return tasks.register('prepareServer', PrepareServer) {
             it.serverDir.set(serverDir)
-            eula = runConfiguration.eula
-            onlineMode = runConfiguration.onlineMode
+            eula = serverConfiguration.eula
+            onlineMode = serverConfiguration.onlineMode
             dependsOn('copyServerCore', copyPlugins)
         }
     }
@@ -89,8 +89,8 @@ class LegacyDevServerPlugin implements Plugin<Project> {
         }
     }
 
-    private RunConfiguration getRunConfiguration() {
-        return bukkit.run
+    private ServerConfiguration getServerConfiguration() {
+        return bukkit.server
     }
 
     private PluginMeta getPluginMeta() {

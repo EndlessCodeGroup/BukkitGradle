@@ -6,11 +6,11 @@ import org.gradle.kotlin.dsl.getByType
 import org.gradle.util.ConfigureUtil
 import ru.endlesscode.bukkitgradle.meta.extension.PluginMeta
 import ru.endlesscode.bukkitgradle.server.ServerConstants
-import ru.endlesscode.bukkitgradle.server.extension.RunConfigurationImpl
+import ru.endlesscode.bukkitgradle.server.extension.ServerConfigurationImpl
 
 public open class BukkitExtension(
     public override val meta: PluginMeta,
-    public override val run: RunConfigurationImpl
+    public override val server: ServerConfigurationImpl
 ) : Bukkit {
 
     public override var apiVersion: String = ServerConstants.DEFAULT_VERSION
@@ -18,12 +18,17 @@ public open class BukkitExtension(
     public override val fullVersion: String
         get() = "$apiVersion$REVISION_SUFFIX"
 
-    public fun run(body: Closure<out RunConfigurationImpl>) {
-        ConfigureUtil.configure(body, run)
+    @Deprecated("Use 'server { ... }' instead", ReplaceWith("server(body)"))
+    public fun run(body: Closure<out ServerConfigurationImpl>) {
+        ConfigureUtil.configure(body, server)
     }
 
-    public fun run(body: RunConfigurationImpl.() -> Unit) {
-        run.run(body)
+    public fun server(body: Closure<out ServerConfigurationImpl>) {
+        ConfigureUtil.configure(body, server)
+    }
+
+    public fun server(body: ServerConfigurationImpl.() -> Unit) {
+        server.run(body)
     }
 
     public fun meta(body: Closure<out PluginMeta>) {

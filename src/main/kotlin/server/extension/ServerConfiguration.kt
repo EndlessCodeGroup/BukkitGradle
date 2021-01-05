@@ -1,6 +1,6 @@
 package ru.endlesscode.bukkitgradle.server.extension
 
-public interface RunConfiguration {
+public interface ServerConfiguration {
 
     public val version: String?
     public val eula: Boolean

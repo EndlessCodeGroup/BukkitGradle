@@ -6,7 +6,7 @@ import java.util.*
 
 public class ServerProperties(projectPath: File) {
 
-    private val logger = LoggerFactory.getLogger("RunConfiguration")
+    private val logger = LoggerFactory.getLogger("ServerProperties")
     private val properties = Properties()
 
     private val propertiesFile = File(projectPath, NAME)
