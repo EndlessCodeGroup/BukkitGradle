@@ -6,7 +6,7 @@ import org.gradle.api.Project
 import org.gradle.api.plugins.JavaPluginConvention
 import org.gradle.api.tasks.compile.JavaCompile
 import ru.endlesscode.bukkitgradle.meta.PluginMetaPlugin
-import ru.endlesscode.bukkitgradle.meta.extension.PluginMeta
+import ru.endlesscode.bukkitgradle.meta.extension.PluginMetaImpl
 import ru.endlesscode.bukkitgradle.meta.util.StringUtils
 import ru.endlesscode.bukkitgradle.server.DevServerPlugin
 import ru.endlesscode.bukkitgradle.server.extension.ServerConfigurationImpl
@@ -50,8 +50,8 @@ class BukkitGradlePlugin implements Plugin<Project> {
         }
     }
 
-    private PluginMeta configurePluginMeta() {
-        return new PluginMeta(project.objects).tap {
+    private PluginMetaImpl configurePluginMeta() {
+        return new PluginMetaImpl(project.objects).tap {
             name.convention(project.name)
             description.convention(project.provider { project.description })
             main.convention(name.map { "${project.group}.${StringUtils.toPascalCase(it)}" })

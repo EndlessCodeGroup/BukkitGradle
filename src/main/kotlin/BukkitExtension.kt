@@ -4,13 +4,13 @@ import groovy.lang.Closure
 import org.gradle.api.Project
 import org.gradle.kotlin.dsl.getByType
 import org.gradle.util.ConfigureUtil
-import ru.endlesscode.bukkitgradle.meta.extension.PluginMeta
+import ru.endlesscode.bukkitgradle.meta.extension.PluginMetaImpl
 import ru.endlesscode.bukkitgradle.server.ServerConstants
 import ru.endlesscode.bukkitgradle.server.extension.ServerConfigurationImpl
 
 // TODO 1.0: Remove deprecated fields on release
 public open class BukkitExtension(
-    public override val meta: PluginMeta,
+    public override val meta: PluginMetaImpl,
     public override val server: ServerConfigurationImpl
 ) : Bukkit {
 
@@ -36,11 +36,11 @@ public open class BukkitExtension(
         server.run(body)
     }
 
-    public fun meta(body: Closure<out PluginMeta>) {
+    public fun meta(body: Closure<out PluginMetaImpl>) {
         ConfigureUtil.configure(body, meta)
     }
 
-    public fun meta(body: PluginMeta.() -> Unit) {
+    public fun meta(body: PluginMetaImpl.() -> Unit) {
         meta.run(body)
     }
 
