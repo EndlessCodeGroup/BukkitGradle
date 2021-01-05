@@ -8,6 +8,7 @@ import ru.endlesscode.bukkitgradle.meta.extension.PluginMeta
 import ru.endlesscode.bukkitgradle.server.ServerConstants
 import ru.endlesscode.bukkitgradle.server.extension.ServerConfigurationImpl
 
+// TODO 1.0: Remove deprecated fields on release
 public open class BukkitExtension(
     public override val meta: PluginMeta,
     public override val server: ServerConfigurationImpl
@@ -17,6 +18,10 @@ public open class BukkitExtension(
 
     public override val fullVersion: String
         get() = "$apiVersion$REVISION_SUFFIX"
+
+    @Deprecated("Use 'server' instead", ReplaceWith("server"))
+    public val run: ServerConfigurationImpl
+        get() = server
 
     @Deprecated("Use 'server { ... }' instead", ReplaceWith("server(body)"))
     public fun run(body: Closure<out ServerConfigurationImpl>) {
@@ -39,8 +44,7 @@ public open class BukkitExtension(
         meta.run(body)
     }
 
-    // TODO 1.0: Remove on release
-    @Deprecated("Use apiVersion instead of version.", ReplaceWith("apiVersion.set(version)"))
+    @Deprecated("Use apiVersion instead of version.", ReplaceWith("apiVersion = version"))
     public fun setVersion(version: String) {
         apiVersion = version
     }
