@@ -10,6 +10,7 @@ import ru.endlesscode.bukkitgradle.BukkitGradlePlugin
 import ru.endlesscode.bukkitgradle.BukkitGroovy
 import ru.endlesscode.bukkitgradle.server.PaperConstants
 import ru.endlesscode.bukkitgradle.server.ServerConstants
+import ru.endlesscode.bukkitgradle.server.ServerProperties
 import ru.endlesscode.bukkitgradle.server.extension.CoreType
 import ru.endlesscode.bukkitgradle.server.legacy.util.MavenApi
 

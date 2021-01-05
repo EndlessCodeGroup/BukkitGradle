@@ -9,6 +9,7 @@ import org.gradle.jvm.tasks.Jar
 import ru.endlesscode.bukkitgradle.Bukkit
 import ru.endlesscode.bukkitgradle.meta.extension.PluginMeta
 import ru.endlesscode.bukkitgradle.server.ServerConstants
+import ru.endlesscode.bukkitgradle.server.ServerProperties
 import ru.endlesscode.bukkitgradle.server.extension.RunConfiguration
 import ru.endlesscode.bukkitgradle.server.task.CreateIdeaJarRunConfiguration
 import ru.endlesscode.bukkitgradle.server.task.GenerateRunningScript
