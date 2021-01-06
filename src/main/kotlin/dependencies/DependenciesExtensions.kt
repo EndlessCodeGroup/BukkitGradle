@@ -46,15 +46,14 @@ public fun RepositoryHandler.aikar(configure: MavenArtifactRepository.() -> Unit
     addRepo("aikar", URL_AIKAR, configure)
 }
 
-public fun DependencyHandler.spigot(): String {
-    return api("org.spigotmc", "spigot", "mavenLocal")
-}
-public fun DependencyHandler.spigotApi(): String {
-    return api("org.spigotmc", "spigot-api", "spigot")
-}
-public fun DependencyHandler.bukkit(): String {
-    return api("org.bukkit", "bukkit", "spigot")
-}
-public fun DependencyHandler.paperApi(): String {
-    return api("com.destroystokyo.paper", "paper-api", "papermc")
-}
+public val DependencyHandler.spigot: String
+    get() = api("org.spigotmc", "spigot", "mavenLocal")
+
+public val DependencyHandler.spigotApi: String
+    get() = api("org.spigotmc", "spigot-api", "spigot")
+
+public val DependencyHandler.bukkit: String
+    get() = api("org.bukkit", "bukkit", "spigot")
+
+public val DependencyHandler.paperApi: String
+    get() = api("com.destroystokyo.paper", "paper-api", "papermc")
