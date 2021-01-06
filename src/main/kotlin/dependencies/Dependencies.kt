@@ -13,16 +13,16 @@ import org.gradle.kotlin.dsl.extra
 import org.gradle.kotlin.dsl.maven
 import ru.endlesscode.bukkitgradle.bukkit
 
-public object Dependencies {
+internal object Dependencies {
 
-    internal const val URL_SPIGOT = "https://hub.spigotmc.org/nexus/content/repositories/snapshots/"
-    internal const val URL_SK89Q = "https://maven.sk89q.com/repo/"
-    internal const val URL_PAPERMC = "https://papermc.io/repo/repository/maven-public/"
-    internal const val URL_DMULLOY2 = "https://repo.dmulloy2.net/nexus/repository/public/"
-    internal const val URL_MD5 = "https://repo.md-5.net/content/groups/public/"
-    internal const val URL_VAULT = "http://nexus.hc.to/content/repositories/pub_releases/"
-    internal const val URL_PLACEHOLDERAPI = "https://repo.extendedclip.com/content/repositories/placeholderapi/"
-    internal const val URL_AIKAR = "https://repo.aikar.co/content/groups/aikar/"
+    const val URL_SPIGOT = "https://hub.spigotmc.org/nexus/content/repositories/snapshots/"
+    const val URL_SK89Q = "https://maven.sk89q.com/repo/"
+    const val URL_PAPERMC = "https://papermc.io/repo/repository/maven-public/"
+    const val URL_DMULLOY2 = "https://repo.dmulloy2.net/nexus/repository/public/"
+    const val URL_MD5 = "https://repo.md-5.net/content/groups/public/"
+    const val URL_VAULT = "http://nexus.hc.to/content/repositories/pub_releases/"
+    const val URL_PLACEHOLDERAPI = "https://repo.extendedclip.com/content/repositories/placeholderapi/"
+    const val URL_AIKAR = "https://repo.aikar.co/content/groups/aikar/"
 
     private lateinit var project: Project
     private lateinit var repoHandler: RepositoryHandler
@@ -32,7 +32,7 @@ public object Dependencies {
         get() = InvokerHelper.getProperty(this, "ext") as ExtraPropertiesExtension
 
     @JvmStatic
-    public fun configureProject(project: Project) {
+    fun configureProject(project: Project) {
         Dependencies.project = project
         repoHandler = project.repositories
         depHandler = project.dependencies
@@ -57,7 +57,7 @@ public object Dependencies {
         depExtra["paperApi"] = depClosureOf { depHandler.api("com.destroystokyo.paper", "paper-api", "papermc") }
     }
 
-    internal fun RepositoryHandler.addRepo(
+    fun RepositoryHandler.addRepo(
         repoName: String,
         repoUrl: String,
         configure: MavenArtifactRepository.() -> Unit = {}
@@ -69,7 +69,7 @@ public object Dependencies {
     }
 
     @Suppress("unused") // Receiver required for scope
-    internal fun DependencyHandler.api(groupId: String, artifactId: String, vararg requiredRepos: String): String {
+    fun DependencyHandler.api(groupId: String, artifactId: String, vararg requiredRepos: String): String {
         val version = "${project.bukkit.apiVersion}-R0.1-SNAPSHOT"
         return dep(groupId, artifactId, version, *requiredRepos)
     }
