@@ -54,7 +54,7 @@ public class BukkitGradlePlugin : Plugin<Project> {
 
     /** Sets encoding on compile to UTF-8. */
     private fun Project.configureEncoding() {
-        tasks.withType<JavaCompile> {
+        tasks.withType<JavaCompile>().configureEach {
             options.encoding = "UTF-8"
         }
     }
