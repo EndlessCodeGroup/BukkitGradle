@@ -3,33 +3,17 @@ package ru.endlesscode.bukkitgradle.meta.extension
 import org.gradle.api.model.ObjectFactory
 import org.gradle.api.provider.ListProperty
 import org.gradle.api.provider.Property
-import org.gradle.api.tasks.Input
-import org.gradle.api.tasks.Optional
 import org.gradle.kotlin.dsl.listProperty
 import org.gradle.kotlin.dsl.property
 
 // TODO 1.0: Remove deprecated methods
 public class PluginMetaImpl(objects: ObjectFactory) : PluginMeta {
 
-    @Input
     override val name: Property<String> = objects.property()
-
-    @Optional
-    @Input
     override val description: Property<String> = objects.property()
-
-    @Input
     override val main: Property<String> = objects.property()
-
-    @Input
     override val version: Property<String> = objects.property()
-
-    @Optional
-    @Input
     override val url: Property<String> = objects.property()
-
-    @Optional
-    @Input
     override val authors: ListProperty<String> = objects.listProperty()
 
     @Deprecated("Use property syntax instead", ReplaceWith("this.name.set(name)"))
