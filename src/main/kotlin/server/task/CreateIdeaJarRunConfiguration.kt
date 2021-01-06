@@ -3,9 +3,12 @@ package ru.endlesscode.bukkitgradle.server.task
 import groovy.xml.MarkupBuilder
 import org.gradle.api.DefaultTask
 import org.gradle.api.file.DirectoryProperty
+import org.gradle.api.file.RegularFile
 import org.gradle.api.provider.Property
+import org.gradle.api.provider.Provider
 import org.gradle.api.tasks.Input
-import org.gradle.api.tasks.OutputDirectory
+import org.gradle.api.tasks.Internal
+import org.gradle.api.tasks.OutputFile
 import org.gradle.api.tasks.TaskAction
 import org.gradle.kotlin.dsl.property
 import org.gradle.kotlin.dsl.withGroovyBuilder
@@ -31,8 +34,13 @@ public open class CreateIdeaJarRunConfiguration : DefaultTask() {
     @Input
     public val jarPath: Property<File> = project.objects.property()
 
-    @OutputDirectory
+    @Internal
     public val configurationsDir: DirectoryProperty = project.objects.directoryProperty()
+
+    @OutputFile
+    public val configurationFile: Provider<RegularFile> = configurationsDir.zip(configurationName) { dir, name ->
+        dir.file("${Idea.fileNameSlug(name)}.xml")
+    }
 
     init {
         group = TASKS_GROUP_BUKKIT
@@ -47,15 +55,11 @@ public open class CreateIdeaJarRunConfiguration : DefaultTask() {
     @TaskAction
     public fun createJarRunConfiguration() {
         val configurationName = configurationName.get()
-        val configurationsDir = configurationsDir.get()
+        val configurationFile = configurationFile.get().asFile
 
-        configurationsDir.asFile.mkdirs()
+        configurationFile.parentFile.mkdirs()
 
-        val runConfigurationFile = configurationsDir
-            .file("${Idea.fileNameSlug(configurationName)}.xml")
-            .asFile
-
-        MarkupBuilder(runConfigurationFile.writer()).withGroovyBuilder {
+        MarkupBuilder(configurationFile.writer()).withGroovyBuilder {
             "component"("name" to "ProjectRunConfigurationManager") {
                 "configuration"(
                     "default" to false,

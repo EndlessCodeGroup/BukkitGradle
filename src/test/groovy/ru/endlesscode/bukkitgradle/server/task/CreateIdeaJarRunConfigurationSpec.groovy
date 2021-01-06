@@ -10,18 +10,18 @@ class CreateIdeaJarRunConfigurationSpec extends PluginSpecification {
 
     def "when run from IDEA - task should work"() {
         when:
-        def result = runner.withArguments(TASK_NAME, IDEA_ACTIVE_PROPERTY).build()
+        run(TASK_NAME, IDEA_ACTIVE_PROPERTY)
 
         then:
-        result.task(TASK_NAME).outcome == TaskOutcome.SUCCESS
+        taskOutcome(TASK_NAME) == TaskOutcome.SUCCESS
     }
 
     def "when run not from IDEA - task should be skipped"() {
         when:
-        def result = runner.withArguments(TASK_NAME).build()
+        run(TASK_NAME)
 
         then:
-        result.task(TASK_NAME).outcome == TaskOutcome.SKIPPED
+        taskOutcome(TASK_NAME) == TaskOutcome.SKIPPED
     }
 
     def "when run from IDEA - should generate xml"() {
@@ -35,13 +35,10 @@ class CreateIdeaJarRunConfigurationSpec extends PluginSpecification {
         def serverDir = "${project.buildDir}/server/1.15.2"
 
         when:
-        runner.withArguments(TASK_NAME, IDEA_ACTIVE_PROPERTY).build()
-
-        and:
-        def text = file('.idea/runConfigurations/test_plugin__Run_server.xml').text
+        run(TASK_NAME, IDEA_ACTIVE_PROPERTY)
 
         then:
-        text == """\
+        file('.idea/runConfigurations/test_plugin__Run_server.xml').text == """\
             <component name='ProjectRunConfigurationManager'>
               <configuration default='false' name='test-plugin: Run server' type='JarApplication' singleton='true'>
                 <option name='JAR_PATH' value='${serverDir}/core.jar' />
@@ -52,6 +49,7 @@ class CreateIdeaJarRunConfigurationSpec extends PluginSpecification {
                   <option name='Gradle.BeforeRunTask' enabled='true' tasks='prepareServer' externalProjectPath='\$PROJECT_DIR\$' />
                 </method>
               </configuration>
-            </component>""".stripIndent()
+            </component>
+        """.stripIndent().trim()
     }
 }

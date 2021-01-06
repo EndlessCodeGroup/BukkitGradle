@@ -4,20 +4,21 @@ import org.slf4j.Logger
 import org.slf4j.LoggerFactory
 import java.util.*
 
-public class RunConfiguration {
+public class ServerConfigurationImpl : ServerConfiguration {
 
-    private val logger: Logger = LoggerFactory.getLogger("RunConfiguration")
+    private val logger: Logger = LoggerFactory.getLogger("ServerConfigurationImpl")
 
-    public var eula: Boolean = false
-    public var onlineMode: Boolean = false
-    public var debug: Boolean = true
-    public var encoding: String = "UTF-8"
-    public var javaArgs: String = "-Xmx1G"
-    public var bukkitArgs: String = ""
+    override var version: String? = null
+    override var eula: Boolean = false
+    override var onlineMode: Boolean = false
+    override var debug: Boolean = true
+    override var encoding: String = "UTF-8"
+    override var javaArgs: String = "-Xmx1G"
+    override var bukkitArgs: String = ""
 
-    private var coreType: CoreType = CoreType.SPIGOT
+    override var coreType: CoreType = CoreType.SPIGOT
 
-    public fun setCore(core: String) {
+    override fun setCore(core: String) {
         try {
             coreType = CoreType.valueOf(core.toUpperCase(Locale.ENGLISH))
         } catch (_: IllegalArgumentException) {
@@ -32,18 +33,12 @@ public class RunConfiguration {
         }
     }
 
-    public fun getCoreType(): CoreType {
-        return coreType
-    }
-
-    /** Returns arguments for JVM. */
-    @JvmOverloads
-    public fun buildJvmArgs(debug: Boolean = this.debug): String {
+    override fun buildJvmArgs(): String {
         return "${if (debug) "$DEBUG_ARGS " else ""}-Dfile.encoding=$encoding $javaArgs"
     }
 
     override fun toString(): String {
-        return "RunConfiguration{" +
+        return "ServerConfigurationImpl{" +
             "eula=$eula" +
             ", onlineMode=$onlineMode" +
             ", debug=$debug" +

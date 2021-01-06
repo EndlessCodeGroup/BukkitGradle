@@ -11,6 +11,7 @@ import org.gradle.kotlin.dsl.get
 import org.gradle.kotlin.dsl.getPlugin
 import ru.endlesscode.bukkitgradle.bukkit
 import ru.endlesscode.bukkitgradle.meta.extension.PluginMeta
+import ru.endlesscode.bukkitgradle.meta.extension.items
 import java.io.File
 
 internal class MetaFile(

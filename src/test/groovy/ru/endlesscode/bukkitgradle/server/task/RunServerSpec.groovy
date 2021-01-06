@@ -1,6 +1,6 @@
 package ru.endlesscode.bukkitgradle.server.task
 
-import org.gradle.testkit.runner.BuildResult
+
 import org.gradle.testkit.runner.TaskOutcome
 import ru.endlesscode.bukkitgradle.PluginSpecification
 
@@ -8,16 +8,17 @@ class RunServerSpec extends PluginSpecification {
 
     private final static TASK_NAME = ':runServer'
 
-    def "when run runServer - should also task dependencies"() {
+    def "when run runServer - should also run task dependencies"() {
         when: "run server"
-        def result = runServer('-x', 'prepareServer')
+        run(TASK_NAME, '-x', 'copyServerCore')
 
-        then: "task should be successful"
-        result.task(':generateRunningScript').outcome == TaskOutcome.SUCCESS
-        result.task(TASK_NAME).outcome == TaskOutcome.SUCCESS
-    }
+        then: "generateRunningScript should be successful"
+        taskOutcome(':generateRunningScript') == TaskOutcome.SUCCESS
 
-    private BuildResult runServer(String... args) {
-        return runner.withArguments([TASK_NAME] + args.toList()).build()
+        and: "prepareServer should be successful"
+        taskOutcome(":prepareServer") == TaskOutcome.SUCCESS
+
+        and: "task should be also successful"
+        taskOutcome(TASK_NAME) == TaskOutcome.SUCCESS
     }
 }
