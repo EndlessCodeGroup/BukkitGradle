@@ -1,5 +1,14 @@
 ## Unreleased
 
+### Reworked tasks hierarchy
+
+All plugin's tasks reworked to use actual Gradle APIs:
+- [Task Configuration Avoidance][tca].
+  Plugin's tasks will be created and configured only when it needed
+- [Up-to-date checks][uptodate].
+  Tasks will not re-run if input data not changed
+- Optimized work in offline mode.
+
 ### Property syntax to configure meta fields
 Use `.set` instead of `=`:
 ```diff
@@ -44,3 +53,6 @@ now it is friendly to Kotlin DSL.
 ### Housekeeping
 - Default bukkit version now is 1.16.4
 - Update Gradle to 6.7.1
+
+[tca]: https://docs.gradle.org/current/userguide/task_configuration_avoidance.html
+[uptodate]: https://docs.gradle.org/current/userguide/more_about_tasks.html#sec:up_to_date_checks
