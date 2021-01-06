@@ -20,19 +20,11 @@ tasks.test {
     useJUnitPlatform()
 }
 
-// TODO: Remove after migration to Kotlin
-tasks.compileGroovy {
-    dependsOn(tasks.compileKotlin)
-    classpath += files(tasks.compileKotlin.get().destinationDir)
-}
-
 repositories {
     jcenter()
 }
 
 dependencies {
-    implementation(gradleApi())
-    implementation(localGroovy())
     implementation("de.undercouch:gradle-download-task:4.1.1")
     testImplementation("junit:junit:4.13")
     testImplementation(platform("org.spockframework:spock-bom:2.0-M2-groovy-2.5"))
