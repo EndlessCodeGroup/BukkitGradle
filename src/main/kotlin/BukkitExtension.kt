@@ -4,6 +4,8 @@ import groovy.lang.Closure
 import org.gradle.api.Project
 import org.gradle.kotlin.dsl.getByType
 import org.gradle.util.ConfigureUtil
+import org.slf4j.LoggerFactory
+import ru.endlesscode.bukkitgradle.extensions.warnSyntaxChanged
 import ru.endlesscode.bukkitgradle.meta.extension.PluginMetaImpl
 import ru.endlesscode.bukkitgradle.server.ServerConstants
 import ru.endlesscode.bukkitgradle.server.extension.ServerConfigurationImpl
@@ -16,12 +18,18 @@ public open class BukkitExtension(
 
     public override var apiVersion: String = ServerConstants.DEFAULT_VERSION
 
+    private val logger = LoggerFactory.getLogger("BukkitExtension")
+
     @Deprecated("Use 'server' instead", ReplaceWith("server"))
     public val run: ServerConfigurationImpl
-        get() = server
+        get() {
+            logger.warnSyntaxChanged("bukkit.run", "bukkit.server")
+            return server
+        }
 
     @Deprecated("Use 'server { ... }' instead", ReplaceWith("server(body)"))
     public fun run(body: Closure<out ServerConfigurationImpl>) {
+        logger.warnSyntaxChanged("bukkit.run { ... }", "bukkit.server { ... }")
         ConfigureUtil.configure(body, server)
     }
 
@@ -43,6 +51,7 @@ public open class BukkitExtension(
 
     @Deprecated("Use apiVersion instead of version.", ReplaceWith("apiVersion = version"))
     public fun setVersion(version: String) {
+        logger.warnSyntaxChanged("bukkit.version = '...'", "bukkit.apiVersion = '...'")
         apiVersion = version
     }
 }
