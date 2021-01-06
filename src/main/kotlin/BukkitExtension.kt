@@ -16,9 +16,6 @@ public open class BukkitExtension(
 
     public override var apiVersion: String = ServerConstants.DEFAULT_VERSION
 
-    public override val fullVersion: String
-        get() = "$apiVersion$REVISION_SUFFIX"
-
     @Deprecated("Use 'server' instead", ReplaceWith("server"))
     public val run: ServerConfigurationImpl
         get() = server
@@ -47,10 +44,6 @@ public open class BukkitExtension(
     @Deprecated("Use apiVersion instead of version.", ReplaceWith("apiVersion = version"))
     public fun setVersion(version: String) {
         apiVersion = version
-    }
-
-    private companion object {
-        const val REVISION_SUFFIX: String = "-R0.1-SNAPSHOT"
     }
 }
 

@@ -5,6 +5,7 @@ import org.gradle.api.Plugin
 import org.gradle.api.Project
 import org.gradle.api.plugins.JavaPluginConvention
 import org.gradle.api.tasks.compile.JavaCompile
+import ru.endlesscode.bukkitgradle.dependencies.Dependencies
 import ru.endlesscode.bukkitgradle.meta.PluginMetaPlugin
 import ru.endlesscode.bukkitgradle.meta.extension.PluginMetaImpl
 import ru.endlesscode.bukkitgradle.meta.util.StringUtils
@@ -74,7 +75,6 @@ class BukkitGradlePlugin implements Plugin<Project> {
      */
     private void addRepositories() {
         project.repositories {
-            mavenLocal()
             jcenter()
         }
     }

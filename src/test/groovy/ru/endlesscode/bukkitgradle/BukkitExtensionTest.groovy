@@ -8,15 +8,7 @@ class BukkitExtensionTest extends PluginTestBase {
 
     @Test
     void testDefaultVersionMustBeFallback() throws Exception {
-        assert ServerConstants.DEFAULT_VERSION == project.bukkit.version
-    }
-
-    @Test
-    void testChangedVersionMustBeRight() throws Exception {
-        project.with {
-            bukkit.version = '1.7.10'
-            assert '1.7.10-R0.1-SNAPSHOT' == "$bukkit.fullVersion".toString()
-        }
+        assert ServerConstants.DEFAULT_VERSION == project.bukkit.apiVersion
     }
 
     @Test

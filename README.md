@@ -145,13 +145,13 @@ BukkitGradle provides short extension-functions to add common repositories and d
 There are list of its.
 
 Usage example:
-```groovy
+```kotlin
 repositories {
     spigot() // Adds spigot repo
 }
 
 dependencies {
-    compileOnly paperApi() // Adds paper-api dependency
+    compileOnly(paperApi()) // Adds paper-api dependency
 }
 ```
 
@@ -172,15 +172,14 @@ Some dependencies also applies repo needed for them.
 
  Name        | Signature                                     | Applies repo
 -------------|-----------------------------------------------|---------------
- spigot      | org.spigotmc:spigot:$apiVersion               | -   
+ spigot      | org.spigotmc:spigot:$apiVersion               | mavenLocal
  spigotApi   | org.spigotmc:spigot-api:$apiVersion           | spigot
  bukkit      | org.bukkit:bukkit:$apiVersion                 | spigot
- craftbukkit | org.bukkit:craftbukkit:$apiVersion            | -
  paperApi    | com.destroystokyo.paper:paper-api:$apiVersion | destroystokyo
  
  **Note:** `$apiVersion` - is `${version}-R0.1-SNAPSHOT` (where `$version` is `bukkit.version`)
 
-If you want more extension-functions - you can [write issue](https://github.com/EndlessCodeGroup/BukkitGradle/issues/new).
+If you need more extension-functions, [create issue](https://github.com/EndlessCodeGroup/BukkitGradle/issues/new).
 
 ### Running Dev server
 Before running server you should configure dev server location.

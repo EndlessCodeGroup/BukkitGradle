@@ -13,7 +13,4 @@ public interface Bukkit {
 
     /** Bukkit version. */
     public val apiVersion: String
-
-    /** Bukkit version in format "[apiVersion]-R0.1-SNAPSHOT". */
-    public val fullVersion: String
 }

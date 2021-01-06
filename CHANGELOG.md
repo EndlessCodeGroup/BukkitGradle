@@ -38,6 +38,8 @@ now it is friendly to Kotlin DSL.
 
 ### Removed
 - Task `:rebuildServerCore`, use `:buildServerCore --rerun-tasks` instead
+- Extension `DependencyHandler.craftbukkit()`, use `DependencyHandler.spigot()` instead
+- Automatic `mavenLocal()` apply, you should apply it manually if you need it
 
 ### Housekeeping
 - Default bukkit version now is 1.16.4

@@ -1,6 +1,5 @@
 package ru.endlesscode.bukkitgradle
 
-import org.gradle.api.artifacts.Dependency
 import org.junit.Test
 
 class BukkitGradlePluginTest extends PluginTestBase {
@@ -20,18 +19,16 @@ class BukkitGradlePluginTest extends PluginTestBase {
         project.repositories.sk89q()
 
         // Then
-        project.repositories.getByName("sk89q")
+        assert project.repositories.findByName("sk89q") != null
     }
 
     @Test
     void 'when use bukkit extension - and bukkit version not set - should return bukkit dependency with default version'() {
         // When
-        Dependency dependency = project.dependencies.bukkit()
+        String dependency = project.dependencies.bukkit()
 
         // Then
-        assert 'org.bukkit' == dependency.group
-        assert 'bukkit' == dependency.name
-        assert '1.16.4-R0.1-SNAPSHOT' == dependency.version
+        assert 'org.bukkit:bukkit:1.16.4-R0.1-SNAPSHOT' == dependency
     }
 
     @Test
@@ -40,12 +37,10 @@ class BukkitGradlePluginTest extends PluginTestBase {
         project.bukkit.version = "1.7.10"
 
         // When
-        Dependency dependency = project.dependencies.bukkit()
+        String dependency = project.dependencies.bukkit()
 
         // Then
-        assert 'org.bukkit' == dependency.group
-        assert 'bukkit' == dependency.name
-        assert '1.7.10-R0.1-SNAPSHOT' == dependency.version
+        assert 'org.bukkit:bukkit:1.7.10-R0.1-SNAPSHOT' == dependency
     }
 
     @Test
@@ -54,16 +49,18 @@ class BukkitGradlePluginTest extends PluginTestBase {
         project.dependencies.bukkit()
 
         // Then
-        project.repositories.getByName("Spigot")
+        assert project.repositories.findByName("Spigot") != null
     }
 
     @Test
     void 'when use spigot extension - should add repo mavenLocal'() {
-        project.repositories.getByName("MavenLocal")
+        // Given
+        assert project.repositories.findByName("MavenLocal") == null
+
         // When
         project.dependencies.spigot()
 
         // Then
-        project.repositories.getByName("MavenLocal")
+        assert project.repositories.findByName("MavenLocal") != null
     }
 }
