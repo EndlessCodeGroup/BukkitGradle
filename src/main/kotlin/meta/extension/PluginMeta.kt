@@ -21,6 +21,10 @@ public interface PluginMeta {
 
     @get:Optional
     @get:Input
+    public val apiVersion: Provider<String>
+
+    @get:Optional
+    @get:Input
     public val url: Provider<String>
 
     @get:Optional

@@ -15,6 +15,7 @@ public class PluginMetaImpl(objects: ObjectFactory) : PluginMeta {
     override val description: Property<String> = objects.property()
     override val main: Property<String> = objects.property()
     override val version: Property<String> = objects.property()
+    override val apiVersion: Property<String> = objects.property()
     override val url: Property<String> = objects.property()
     override val authors: ListProperty<String> = objects.listProperty()
 

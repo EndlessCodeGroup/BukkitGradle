@@ -52,6 +52,7 @@ public open class MergePluginMeta @Inject internal constructor(
             name = meta.name.get(),
             description = meta.description.orNull,
             version = meta.version.get(),
+            apiVersion = meta.apiVersion.orNull,
             website = meta.url.orNull,
             authors = meta.authors.get().takeIf { it.isNotEmpty() }
         )

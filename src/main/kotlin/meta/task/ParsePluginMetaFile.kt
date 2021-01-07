@@ -56,6 +56,7 @@ internal open class ParsePluginMetaFile @Inject constructor(
             name?.let(meta.name::convention)
             description?.let(meta.description::convention)
             version?.let(meta.version::convention)
+            apiVersion?.let(meta.apiVersion::convention)
             website?.let(meta.url::convention)
             authors?.let(meta.authors::convention)
         }

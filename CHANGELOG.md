@@ -37,6 +37,18 @@ bukkit {
 ```
 If `bukkit.server.version` is not specified, will be used `bukkit.apiVersion` for server.
 
+Now, BukkitGradle adds `api-version` field to `plugin.yml`.
+It will be parsed from `bukkit.apiVersion` but you can override it with `bukkit.meta.apiVersion` if need:
+```kotlin
+bukkit {
+    apiVersion = "1.16.4" // Inferred api-version is 1.16
+    
+    meta {
+        apiVersion.set("1.13") // But here you can override it
+    }
+}
+```
+
 ### Re-written in Kotlin
 The plugin has been converted to Kotlin to make support easier.
 The plugin still can be configured with Groovy DSL but
@@ -51,6 +63,7 @@ now it is friendly to Kotlin DSL.
 - Add `nogui` argument by default to `bukkitArgs`
 - Type of properties `server.jvmArgs` and `server.bukkitArgs` changed from `String` to `List<String>`.
   It makes it easier to add arguments without overriding defaults
+- Default main class pattern changed from `<groupId>.<lowercased name>.<name>` to `<groupId>.<name>` 
 
 ### Housekeeping
 - Default bukkit version now is 1.16.4
