@@ -16,6 +16,10 @@ class MergePluginMetaSpec extends PluginSpecification {
     def setup() {
         sourceMetaFile = file("src/main/resources/$PluginMetaPlugin.FILE_NAME")
         metaFile = file("build/tmp/mergePluginMeta/$PluginMetaPlugin.FILE_NAME")
+
+        buildFile << """
+            bukkit.apiVersion = "1.16.2"
+        """.stripIndent()
     }
 
     def 'when run processResources - should also run generatePluginMeta'() {
@@ -38,6 +42,7 @@ class MergePluginMetaSpec extends PluginSpecification {
             main: "com.example.testplugin.TestPlugin"
             name: "test-plugin"
             version: "1.0"
+            api-version: "1.16"
         """.stripIndent().trim()
     }
 
@@ -71,6 +76,7 @@ class MergePluginMetaSpec extends PluginSpecification {
             name: "test-plugin"
             description: "Plugin can has description"
             version: "1.0"
+            api-version: "1.16"
         """.stripIndent().trim()
     }
 
@@ -84,6 +90,7 @@ class MergePluginMetaSpec extends PluginSpecification {
                     description.set('Test plugin description')
                     main.set('com.example.plugin.Plugin')
                     version.set('0.1')
+                    apiVersion.set('1.13')
                     url.set('http://www.example.com/')
                     authors.set(["OsipXD", "Contributors"])
                 }
@@ -99,6 +106,7 @@ class MergePluginMetaSpec extends PluginSpecification {
             name: "TestPlugin"
             description: "Test plugin description"
             version: "0.1"
+            api-version: "1.13"
             authors: ["OsipXD", "Contributors"]
             website: "http://www.example.com/"
         """.stripIndent().trim()
@@ -129,6 +137,7 @@ class MergePluginMetaSpec extends PluginSpecification {
             name: "TestPlugin"
             description: "Test plugin description"
             version: "0.1"
+            api-version: "1.16"
             authors: ["OsipXD", "Contributors"]
             website: "http://www.example.com/"
         """.stripIndent().trim()
@@ -154,6 +163,7 @@ class MergePluginMetaSpec extends PluginSpecification {
             main: "com.example.testplugin.TestPlugin"
             name: "test-plugin"
             version: "1.0"
+            api-version: "1.16"
             depend: ["Vault", "ProtocolLib"]
             commands:
               "example":
@@ -185,6 +195,7 @@ class MergePluginMetaSpec extends PluginSpecification {
             main: "com.example.testplugin.TestPlugin"
             name: "test-plugin"
             version: "1.0"
+            api-version: "1.16"
             commands:
               "퀘스트":
                 description: "퀘스트 명령어 입니다."
@@ -206,6 +217,7 @@ class MergePluginMetaSpec extends PluginSpecification {
             main: "com.example.testplugin.SourceValue"
             name: "SourceValue"
             version: "1.2"
+            api-version: "1.16"
         """.stripIndent().trim()
     }
 }
