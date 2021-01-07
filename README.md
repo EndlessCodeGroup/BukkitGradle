@@ -13,7 +13,7 @@ Gradle utilities for easier writing Bukkit plugins.
 - [Running Dev server](#running-dev-server)
   - [Dev server configuration](#dev-server-configuration)
 - [Migration Guide](#migration-guide)
-  - [Update to 0.9](#update-to-09)
+  - [Update to 0.9.0](#update-to-090)
 - [License](#license)
 
 <!-- END doctoc generated TOC please keep comment here to allow auto update -->
@@ -40,7 +40,7 @@ Gradle utilities for easier writing Bukkit plugins.
 #### With new plugins mechanism
 ```kotlin
 plugins {
-  id("ru.endlesscode.bukkitgradle") version "0.9"
+  id("ru.endlesscode.bukkitgradle") version "0.9.0"
 }
 ```
 
@@ -51,7 +51,7 @@ buildscript {
     jcenter()
   }
   dependencies {
-    classpath("gradle.plugin.ru.endlesscode:bukkit-gradle:0.9")
+    classpath("gradle.plugin.ru.endlesscode:bukkit-gradle:0.9.0")
   }
 }
 
@@ -62,7 +62,7 @@ apply(plugin: "ru.endlesscode.bukkitgradle")
 Simple `build.gradle` file that use BukkitGradle:
 ```kotlin
 plugins {
-    id("ru.endlesscode.bukkitgradle") version "0.9"
+    id("ru.endlesscode.bukkitgradle") version "0.9.0"
 }
  
 // Project information
@@ -225,7 +225,7 @@ EULA and online-mode settings in `build.gradle` always rewrites settings in `eul
 
 ## Migration Guide
 
-### Update to 0.9
+### Update to 0.9.0
 
 1. Update gradle to 6.6 or newer:
    ```shell

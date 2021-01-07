@@ -1,4 +1,6 @@
-## Unreleased
+## [Unreleased]
+
+## [0.9.0] - 2020-01-08
 
 ### Reworked tasks hierarchy
 
@@ -83,3 +85,6 @@ now it is friendly to Kotlin DSL.
 [tca]: https://docs.gradle.org/current/userguide/task_configuration_avoidance.html
 [uptodate]: https://docs.gradle.org/current/userguide/more_about_tasks.html#sec:up_to_date_checks
 [vault]: https://github.com/MilkBowl/VaultAPI
+
+[unreleased]: https://github.com/EndlessCodeGroup/BukkitGradle/compare/0.9.0...develop
+[0.9.0]: https://github.com/EndlessCodeGroup/BukkitGradle/compare/0.8.2...0.9.0
