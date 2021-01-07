@@ -234,4 +234,33 @@ class MergePluginMetaSpec extends PluginSpecification {
             api-version: "1.16"
         """.stripIndent().trim()
     }
+
+    void 'when merge meta - and there are conflicting fields in source and in build script - should prefer values from build script'() {
+        given: "source meta file with extra fields"
+        sourceMetaFile << """
+            name: SourceValue
+            version: 1.2
+        """.stripIndent()
+
+        and: "conflicting gields in build script"
+        buildFile << """
+            bukkit {
+                meta {
+                    name.set("BuildscriptValue")
+                    version.set("1.3")
+                }
+            }
+        """.stripIndent()
+
+        when: "run processResources"
+        run(TASK_PATH, "--stacktrace")
+
+        then: "should write meta and prefer source fields"
+        metaFile.text == """\
+            main: "com.example.testplugin.BuildscriptValue"
+            name: "BuildscriptValue"
+            version: "1.3"
+            api-version: "1.16"
+        """.stripIndent().trim()
+    }
 }
