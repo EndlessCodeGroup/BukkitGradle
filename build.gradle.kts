@@ -29,6 +29,7 @@ repositories {
 dependencies {
     implementation("de.undercouch:gradle-download-task:4.1.1")
     implementation("org.jetbrains.kotlinx:kotlinx-serialization-json:1.0.1")
+    implementation("com.charleskorn.kaml:kaml:0.26.0")
     testImplementation("junit:junit:4.13")
     testImplementation(platform("org.spockframework:spock-bom:2.0-M2-groovy-2.5"))
     testImplementation("org.spockframework:spock-core")

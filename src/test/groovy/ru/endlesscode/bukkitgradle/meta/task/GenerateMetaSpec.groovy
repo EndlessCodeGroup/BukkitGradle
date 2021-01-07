@@ -35,10 +35,10 @@ class GenerateMetaSpec extends PluginSpecification {
 
         and: "meta file content corresponds to default config"
         metaFile.text == """\
-            name: test-plugin
-            main: com.example.testplugin.TestPlugin
-            version: 1.0
-        """.stripIndent()
+            main: "com.example.testplugin.TestPlugin"
+            name: "test-plugin"
+            version: "1.0"
+        """.stripIndent().trim()
     }
 
     def 'when generate meta - and generate it again - should skip second task run'() {
@@ -73,41 +73,11 @@ class GenerateMetaSpec extends PluginSpecification {
 
         and: "meta generated with new description"
         metaFile.text == """\
-            name: test-plugin
-            description: Plugin can has description
-            main: com.example.testplugin.TestPlugin
-            version: 1.0
-        """.stripIndent()
-    }
-
-    void 'when generate meta - and there is filled meta file - should keep only unsupported lines in the file'() {
-        given: "filled meta file"
-        sourceMetaFile << """
-            name: TestPlugin
-            description: Test plugin description
-            version: 0.1
-
-            main: com.example.plugin.Plugin
-            author: OsipXD
-            website: www.example.com
-
-            depend: [Vault, ProtocolLib]
-            command:
-              example
-        """.stripIndent()
-
-        when: "run processResources"
-        run(TASK_PATH)
-
-        then: "the task is successful"
-        taskOutcome(TASK_PATH) == TaskOutcome.SUCCESS
-
-        and: "should keep only unsupported lines in source file"
-        sourceMetaFile.text == """\
-            depend: [Vault, ProtocolLib]
-            command:
-              example
-        """.stripIndent()
+            main: "com.example.testplugin.TestPlugin"
+            name: "test-plugin"
+            description: "Plugin can has description"
+            version: "1.0"
+        """.stripIndent().trim()
     }
 
     void 'when generate meta - and all properties configured - should write all lines'() {
@@ -134,13 +104,13 @@ class GenerateMetaSpec extends PluginSpecification {
 
         and: "should write all lines"
         metaFile.text == """\
-            name: TestPlugin
-            description: Test plugin description
-            main: com.example.plugin.Plugin
-            version: 0.1
-            website: http://www.example.com/
-            authors: [OsipXD, Contributors]
-        """.stripIndent()
+            main: "com.example.plugin.Plugin"
+            name: "TestPlugin"
+            description: "Test plugin description"
+            version: "0.1"
+            authors: ["OsipXD", "Contributors"]
+            website: "http://www.example.com/"
+        """.stripIndent().trim()
     }
 
     void 'when generate meta - and all properties configured old way - should write all lines'() {
@@ -167,21 +137,25 @@ class GenerateMetaSpec extends PluginSpecification {
 
         and: "should write all lines"
         metaFile.text == """\
-            name: TestPlugin
-            description: Test plugin description
-            main: com.example.plugin.Plugin
-            version: 0.1
-            website: http://www.example.com/
-            authors: [OsipXD, Contributors]
-        """.stripIndent()
+            main: "com.example.plugin.Plugin"
+            name: "TestPlugin"
+            description: "Test plugin description"
+            version: "0.1"
+            authors: ["OsipXD", "Contributors"]
+            website: "http://www.example.com/"
+        """.stripIndent().trim()
     }
 
     void 'when generate meta - and there are extra fields in source - should write all lines'() {
         given: "source meta file with extra fields"
         sourceMetaFile << """
             depend: [Vault, ProtocolLib]
-            command:
-              example
+            commands:
+              example:
+                description: Just a command
+            permissions:
+              example.foo:
+                description: My foo permission
         """.stripIndent()
 
         when: "run processResources"
@@ -192,13 +166,17 @@ class GenerateMetaSpec extends PluginSpecification {
 
         and: "should write meta with the extra fields"
         metaFile.text == """\
-            name: test-plugin
-            main: com.example.testplugin.TestPlugin
-            version: 1.0
-            depend: [Vault, ProtocolLib]
-            command:
-              example
-        """.stripIndent()
+            main: "com.example.testplugin.TestPlugin"
+            name: "test-plugin"
+            version: "1.0"
+            depend: ["Vault", "ProtocolLib"]
+            commands:
+              "example":
+                description: "Just a command"
+            permissions:
+              "example.foo":
+                description: "My foo permission"
+        """.stripIndent().trim()
     }
 
     // BukkitGradle-26
@@ -222,12 +200,12 @@ class GenerateMetaSpec extends PluginSpecification {
 
         and:
         metaFile.text == """\
-            name: test-plugin
-            main: com.example.testplugin.TestPlugin
-            version: 1.0
+            main: "com.example.testplugin.TestPlugin"
+            name: "test-plugin"
+            version: "1.0"
             commands:
-              퀘스트:
-                description: 퀘스트 명령어 입니다.
-        """.stripIndent()
+              "퀘스트":
+                description: "퀘스트 명령어 입니다."
+        """.stripIndent().trim()
     }
 }
