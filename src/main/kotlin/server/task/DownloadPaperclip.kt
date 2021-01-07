@@ -1,8 +1,9 @@
 package ru.endlesscode.bukkitgradle.server.task
 
 import de.undercouch.gradle.tasks.download.Download
-import groovy.json.JsonSlurper
-import org.codehaus.groovy.runtime.InvokerHelper
+import kotlinx.serialization.Serializable
+import kotlinx.serialization.decodeFromString
+import kotlinx.serialization.json.Json
 import org.gradle.api.model.ObjectFactory
 import org.gradle.api.provider.Property
 import org.gradle.api.provider.Provider
@@ -26,9 +27,6 @@ public open class DownloadPaperclip @Inject constructor(objects: ObjectFactory) 
     @OutputFile
     public val paperclipFile: Provider<File> = project.provider { outputFiles.single() }
 
-    private val Any.versions: Map<*, *>
-        get() = InvokerHelper.getProperty(this, "versions") as Map<*, *>
-
     init {
         group = TASKS_GROUP_BUKKIT
         description = "Download paperclip"
@@ -43,9 +41,8 @@ public open class DownloadPaperclip @Inject constructor(objects: ObjectFactory) 
             throw StopExecutionException()
         }
 
-        val jsonObject = JsonSlurper().parse(versionsFile)
-        val versionsUrls = jsonObject.versions
-        val paperUrl = versionsUrls[version] as? String
+        val versionsUrls = Json.decodeFromString<PaperVersions>(versionsFile.readText()).versions
+        val paperUrl = versionsUrls[version]
         if (paperUrl == null) {
             project.logger.warn(
                 """
@@ -58,4 +55,10 @@ public open class DownloadPaperclip @Inject constructor(objects: ObjectFactory) 
 
         return paperUrl
     }
+
+    @Serializable
+    private data class PaperVersions(
+        val latest: String,
+        val versions: Map<String, String>
+    )
 }
