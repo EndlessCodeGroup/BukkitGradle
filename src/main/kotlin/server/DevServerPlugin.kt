@@ -55,12 +55,15 @@ public class DevServerPlugin : Plugin<Project> {
 
         val generateRunningScript = registerGenerateRunningScriptTask(serverDir)
         val prepareServer = registerPrepareServerTask(copyServerCore, serverDir)
-        registerRunServerTask(generateRunningScript, prepareServer)
+        registerRunServerTask(prepareServer, serverDir)
 
         registerBuildIdeRunTask(serverDir)
     }
 
-    private fun registerBuildServerCoreTask(buildToolsDir: Provider<File>, coreVersion: Provider<String>): TaskProvider<BuildServerCore> {
+    private fun registerBuildServerCoreTask(
+        buildToolsDir: Provider<File>,
+        coreVersion: Provider<String>
+    ): TaskProvider<BuildServerCore> {
         val downloadBuildTools = tasks.register<Download>("downloadBuildTools") {
             group = TASKS_GROUP_BUKKIT
             description = "Download BuildTools"
@@ -148,11 +151,13 @@ public class DevServerPlugin : Plugin<Project> {
     }
 
     private fun registerRunServerTask(
-        generateRunningScript: TaskProvider<GenerateRunningScript>,
-        prepareServer: TaskProvider<PrepareServer>
+        prepareServer: TaskProvider<PrepareServer>,
+        serverDir: Provider<Directory>
     ) {
         tasks.register<RunServer>("runServer") {
-            scriptFile.set(generateRunningScript.map { it.scriptFile.get().asFile })
+            workingDir(serverDir)
+            jvmArgs = serverConfiguration.buildJvmArgs().split(" ")
+            bukkitArgs = serverConfiguration.bukkitArgs.split(" ")
             dependsOn(prepareServer)
         }
     }
