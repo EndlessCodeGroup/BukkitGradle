@@ -12,11 +12,14 @@ import ru.endlesscode.bukkitgradle.server.extension.ServerConfigurationImpl
 
 // TODO 1.0: Remove deprecated fields on release
 public open class BukkitExtension(
-    public override val meta: PluginMetaImpl,
-    public override val server: ServerConfigurationImpl
+    public final override val meta: PluginMetaImpl,
+    public final override val server: ServerConfigurationImpl
 ) : Bukkit {
 
-    public override var apiVersion: String = ServerConstants.DEFAULT_VERSION
+    public final override var apiVersion: String = ServerConstants.DEFAULT_VERSION
+
+    public final override var generateMeta: Boolean = true
+        private set
 
     private val logger = LoggerFactory.getLogger("BukkitExtension")
 
@@ -53,6 +56,11 @@ public open class BukkitExtension(
     public fun setVersion(version: String) {
         logger.warnSyntaxChanged("bukkit.version = '...'", "bukkit.apiVersion = '...'")
         apiVersion = version
+    }
+
+    /** Disabled plugin.yml generation. */
+    public fun disableMetaGeneration() {
+        generateMeta = false
     }
 }
 

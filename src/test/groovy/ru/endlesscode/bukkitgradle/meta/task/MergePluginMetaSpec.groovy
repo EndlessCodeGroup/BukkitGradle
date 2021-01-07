@@ -33,6 +33,20 @@ class MergePluginMetaSpec extends PluginSpecification {
         taskOutcome(":parsePluginMetaFile") == TaskOutcome.SUCCESS
     }
 
+    def 'when run processResources - and meta generation disabled - should not run generatePluginMeta'() {
+        given: "meta generation disabled"
+        buildFile << "bukkit.disableMetaGeneration()"
+
+        when: "run processResources"
+        run(':processResources')
+
+        then: "task generatePluginMeta completed successfully"
+        taskOutcome(TASK_PATH) == TaskOutcome.SKIPPED
+
+        and: "task generatePluginMeta completed successfully"
+        taskOutcome(":parsePluginMetaFile") == TaskOutcome.SKIPPED
+    }
+
     def 'when merge meta - should generate default plugin meta successfully'() {
         when: "run generate meta task"
         run(TASK_PATH)

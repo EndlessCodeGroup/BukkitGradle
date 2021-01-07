@@ -49,6 +49,18 @@ bukkit {
 }
 ```
 
+### Smarter plugin.yml generation
+
+BukkitGradle will not "eat" your existing plugin.yml file.
+Its content will be used if you've not configured `bukkit.meta` in BukkitGradle.
+
+If you don't want plugin.yml generation at all, you can disable it:
+```kotlin
+bukkit {
+    disableMetaGeneration()
+}
+```
+
 ### Re-written in Kotlin
 The plugin has been converted to Kotlin to make support easier.
 The plugin still can be configured with Groovy DSL but
