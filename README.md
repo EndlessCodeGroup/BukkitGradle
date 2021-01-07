@@ -6,11 +6,15 @@ Gradle utilities for easier writing Bukkit plugins.
 <!-- DON'T EDIT THIS SECTION, INSTEAD RE-RUN doctoc TO UPDATE -->
 
 
-- [Apply plugin](#apply-plugin)
+- [Installation](#installation)
   - [First steps](#first-steps)
-  - [Configuring plugin](#configuring-plugin)
-  - [Repositories and Dependencies](#repositories-and-dependencies)
-  - [Running Dev server](#running-dev-server)
+- [Configuration](#configuration)
+- [Repositories and Dependencies](#repositories-and-dependencies)
+- [Running Dev server](#running-dev-server)
+  - [Dev server configuration](#dev-server-configuration)
+- [Migration Guide](#migration-guide)
+  - [Update to 0.9](#update-to-09)
+- [License](#license)
 
 <!-- END doctoc generated TOC please keep comment here to allow auto update -->
 
@@ -29,14 +33,14 @@ Gradle utilities for easier writing Bukkit plugins.
 #### TODO:
 - Add smart dependency system
 
-## Apply plugin
+## Installation
 [BukkitGradle on plugins.gradle.org](https://plugins.gradle.org/plugin/ru.endlesscode.bukkitgradle)
 > **Note:** Gradle 6.6+ required
 
 #### With new plugins mechanism
-```groovy
+```kotlin
 plugins {
-  id "ru.endlesscode.bukkitgradle" version "0.9"
+  id("ru.endlesscode.bukkitgradle") version "0.9"
 }
 ```
 
@@ -47,16 +51,16 @@ buildscript {
     jcenter()
   }
   dependencies {
-    classpath "gradle.plugin.ru.endlesscode:bukkit-gradle:0.9"
+    classpath("gradle.plugin.ru.endlesscode:bukkit-gradle:0.9")
   }
 }
 
-apply plugin: "ru.endlesscode.bukkitgradle"
+apply(plugin: "ru.endlesscode.bukkitgradle")
 ```
 
 ### First steps
 Simple `build.gradle` file that use BukkitGradle:
-```groovy
+```kotlin
 plugins {
     id("ru.endlesscode.bukkitgradle") version "0.9"
 }
@@ -86,9 +90,9 @@ api-version: 1.16
 ```
 > **Note:** Main class built by following pattern: `<groupId>.<name>`
 
-### Configuring plugin
+## Configuration
 You can configure attributes that will be placed to `plugin.yml`:
-```groovy
+```kotlin
 // Override default configurations
 bukkit {
     // Version of API (if you will not set this property, will be used latest version at moment of BukkitGradle release)
@@ -120,7 +124,7 @@ authors: [OsipXD, Contributors]
 If you want to add unsupported by BukkitGradle attributes, like a `depend`, `commands` etc.
 Create `plugin.yml` file and put custom attributes there.
 
-### Repositories and Dependencies
+## Repositories and Dependencies
 BukkitGradle provides short extension-functions to add common repositories and dependencies.
 There are list of its.
 
@@ -135,7 +139,7 @@ dependencies {
 }
 ```
 
-##### Repositories:
+#### Repositories:
  Name           | Url
 ----------------|-------------------------------------------------------------------
  spigot         | https://hub.spigotmc.org/nexus/content/repositories/snapshots/
@@ -147,7 +151,7 @@ dependencies {
  placeholderapi | https://repo.extendedclip.com/content/repositories/placeholderapi/
  aikar          | https://repo.aikar.co/content/groups/aikar/
 
-##### Dependencies:
+#### Dependencies:
 Some dependencies also applies repo needed for them.
 
  Name        | Signature                                     | Applies repo
@@ -159,9 +163,9 @@ Some dependencies also applies repo needed for them.
  
  **Note:** `$apiVersion` - is `${version}-R0.1-SNAPSHOT` (where `$version` is `bukkit.version`)
 
-If you need more extension-functions, [create issue](https://github.com/EndlessCodeGroup/BukkitGradle/issues/new).
+If you need more extension-functions, [create issue][issue].
 
-### Running Dev server
+## Running Dev server
 Before running server you should configure dev server location.
 
 You can define it in `local.properties` file (that was automatically created in project directory on refresh):
@@ -182,17 +186,17 @@ If there no BuildTools.jar it will be automatically downloaded.
 > Specify environment variables `BUKKIT_DEV_SERVER_HOME` 
 and `BUKKIT_BUILDTOOLS_HOME`.
 
-##### On IntelliJ IDEA
+#### On IntelliJ IDEA
 Run `:buildIdeaRun` task.
 Run Configuration will be added to your IDE.
 It will be automatically refreshed when you change server configurations.
 
 ![Run Configuration](http://image.prntscr.com/image/1a12a03b8ac54fccb7d5b70a335fa996.png)
 
-##### On other IDEs
+#### On other IDEs
 Run `:runServer` task.
 
-#### Dev server configuration
+### Dev server configuration
 To accept EULA and change settings use `bukkit.server` section:
 ```groovy
 bukkit {
@@ -218,3 +222,72 @@ bukkit {
 }
 ```
 EULA and online-mode settings in `build.gradle` always rewrites settings in `eula.txt` and `server.properties`
+
+## Migration Guide
+
+### Update to 0.9
+
+1. Update gradle to 6.6 or newer:
+   ```shell
+   $ ./gradlew wrapper --gradle-version 6.7.1
+   ```
+1. Use syntax `.set` in `bukkit.meta` instead of `=`:
+   ```diff
+   bukkit {
+       meta {
+   -        desctiption = "My plugin's description"
+   +        description.set("My plugin's description")
+       }
+   }
+   ```
+1. Use `bukkit.apiVersion` instead of `bukkit.version`:
+   ```diff
+   bukkit {
+   -   version = "1.16.4"
+   +   apiVersion = "1.16.4"
+   }
+   ```
+1. Use `build.server` block instead of `build.run`:
+   ```diff
+   bukkit {
+   -   run {
+   +   server {
+           core = "paper"
+       }
+   }
+   ```
+1. Update arguments assignment syntax:
+   ```diff
+   bukkit {
+       server {
+   -       jvmArgs = "-Xmx2G -Xms512M"
+   +       jvmArgs = ["-Xmx2G", "-Xms512M"]
+   +       //or jvmArgs("-Xms512M") if you don't want to override defaults
+       }
+   }
+   ```
+1. Replace removed APIs:
+   ```diff
+   repositories {
+   -   destroystokyo()
+   +   papermc()
+
+   -   vault()
+   +   jitpack()
+   }
+   
+   dependencies {
+   -   compileOnly(craftbikkit())
+   +   compileOnly(spigot())
+   }
+   ```
+1. Remove `q` and `qq` functions calls in `meta { ... }`
+1. Check generated plugin.yml contents after build.
+   
+If there are any problems, [create an issue][issue].
+
+## License
+
+[MIT](LICENSE) (c) 2020 EndlessCode Group
+
+[issue]: https://github.com/EndlessCodeGroup/BukkitGradle/issues/new

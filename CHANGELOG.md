@@ -20,9 +20,6 @@ bukkit {
 }
 ```
 
-### run -> server
-`bukkit.run` renamed to `bukkit.server`. The old name is deprecated
-
 ### Improved Bukkit version management
 
 Field `bukkit.version` is deprecated now, you should use `bukkit.apiVersion` instead.
@@ -73,10 +70,11 @@ now it is friendly to Kotlin DSL.
 - Removed repository extension `RepositoryHandler.vault()`, use `RepositoryHandler.jitpack()` instead and read [VaultAPI README][vault]
 
 ### Changed
+- `bukkit.run` renamed to `bukkit.server`. The old name is deprecated
 - Add `nogui` argument by default to `bukkitArgs`
 - Type of properties `server.jvmArgs` and `server.bukkitArgs` changed from `String` to `List<String>`.
   It makes it easier to add arguments without overriding defaults
-- Default main class pattern changed from `<groupId>.<lowercased name>.<name>` to `<groupId>.<name>` 
+- Default main class pattern changed from `<groupId>.<lowercased name>.<name>` to `<groupId>.<name>`
 
 ### Housekeeping
 - Default bukkit version now is 1.16.4
