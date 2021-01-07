@@ -12,5 +12,5 @@ public interface ServerConfiguration {
     public val coreType: CoreType
 
     /** Returns arguments for JVM. */
-    public fun buildJvmArgs(): List<String>
+    public fun buildJvmArgs(debug: Boolean = this.debug): List<String>
 }

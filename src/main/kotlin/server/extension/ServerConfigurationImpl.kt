@@ -48,7 +48,7 @@ public class ServerConfigurationImpl : ServerConfiguration {
         bukkitArgs = bukkitArgs + args.toList()
     }
 
-    override fun buildJvmArgs(): List<String> {
+    override fun buildJvmArgs(debug: Boolean): List<String> {
         return listOfNotNull(DEBUG_ARGS.takeIf { debug }, "-Dfile.encoding=$encoding") + javaArgs
     }
 

@@ -157,6 +157,8 @@ public class DevServerPlugin : Plugin<Project> {
         tasks.register<CreateIdeaJarRunConfiguration>("buildIdeaRun") {
             configurationName.set("${project.name}: Run server")
             beforeRunTask.set("prepareServer")
+            vmParameters.set(serverConfiguration.buildJvmArgs(debug = false))
+            programParameters.set(serverConfiguration.bukkitArgs)
             configurationsDir.set(project.rootProject.layout.projectDirectory.dir(".idea/runConfigurations"))
             jarPath.set(serverDir.map { it.file(ServerConstants.FILE_CORE).asFile })
         }
