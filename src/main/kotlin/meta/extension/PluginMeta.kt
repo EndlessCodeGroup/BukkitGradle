@@ -21,19 +21,13 @@ public interface PluginMeta {
 
     @get:Optional
     @get:Input
+    public val apiVersion: Provider<String>
+
+    @get:Optional
+    @get:Input
     public val url: Provider<String>
 
     @get:Optional
     @get:Input
     public val authors: Provider<List<String>>
 }
-
-internal val PluginMeta.items: Map<String, Provider<*>>
-    get() = mapOf(
-        "name" to name,
-        "description" to description,
-        "main" to main,
-        "version" to version,
-        "website" to url,
-        "authors" to authors
-    )

@@ -13,4 +13,7 @@ public interface Bukkit {
 
     /** Bukkit version. */
     public val apiVersion: String
+
+    /** Plugin Meta generation enabled. */
+    public val generateMeta: Boolean
 }

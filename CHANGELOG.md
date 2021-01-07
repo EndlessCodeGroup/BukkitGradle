@@ -37,20 +37,46 @@ bukkit {
 ```
 If `bukkit.server.version` is not specified, will be used `bukkit.apiVersion` for server.
 
+Now, BukkitGradle adds `api-version` field to `plugin.yml`.
+It will be parsed from `bukkit.apiVersion` but you can override it with `bukkit.meta.apiVersion` if need:
+```kotlin
+bukkit {
+    apiVersion = "1.16.4" // Inferred api-version is 1.16
+    
+    meta {
+        apiVersion.set("1.13") // But here you can override it
+    }
+}
+```
+
+### Smarter plugin.yml generation
+
+BukkitGradle will not "eat" your existing plugin.yml file.
+Its content will be used if you've not configured `bukkit.meta` in BukkitGradle.
+
+If you don't want plugin.yml generation at all, you can disable it:
+```kotlin
+bukkit {
+    disableMetaGeneration()
+}
+```
+
 ### Re-written in Kotlin
 The plugin has been converted to Kotlin to make support easier.
 The plugin still can be configured with Groovy DSL but
 now it is friendly to Kotlin DSL.
 
 ### Removed
-- Task `:rebuildServerCore`, use `:buildServerCore --rerun-tasks` instead
-- Extension `DependencyHandler.craftbukkit()`, use `DependencyHandler.spigot()` instead
-- Automatic `mavenLocal()` apply, you should apply it manually if you need it
+- Removed task `:rebuildServerCore`, use `:buildServerCore --rerun-tasks` instead
+- Removed extension `DependencyHandler.craftbukkit()`, use `DependencyHandler.spigot()` instead
+- Removed automatic `mavenLocal()` apply, you should apply it manually if you need it
+- Removed repository extension `RepositoryHandler.vault()`, use `RepositoryHandler.jitpack()` instead and read [VaultAPI README][vault]
 
 ### Changed
 - Add `nogui` argument by default to `bukkitArgs`
 - Type of properties `server.jvmArgs` and `server.bukkitArgs` changed from `String` to `List<String>`.
   It makes it easier to add arguments without overriding defaults
+- Default main class pattern changed from `<groupId>.<lowercased name>.<name>` to `<groupId>.<name>` 
 
 ### Housekeeping
 - Default bukkit version now is 1.16.4
@@ -58,3 +84,4 @@ now it is friendly to Kotlin DSL.
 
 [tca]: https://docs.gradle.org/current/userguide/task_configuration_avoidance.html
 [uptodate]: https://docs.gradle.org/current/userguide/more_about_tasks.html#sec:up_to_date_checks
+[vault]: https://github.com/MilkBowl/VaultAPI

@@ -32,7 +32,7 @@ Gradle utilities for easier writing Bukkit plugins.
 
 ## Apply plugin
 [BukkitGradle on plugins.gradle.org](https://plugins.gradle.org/plugin/ru.endlesscode.bukkitgradle)
-> **NOTE:** Gradle 5.0+ required
+> **Note:** Gradle 6.6+ required
 
 #### With new plugins mechanism
 ```groovy
@@ -66,7 +66,7 @@ plugins {
 }
  
 // Project information
-group = "com.example"
+group = "com.example.myplugin"
 description = "My first Bukkit plugin with Gradle"
 version = "0.1"
 
@@ -76,23 +76,27 @@ dependencies {
     // see section 'Dependencies' for more info
 }
 ```
-`compileOnly` - it's like provided scope in Maven. It means that this dependncy will not included to your final jar.
-It's enough! Will be hooked latest version of Bukkit and automatically generated `plugin.yml` with next content:
+> **Note:** `compileOnly` - it's like `provided` scope in Maven.
+It means that this dependency will not be included to your final jar.
+
+It's enough!
+Will be hooked the latest version of Bukkit and automatically generated `plugin.yml` with next content:
 ```yaml
 name: MyPlugin
 description: My first Bukkit plugin with Gradle
 main: com.example.myplugin.MyPlugin
 version: 0.1
+api-version: 1.16
 ```
-Main class build by pattern: `<groupId>.<lower case name>.<name>`
+> **Note:** Main class built by following pattern: `<groupId>.<name>`
 
 ### Configuring plugin
 You can configure attributes that will be placed to `plugin.yml`:
 ```groovy
 // Override default configurations
 bukkit {
-    // Version of API (if you will not set this property, will be used latest available)
-    version = "1.12.2"
+    // Version of API (if you will not set this property, will be used latest version at moment of BukkitGradle release)
+    apiVersion = "1.15.2"
  
     // Attributes for plugin.yml
     meta {
@@ -106,39 +110,19 @@ bukkit {
 }
 ```
 
-Will be generated next `plugin.yml` file:
+Will be generated `plugin.yml` file:
 ```yaml
 name: MyPlugin
 description: My amazing plugin, that doing nothing
 main: com.example.plugin.MyPlugin
 version: 1.0
+api-version: 1.15
 website: http://www.example.com
 authors: [OsipXD, Contributors]
 ```
 
-Also you can add custom (unsupported by BukkitGradle) attributes like a `depend` etc.
-Just create `plugin.yml` file and put custom attributes into.
-
-#### Quotes around values
-In some cases you may need put meta value in quotes. For this you can use `q` and `qq` functions.
-
-For example, we have meta:
-```groovy
-meta {
-    name.set(qq("Double Quoted Name"))
-    description.set(q("Single quoted description"))
-    url.set("http://without.quot.es/")
-}
-```
-
-And will be generated:
-```yaml
-name: "Double Quoted Name"
-description: 'Single quoted description'
-website: http://without.quot.es/
-```
-
-**Note:** In Groovy you can use functions in two ways: normal - `q("value")` and without braces - `q "value"`
+If you want to add unsupported by BukkitGradle attributes, like a `depend`, `commands` etc.
+Create `plugin.yml` file and put custom attributes there.
 
 ### Repositories and Dependencies
 BukkitGradle provides short extension-functions to add common repositories and dependencies.
@@ -158,13 +142,13 @@ dependencies {
 ##### Repositories:
  Name           | Url
 ----------------|-------------------------------------------------------------------
- spigot         | https://hub.spigotmc.org/nexus/content/repositories/snapshots/   
- sk98q          | http://maven.sk89q.com/repo/                                     
- destroystokyo  | https://repo.destroystokyo.com/repository/maven-public/ 
- dmulloy2       | http://repo.dmulloy2.net/nexus/repository/public/
- md5            | http://repo.md-5.net/content/groups/public/
- vault          | http://nexus.hc.to/content/repositories/pub_releases/
- placeholderapi | http://repo.extendedclip.com/content/repositories/placeholderapi/
+ spigot         | https://hub.spigotmc.org/nexus/content/repositories/snapshots/
+ sk98q          | https://maven.sk89q.com/repo/
+ papermc        | https://papermc.io/repo/repository/maven-public/
+ dmulloy2       | https://repo.dmulloy2.net/nexus/repository/public/
+ md5            | https://repo.md-5.net/content/groups/public/
+ jitpack        | https://jitpack.io/
+ placeholderapi | https://repo.extendedclip.com/content/repositories/placeholderapi/
  aikar          | https://repo.aikar.co/content/groups/aikar/
 
 ##### Dependencies:
@@ -198,17 +182,19 @@ buildtools.dir=/path/to/buildtools/
 ```
 If there no BuildTools.jar it will be automatically downloaded.
 
-**TIP:** you can define it globally (for all projects that uses BukkitGradle) with environment variables `BUKKIT_DEV_SERVER_HOME` 
+> **Tip:** you can define it globally, for all projects that uses BukkitGradle.
+> Specify environment variables `BUKKIT_DEV_SERVER_HOME` 
 and `BUKKIT_BUILDTOOLS_HOME`.
 
 ##### On IntelliJ IDEA
-Run `:buildIdeaRun` task. To your IDE will be added Run Configuration that will dynamically refreshes when you change 
-server configurations.
+Run `:buildIdeaRun` task.
+Run Configuration will be added to your IDE.
+It will be automatically refreshed when you change server configurations.
 
 ![Run Configuration](http://image.prntscr.com/image/1a12a03b8ac54fccb7d5b70a335fa996.png)
 
 ##### On other IDEs
-Run `:startServer` task.
+Run `:runServer` task.
 
 #### Dev server configuration
 To accept EULA and change settings use `bukkit.server` section:
@@ -218,6 +204,8 @@ bukkit {
     server {
         // Core type. It can be 'spigot' or 'paper'
         core = "spigot"
+        // Server version
+        version = "1.16.4" // If not specified, apiVersion will be used
         // Accept EULA
         eula = false
         // Set online-mode flag

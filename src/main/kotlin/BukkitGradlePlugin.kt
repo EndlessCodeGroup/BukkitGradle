@@ -48,6 +48,7 @@ public class BukkitGradlePlugin : Plugin<Project> {
             description.convention(provider { project.description })
             main.convention(name.map { "${project.group}.${StringUtils.toPascalCase(it)}" })
             version.convention(provider { project.version.toString() })
+            apiVersion.convention(provider { StringUtils.parseApiVersion(bukkit.apiVersion) })
             url.convention(provider { findProperty("url")?.toString() })
         }
     }

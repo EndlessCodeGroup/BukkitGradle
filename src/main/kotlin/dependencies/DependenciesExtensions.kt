@@ -5,12 +5,12 @@ import org.gradle.api.artifacts.dsl.RepositoryHandler
 import org.gradle.api.artifacts.repositories.MavenArtifactRepository
 import ru.endlesscode.bukkitgradle.dependencies.Dependencies.URL_AIKAR
 import ru.endlesscode.bukkitgradle.dependencies.Dependencies.URL_DMULLOY2
+import ru.endlesscode.bukkitgradle.dependencies.Dependencies.URL_JITPACK
 import ru.endlesscode.bukkitgradle.dependencies.Dependencies.URL_MD5
 import ru.endlesscode.bukkitgradle.dependencies.Dependencies.URL_PAPERMC
 import ru.endlesscode.bukkitgradle.dependencies.Dependencies.URL_PLACEHOLDERAPI
 import ru.endlesscode.bukkitgradle.dependencies.Dependencies.URL_SK89Q
 import ru.endlesscode.bukkitgradle.dependencies.Dependencies.URL_SPIGOT
-import ru.endlesscode.bukkitgradle.dependencies.Dependencies.URL_VAULT
 import ru.endlesscode.bukkitgradle.dependencies.Dependencies.addRepo
 import ru.endlesscode.bukkitgradle.dependencies.Dependencies.api
 
@@ -34,8 +34,8 @@ public fun RepositoryHandler.md5(configure: MavenArtifactRepository.() -> Unit =
     addRepo("md5", URL_MD5, configure)
 }
 
-public fun RepositoryHandler.vault(configure: MavenArtifactRepository.() -> Unit = {}) {
-    addRepo("Vault", URL_VAULT, configure)
+public fun RepositoryHandler.jitpack(configure: MavenArtifactRepository.() -> Unit = {}) {
+    addRepo("jitpack", URL_JITPACK, configure)
 }
 
 public fun RepositoryHandler.placeholderApi(configure: MavenArtifactRepository.() -> Unit = {}) {
