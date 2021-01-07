@@ -53,7 +53,6 @@ public class DevServerPlugin : Plugin<Project> {
         val downloadPaperclip = registerDownloadPaperclip(coreVersion)
         val copyServerCore = registerCopyServerCoreTask(buildServerCore, downloadPaperclip, serverDir)
 
-        val generateRunningScript = registerGenerateRunningScriptTask(serverDir)
         val prepareServer = registerPrepareServerTask(copyServerCore, serverDir)
         registerRunServerTask(prepareServer, serverDir)
 
@@ -95,14 +94,6 @@ public class DevServerPlugin : Plugin<Project> {
             paperVersionsFile.set(downloadPaperVersions.map { it.outputFiles.single() })
             version.set(coreVersion)
             dest(bukkitGradleDir)
-        }
-    }
-
-    private fun registerGenerateRunningScriptTask(serverDir: Provider<Directory>): TaskProvider<GenerateRunningScript> {
-        return project.tasks.register<GenerateRunningScript>("generateRunningScript") {
-            jvmArgs.set(serverConfiguration.buildJvmArgs())
-            bukkitArgs.set(serverConfiguration.bukkitArgs)
-            scriptDir.set(serverDir)
         }
     }
 
