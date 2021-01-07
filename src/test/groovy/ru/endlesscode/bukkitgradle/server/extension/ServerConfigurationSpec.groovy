@@ -5,52 +5,52 @@ import spock.lang.Specification
 class ServerConfigurationSpec extends Specification {
 
     // SUT
-    ServerConfigurationImpl runConfiguration
+    ServerConfigurationImpl serverConfiguration
 
     void setup() {
-        runConfiguration = new ServerConfigurationImpl()
+        serverConfiguration = new ServerConfigurationImpl()
     }
 
     void 'when build args - should return args with debug flags'() {
         when:
-        def args = runConfiguration.buildJvmArgs()
+        def args = serverConfiguration.buildJvmArgs()
 
         then:
-        "-agentlib:jdwp=transport=dt_socket,server=y,suspend=n,address=5005 -Dfile.encoding=UTF-8 -Xmx1G" == args
+        ["-agentlib:jdwp=transport=dt_socket,server=y,suspend=n,address=5005", "-Dfile.encoding=UTF-8", "-Xmx1G"] == args
     }
 
     void 'when build args - and debug disabled - should return args without debug flags'() {
         given:
-        runConfiguration.debug = false
+        serverConfiguration.debug = false
 
         when:
-        def args = runConfiguration.buildJvmArgs()
+        def args = serverConfiguration.buildJvmArgs()
 
         then:
-        "-Dfile.encoding=UTF-8 -Xmx1G" == args
+        ["-Dfile.encoding=UTF-8", "-Xmx1G"] == args
     }
 
     void 'when set existing core - should set core successfully'() {
         when:
-        runConfiguration.core = "paper"
+        serverConfiguration.core = "paper"
 
         then:
-        CoreType.PAPER == runConfiguration.coreType
+        CoreType.PAPER == serverConfiguration.coreType
     }
 
     void 'when set existing core in mixed case - should set core successfully'() {
         when:
-        runConfiguration.core = "Paper"
+        serverConfiguration.core = "Paper"
 
         then:
-        CoreType.PAPER == runConfiguration.coreType
+        CoreType.PAPER == serverConfiguration.coreType
     }
 
     void 'when set not existing core - should fallback to spigot core'() {
         when:
-        runConfiguration.core = "uber-bukkit"
+        serverConfiguration.core = "uber-bukkit"
 
         then:
-        CoreType.SPIGOT == runConfiguration.coreType
+        CoreType.SPIGOT == serverConfiguration.coreType
     }
 }

@@ -147,8 +147,8 @@ public class DevServerPlugin : Plugin<Project> {
     ) {
         tasks.register<RunServer>("runServer") {
             workingDir(serverDir)
-            jvmArgs = serverConfiguration.buildJvmArgs().split(" ")
-            bukkitArgs = serverConfiguration.bukkitArgs.split(" ")
+            jvmArgs = serverConfiguration.buildJvmArgs()
+            bukkitArgs = serverConfiguration.bukkitArgs
             dependsOn(prepareServer)
         }
     }
