@@ -20,7 +20,7 @@ internal object Dependencies {
     const val URL_PAPERMC = "https://papermc.io/repo/repository/maven-public/"
     const val URL_DMULLOY2 = "https://repo.dmulloy2.net/nexus/repository/public/"
     const val URL_MD5 = "https://repo.md-5.net/content/groups/public/"
-    const val URL_VAULT = "http://nexus.hc.to/content/repositories/pub_releases/"
+    const val URL_JITPACK = "https://jitpack.io"
     const val URL_PLACEHOLDERAPI = "https://repo.extendedclip.com/content/repositories/placeholderapi/"
     const val URL_AIKAR = "https://repo.aikar.co/content/groups/aikar/"
 
@@ -46,7 +46,7 @@ internal object Dependencies {
         repoExtra["papermc"] = closureOf<Any?> { repoHandler.addRepo("PaperMC", URL_PAPERMC) }
         repoExtra["dmulloy2"] = closureOf<Any?> { repoHandler.addRepo("dmulloy2", URL_DMULLOY2) }
         repoExtra["md5"] = closureOf<Any?> { repoHandler.addRepo("md5", URL_MD5) }
-        repoExtra["vault"] = closureOf<Any?> { repoHandler.addRepo("Vault", URL_VAULT) }
+        repoExtra["jitpack"] = closureOf<Any?> { repoHandler.addRepo("jitpack", URL_JITPACK) }
         repoExtra["placeholderapi"] = closureOf<Any?> { repoHandler.addRepo("PlaceholderAPI", URL_PLACEHOLDERAPI) }
         repoExtra["aikar"] = closureOf<Any?> { repoHandler.addRepo("aikar", URL_AIKAR) }
 

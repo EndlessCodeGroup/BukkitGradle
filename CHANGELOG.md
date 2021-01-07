@@ -55,9 +55,10 @@ The plugin still can be configured with Groovy DSL but
 now it is friendly to Kotlin DSL.
 
 ### Removed
-- Task `:rebuildServerCore`, use `:buildServerCore --rerun-tasks` instead
-- Extension `DependencyHandler.craftbukkit()`, use `DependencyHandler.spigot()` instead
-- Automatic `mavenLocal()` apply, you should apply it manually if you need it
+- Removed task `:rebuildServerCore`, use `:buildServerCore --rerun-tasks` instead
+- Removed extension `DependencyHandler.craftbukkit()`, use `DependencyHandler.spigot()` instead
+- Removed automatic `mavenLocal()` apply, you should apply it manually if you need it
+- Removed repository extension `RepositoryHandler.vault()`, use `RepositoryHandler.jitpack()` instead and read [VaultAPI README][vault]
 
 ### Changed
 - Add `nogui` argument by default to `bukkitArgs`
@@ -71,3 +72,4 @@ now it is friendly to Kotlin DSL.
 
 [tca]: https://docs.gradle.org/current/userguide/task_configuration_avoidance.html
 [uptodate]: https://docs.gradle.org/current/userguide/more_about_tasks.html#sec:up_to_date_checks
+[vault]: https://github.com/MilkBowl/VaultAPI
