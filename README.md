@@ -7,7 +7,6 @@ Gradle utilities for easier writing Bukkit plugins.
 
 
 - [Apply plugin](#apply-plugin)
-- [Usage](#usage)
   - [First steps](#first-steps)
   - [Configuring plugin](#configuring-plugin)
   - [Repositories and Dependencies](#repositories-and-dependencies)
@@ -37,7 +36,7 @@ Gradle utilities for easier writing Bukkit plugins.
 #### With new plugins mechanism
 ```groovy
 plugins {
-  id "ru.endlesscode.bukkitgradle" version "0.8.2"
+  id "ru.endlesscode.bukkitgradle" version "0.9"
 }
 ```
 
@@ -48,21 +47,18 @@ buildscript {
     jcenter()
   }
   dependencies {
-    classpath "gradle.plugin.ru.endlesscode:bukkit-gradle:0.8.2"
+    classpath "gradle.plugin.ru.endlesscode:bukkit-gradle:0.9"
   }
 }
 
 apply plugin: "ru.endlesscode.bukkitgradle"
 ```
 
-## Usage
-You can clone [this example project](https://github.com/EndlessCodeGroup/BukkitGradle-Example) [**OUTDATED**], and use it for quick start.
-
 ### First steps
 Simple `build.gradle` file that use BukkitGradle:
 ```groovy
 plugins {
-    id("ru.endlesscode.bukkitgradle") version "0.8.2"
+    id("ru.endlesscode.bukkitgradle") version "0.9"
 }
  
 // Project information
