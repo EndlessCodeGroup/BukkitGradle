@@ -116,29 +116,8 @@ website: http://www.example.com
 authors: [OsipXD, Contributors]
 ```
 
-Also you can add custom (unsupported by BukkitGradle) attributes like a `depend` etc.
-Just create `plugin.yml` file and put custom attributes into.
-
-#### Quotes around values
-In some cases you may need put meta value in quotes. For this you can use `q` and `qq` functions.
-
-For example, we have meta:
-```groovy
-meta {
-    name.set(qq("Double Quoted Name"))
-    description.set(q("Single quoted description"))
-    url.set("http://without.quot.es/")
-}
-```
-
-And will be generated:
-```yaml
-name: "Double Quoted Name"
-description: 'Single quoted description'
-website: http://without.quot.es/
-```
-
-**Note:** In Groovy you can use functions in two ways: normal - `q("value")` and without braces - `q "value"`
+If you want to add unsupported by BukkitGradle attributes, like a `depend`, `commands` etc.
+Create `plugin.yml` file and put custom attributes there.
 
 ### Repositories and Dependencies
 BukkitGradle provides short extension-functions to add common repositories and dependencies.

@@ -56,10 +56,4 @@ public class PluginMetaImpl(objects: ObjectFactory) : PluginMeta {
         logger.warnSyntaxChanged("bukkit.meta.authors = [...]", "bukkit.meta.authors.set([...])")
         this.authors.set(authors)
     }
-
-    /** Enclose [value] in single quotes. */
-    public fun q(value: String): String = "'$value'"
-
-    /** Enclose [value] in double quotes. */
-    public fun qq(value: String): String = "\"$value\""
 }
