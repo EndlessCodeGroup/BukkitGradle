@@ -42,8 +42,8 @@ class CreateIdeaJarRunConfigurationSpec extends PluginSpecification {
             <component name='ProjectRunConfigurationManager'>
               <configuration default='false' name='test-plugin: Run server' type='JarApplication' singleton='true'>
                 <option name='JAR_PATH' value='${serverDir}/core.jar' />
-                <option name='VM_PARAMETERS' value='' />
-                <option name='PROGRAM_PARAMETERS' value='' />
+                <option name='VM_PARAMETERS' value='-Dfile.encoding=UTF-8 -Xmx1G' />
+                <option name='PROGRAM_PARAMETERS' value='nogui' />
                 <option name='WORKING_DIRECTORY' value='${serverDir}' />
                 <method v='2'>
                   <option name='Gradle.BeforeRunTask' enabled='true' tasks='prepareServer' externalProjectPath='\$PROJECT_DIR\$' />

@@ -42,13 +42,15 @@ The plugin has been converted to Kotlin to make support easier.
 The plugin still can be configured with Groovy DSL but
 now it is friendly to Kotlin DSL.
 
-### Added
-- Configuration avoidance and build cache for task `generateMetaData`
-
 ### Removed
 - Task `:rebuildServerCore`, use `:buildServerCore --rerun-tasks` instead
 - Extension `DependencyHandler.craftbukkit()`, use `DependencyHandler.spigot()` instead
 - Automatic `mavenLocal()` apply, you should apply it manually if you need it
+
+### Changed
+- Add `nogui` argument by default to `bukkitArgs`
+- Type of properties `server.jvmArgs` and `server.bukkitArgs` changed from `String` to `List<String>`.
+  It makes it easier to add arguments without overriding defaults
 
 ### Housekeeping
 - Default bukkit version now is 1.16.4

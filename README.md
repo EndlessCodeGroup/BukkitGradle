@@ -227,9 +227,9 @@ bukkit {
         // Set server encoding (flag -Dfile.encoding)
         encoding = "UTF-8"
         // JVM arguments
-        javaArgs = "-Xmx1G"
+        javaArgs("-Xmx1G")
         // Bukkit arguments
-        bukkitArgs = ""
+        bukkitArgs("nogui")
     }
 }
 ```

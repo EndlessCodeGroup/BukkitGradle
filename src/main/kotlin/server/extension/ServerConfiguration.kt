@@ -7,16 +7,10 @@ public interface ServerConfiguration {
     public val onlineMode: Boolean
     public val debug: Boolean
     public val encoding: String
-    public val javaArgs: String
-    public val bukkitArgs: String
+    public val javaArgs: List<String>
+    public val bukkitArgs: List<String>
     public val coreType: CoreType
 
-    /**
-     * Sets core from string.
-     * @see coreType
-     */
-    public fun setCore(core: String)
-
     /** Returns arguments for JVM. */
-    public fun buildJvmArgs(): String
+    public fun buildJvmArgs(debug: Boolean = this.debug): List<String>
 }

@@ -13,12 +13,17 @@ public class ServerConfigurationImpl : ServerConfiguration {
     override var onlineMode: Boolean = false
     override var debug: Boolean = true
     override var encoding: String = "UTF-8"
-    override var javaArgs: String = "-Xmx1G"
-    override var bukkitArgs: String = ""
+
+    override var javaArgs: List<String> = listOf("-Xmx1G")
+    override var bukkitArgs: List<String> = listOf("nogui")
 
     override var coreType: CoreType = CoreType.SPIGOT
 
-    override fun setCore(core: String) {
+    /**
+     * Sets core from string.
+     * @see coreType
+     */
+    public fun setCore(core: String) {
         try {
             coreType = CoreType.valueOf(core.toUpperCase(Locale.ENGLISH))
         } catch (_: IllegalArgumentException) {
@@ -33,8 +38,18 @@ public class ServerConfigurationImpl : ServerConfiguration {
         }
     }
 
-    override fun buildJvmArgs(): String {
-        return "${if (debug) "$DEBUG_ARGS " else ""}-Dfile.encoding=$encoding $javaArgs"
+    /** Append the given [args] to `javaArgs`. */
+    public fun javaArgs(vararg args: String) {
+        javaArgs = javaArgs + args.toList()
+    }
+
+    /** Append the given [args] to `bukkitArgs`. */
+    public fun bukkitArgs(vararg args: String) {
+        bukkitArgs = bukkitArgs + args.toList()
+    }
+
+    override fun buildJvmArgs(debug: Boolean): List<String> {
+        return listOfNotNull(DEBUG_ARGS.takeIf { debug }, "-Dfile.encoding=$encoding") + javaArgs
     }
 
     override fun toString(): String {

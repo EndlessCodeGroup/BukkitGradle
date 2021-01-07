@@ -47,7 +47,7 @@ internal object Dependencies {
         repoExtra["dmulloy2"] = closureOf<Any?> { repoHandler.addRepo("dmulloy2", URL_DMULLOY2) }
         repoExtra["md5"] = closureOf<Any?> { repoHandler.addRepo("md5", URL_MD5) }
         repoExtra["vault"] = closureOf<Any?> { repoHandler.addRepo("Vault", URL_VAULT) }
-        repoExtra["placeholderApi"] = closureOf<Any?> { repoHandler.addRepo("PlaceholderAPI", URL_PLACEHOLDERAPI) }
+        repoExtra["placeholderapi"] = closureOf<Any?> { repoHandler.addRepo("PlaceholderAPI", URL_PLACEHOLDERAPI) }
         repoExtra["aikar"] = closureOf<Any?> { repoHandler.addRepo("aikar", URL_AIKAR) }
 
         val depExtra = depHandler.extra

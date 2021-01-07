@@ -1,8 +1,8 @@
 plugins {
     `kotlin-dsl`
+    `maven-publish`
+    groovy
     kotlin("jvm") version "1.4.21"
-    id("groovy")
-    id("maven-publish")
     id("com.gradle.plugin-publish") version "0.12.0"
     id("com.github.ben-manes.versions") version "0.36.0"
 }
@@ -10,13 +10,14 @@ plugins {
 java {
     sourceCompatibility = JavaVersion.VERSION_1_8
     targetCompatibility = JavaVersion.VERSION_1_8
+    withSourcesJar()
 }
 
 kotlin {
     explicitApi()
 }
 
-tasks.test {
+tasks.test.configure {
     useJUnitPlatform()
 }
 

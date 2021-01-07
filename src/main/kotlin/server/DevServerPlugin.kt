@@ -53,14 +53,16 @@ public class DevServerPlugin : Plugin<Project> {
         val downloadPaperclip = registerDownloadPaperclip(coreVersion)
         val copyServerCore = registerCopyServerCoreTask(buildServerCore, downloadPaperclip, serverDir)
 
-        val generateRunningScript = registerGenerateRunningScriptTask(serverDir)
         val prepareServer = registerPrepareServerTask(copyServerCore, serverDir)
-        registerRunServerTask(generateRunningScript, prepareServer)
+        registerRunServerTask(prepareServer, serverDir)
 
         registerBuildIdeRunTask(serverDir)
     }
 
-    private fun registerBuildServerCoreTask(buildToolsDir: Provider<File>, coreVersion: Provider<String>): TaskProvider<BuildServerCore> {
+    private fun registerBuildServerCoreTask(
+        buildToolsDir: Provider<File>,
+        coreVersion: Provider<String>
+    ): TaskProvider<BuildServerCore> {
         val downloadBuildTools = tasks.register<Download>("downloadBuildTools") {
             group = TASKS_GROUP_BUKKIT
             description = "Download BuildTools"
@@ -92,14 +94,6 @@ public class DevServerPlugin : Plugin<Project> {
             paperVersionsFile.set(downloadPaperVersions.map { it.outputFiles.single() })
             version.set(coreVersion)
             dest(bukkitGradleDir)
-        }
-    }
-
-    private fun registerGenerateRunningScriptTask(serverDir: Provider<Directory>): TaskProvider<GenerateRunningScript> {
-        return project.tasks.register<GenerateRunningScript>("generateRunningScript") {
-            jvmArgs.set(serverConfiguration.buildJvmArgs())
-            bukkitArgs.set(serverConfiguration.bukkitArgs)
-            scriptDir.set(serverDir)
         }
     }
 
@@ -148,11 +142,13 @@ public class DevServerPlugin : Plugin<Project> {
     }
 
     private fun registerRunServerTask(
-        generateRunningScript: TaskProvider<GenerateRunningScript>,
-        prepareServer: TaskProvider<PrepareServer>
+        prepareServer: TaskProvider<PrepareServer>,
+        serverDir: Provider<Directory>
     ) {
         tasks.register<RunServer>("runServer") {
-            scriptFile.set(generateRunningScript.map { it.scriptFile.get().asFile })
+            workingDir(serverDir)
+            jvmArgs = serverConfiguration.buildJvmArgs()
+            bukkitArgs = serverConfiguration.bukkitArgs
             dependsOn(prepareServer)
         }
     }
@@ -161,6 +157,8 @@ public class DevServerPlugin : Plugin<Project> {
         tasks.register<CreateIdeaJarRunConfiguration>("buildIdeaRun") {
             configurationName.set("${project.name}: Run server")
             beforeRunTask.set("prepareServer")
+            vmParameters.set(serverConfiguration.buildJvmArgs(debug = false))
+            programParameters.set(serverConfiguration.bukkitArgs)
             configurationsDir.set(project.rootProject.layout.projectDirectory.dir(".idea/runConfigurations"))
             jarPath.set(serverDir.map { it.file(ServerConstants.FILE_CORE).asFile })
         }

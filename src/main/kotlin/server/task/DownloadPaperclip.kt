@@ -26,8 +26,8 @@ public open class DownloadPaperclip @Inject constructor(objects: ObjectFactory) 
     @OutputFile
     public val paperclipFile: Provider<File> = project.provider { outputFiles.single() }
 
-    private val Any.version: Map<*, *>
-        get() = InvokerHelper.getProperty(this, "version") as Map<*, *>
+    private val Any.versions: Map<*, *>
+        get() = InvokerHelper.getProperty(this, "versions") as Map<*, *>
 
     init {
         group = TASKS_GROUP_BUKKIT
@@ -44,7 +44,7 @@ public open class DownloadPaperclip @Inject constructor(objects: ObjectFactory) 
         }
 
         val jsonObject = JsonSlurper().parse(versionsFile)
-        val versionsUrls = jsonObject.version
+        val versionsUrls = jsonObject.versions
         val paperUrl = versionsUrls[version] as? String
         if (paperUrl == null) {
             project.logger.warn(

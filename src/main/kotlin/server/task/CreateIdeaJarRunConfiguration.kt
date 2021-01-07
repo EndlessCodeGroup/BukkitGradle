@@ -4,12 +4,14 @@ import groovy.xml.MarkupBuilder
 import org.gradle.api.DefaultTask
 import org.gradle.api.file.DirectoryProperty
 import org.gradle.api.file.RegularFile
+import org.gradle.api.provider.ListProperty
 import org.gradle.api.provider.Property
 import org.gradle.api.provider.Provider
 import org.gradle.api.tasks.Input
 import org.gradle.api.tasks.Internal
 import org.gradle.api.tasks.OutputFile
 import org.gradle.api.tasks.TaskAction
+import org.gradle.kotlin.dsl.listProperty
 import org.gradle.kotlin.dsl.property
 import org.gradle.kotlin.dsl.withGroovyBuilder
 import ru.endlesscode.bukkitgradle.TASKS_GROUP_BUKKIT
@@ -23,10 +25,10 @@ public open class CreateIdeaJarRunConfiguration : DefaultTask() {
     public val configurationName: Property<String> = project.objects.property()
 
     @Input
-    public val vmParameters: Property<String> = project.objects.property()
+    public val vmParameters: ListProperty<String> = project.objects.listProperty()
 
     @Input
-    public val programParameters: Property<String> = project.objects.property()
+    public val programParameters: ListProperty<String> = project.objects.listProperty()
 
     @Input
     public val beforeRunTask: Property<String> = project.objects.property()
@@ -46,8 +48,8 @@ public open class CreateIdeaJarRunConfiguration : DefaultTask() {
         group = TASKS_GROUP_BUKKIT
         description = "Configure server run configuration for IDEA"
 
-        vmParameters.convention("")
-        programParameters.convention("")
+        vmParameters.convention(emptyList())
+        programParameters.convention(emptyList())
 
         onlyIf { Idea.isActive() }
     }
@@ -68,8 +70,8 @@ public open class CreateIdeaJarRunConfiguration : DefaultTask() {
                     "singleton" to true
                 ) {
                     "option"("name" to "JAR_PATH", "value" to jarPath.get())
-                    "option"("name" to "VM_PARAMETERS", "value" to vmParameters.get())
-                    "option"("name" to "PROGRAM_PARAMETERS", "value" to programParameters.get())
+                    "option"("name" to "VM_PARAMETERS", "value" to vmParameters.get().joinToString(" "))
+                    "option"("name" to "PROGRAM_PARAMETERS", "value" to programParameters.get().joinToString(" "))
                     "option"("name" to "WORKING_DIRECTORY", "value" to jarPath.get().parentFile)
                     "method"("v" to 2) {
                         "option"(
