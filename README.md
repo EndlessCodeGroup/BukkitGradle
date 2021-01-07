@@ -229,7 +229,7 @@ bukkit {
         // JVM arguments
         javaArgs = "-Xmx1G"
         // Bukkit arguments
-        bukkitArgs = ""
+        bukkitArgs = "nogui"
     }
 }
 ```

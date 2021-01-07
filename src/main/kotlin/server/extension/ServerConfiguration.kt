@@ -11,12 +11,6 @@ public interface ServerConfiguration {
     public val bukkitArgs: String
     public val coreType: CoreType
 
-    /**
-     * Sets core from string.
-     * @see coreType
-     */
-    public fun setCore(core: String)
-
     /** Returns arguments for JVM. */
     public fun buildJvmArgs(): String
 }

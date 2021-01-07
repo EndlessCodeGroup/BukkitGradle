@@ -44,6 +44,7 @@ now it is friendly to Kotlin DSL.
 
 ### Added
 - Configuration avoidance and build cache for task `generateMetaData`
+- Add `nogui` argument by default to `bukkitArgs`
 
 ### Removed
 - Task `:rebuildServerCore`, use `:buildServerCore --rerun-tasks` instead

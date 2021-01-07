@@ -14,11 +14,15 @@ public class ServerConfigurationImpl : ServerConfiguration {
     override var debug: Boolean = true
     override var encoding: String = "UTF-8"
     override var javaArgs: String = "-Xmx1G"
-    override var bukkitArgs: String = ""
+    override var bukkitArgs: String = "nogui"
 
     override var coreType: CoreType = CoreType.SPIGOT
 
-    override fun setCore(core: String) {
+    /**
+     * Sets core from string.
+     * @see coreType
+     */
+    public fun setCore(core: String) {
         try {
             coreType = CoreType.valueOf(core.toUpperCase(Locale.ENGLISH))
         } catch (_: IllegalArgumentException) {
