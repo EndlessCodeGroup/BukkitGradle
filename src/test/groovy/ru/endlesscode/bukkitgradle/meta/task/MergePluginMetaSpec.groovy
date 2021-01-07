@@ -8,14 +8,14 @@ import ru.endlesscode.bukkitgradle.util.CharsetUtils
 
 class MergePluginMetaSpec extends PluginSpecification {
 
-    private final static TASK_PATH = ':generatePluginMeta'
+    private final static TASK_PATH = ':mergePluginMeta'
 
     private File sourceMetaFile
     private File metaFile
 
     def setup() {
-        sourceMetaFile = file("src/main/resources/$MetaFile.NAME")
-        metaFile = file("build/tmp/generatePluginMeta/$MetaFile.NAME")
+        sourceMetaFile = file("src/main/resources/$PluginMetaPlugin.FILE_NAME")
+        metaFile = file("build/tmp/mergePluginMeta/$PluginMetaPlugin.FILE_NAME")
     }
 
     def 'when run processResources - should also run generatePluginMeta'() {
@@ -24,9 +24,12 @@ class MergePluginMetaSpec extends PluginSpecification {
 
         then: "task generatePluginMeta completed successfully"
         taskOutcome(TASK_PATH) == TaskOutcome.SUCCESS
+
+        and: "task generatePluginMeta completed successfully"
+        taskOutcome(":parsePluginMetaFile") == TaskOutcome.SUCCESS
     }
 
-    def 'when generate meta - should generate default plugin meta successfully'() {
+    def 'when merge meta - should generate default plugin meta successfully'() {
         when: "run generate meta task"
         run(TASK_PATH)
 
@@ -38,7 +41,7 @@ class MergePluginMetaSpec extends PluginSpecification {
         """.stripIndent().trim()
     }
 
-    def 'when generate meta - and generate it again - should skip second task run'() {
+    def 'when merge meta - and generate it again - should skip second task run'() {
         when: "run generate meta task"
         run(TASK_PATH)
 
@@ -49,7 +52,7 @@ class MergePluginMetaSpec extends PluginSpecification {
         taskOutcome(TASK_PATH) == TaskOutcome.UP_TO_DATE
     }
 
-    def 'when generate meta - and generate changed meta - should generate new meta'() {
+    def 'when merge meta - and generate changed meta - should generate new meta'() {
         when: "run generate meta task"
         run(TASK_PATH)
 
@@ -71,7 +74,7 @@ class MergePluginMetaSpec extends PluginSpecification {
         """.stripIndent().trim()
     }
 
-    void 'when generate meta - and all properties configured - should write all lines'() {
+    void 'when merge meta - and all properties configured - should write all lines'() {
         given: "configured all meta properties"
         //language=gradle
         buildFile << """
@@ -101,7 +104,7 @@ class MergePluginMetaSpec extends PluginSpecification {
         """.stripIndent().trim()
     }
 
-    void 'when generate meta - and all properties configured old way - should write all lines'() {
+    void 'when merge meta - and all properties configured old way - should write all lines'() {
         given: "configured all meta properties in old way"
         //language=gradle
         buildFile << """
@@ -131,7 +134,7 @@ class MergePluginMetaSpec extends PluginSpecification {
         """.stripIndent().trim()
     }
 
-    void 'when generate meta - and there are extra fields in source - should write all lines'() {
+    void 'when merge meta - and there are extra fields in source - should write all lines'() {
         given: "source meta file with extra fields"
         sourceMetaFile << """
             depend: [Vault, ProtocolLib]
@@ -162,7 +165,7 @@ class MergePluginMetaSpec extends PluginSpecification {
     }
 
     // BukkitGradle-26
-    void 'when generate meta - and there are exotic chars in source - should read it correctly'() {
+    void 'when merge meta - and there are exotic chars in source - should read it correctly'() {
         given: "source meta file with exotic chars"
         sourceMetaFile << """
             commands:

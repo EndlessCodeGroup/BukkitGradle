@@ -54,7 +54,7 @@ internal data class PluginMetaYaml(
 
     /** Permission that the plugin wishes to register. */
     val permissions: Map<String, PluginPermission>? = null
-)
+) : java.io.Serializable
 
 @Serializable
 internal data class PluginCommand(
@@ -77,7 +77,7 @@ internal data class PluginCommand(
 
     /** A short description of how to use this command. */
     val usage: String? = null
-)
+) : java.io.Serializable
 
 @Serializable
 internal data class PluginPermission(
@@ -90,4 +90,4 @@ internal data class PluginPermission(
 
     /** Children for the permission. */
     val children: Map<String, Boolean>? = null
-)
+) : java.io.Serializable
