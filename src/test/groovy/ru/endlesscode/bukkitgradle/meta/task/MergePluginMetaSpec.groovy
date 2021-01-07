@@ -3,10 +3,10 @@ package ru.endlesscode.bukkitgradle.meta.task
 
 import org.gradle.testkit.runner.TaskOutcome
 import ru.endlesscode.bukkitgradle.PluginSpecification
-import ru.endlesscode.bukkitgradle.meta.MetaFile
+import ru.endlesscode.bukkitgradle.meta.PluginMetaPlugin
 import ru.endlesscode.bukkitgradle.util.CharsetUtils
 
-class GenerateMetaSpec extends PluginSpecification {
+class MergePluginMetaSpec extends PluginSpecification {
 
     private final static TASK_PATH = ':generatePluginMeta'
 
@@ -30,10 +30,7 @@ class GenerateMetaSpec extends PluginSpecification {
         when: "run generate meta task"
         run(TASK_PATH)
 
-        then: "the task is successful"
-        taskOutcome(TASK_PATH) == TaskOutcome.SUCCESS
-
-        and: "meta file content corresponds to default config"
+        then: "meta file content corresponds to default config"
         metaFile.text == """\
             main: "com.example.testplugin.TestPlugin"
             name: "test-plugin"
@@ -45,10 +42,7 @@ class GenerateMetaSpec extends PluginSpecification {
         when: "run generate meta task"
         run(TASK_PATH)
 
-        then: "the task is successful"
-        taskOutcome(TASK_PATH) == TaskOutcome.SUCCESS
-
-        when: "run generate meta again"
+        and: "run generate meta again"
         run(TASK_PATH)
 
         then: "the task is skipped due to up-to-date"
@@ -59,10 +53,7 @@ class GenerateMetaSpec extends PluginSpecification {
         when: "run generate meta task"
         run(TASK_PATH)
 
-        then: "the task is successful"
-        taskOutcome(TASK_PATH) == TaskOutcome.SUCCESS
-
-        when: "change description"
+        and: "change description"
         buildFile << 'description = "Plugin can has description"'
 
         and: "run generate meta task again"
@@ -99,10 +90,7 @@ class GenerateMetaSpec extends PluginSpecification {
         when: "run processResources"
         run(TASK_PATH)
 
-        then: "the task is successful"
-        taskOutcome(TASK_PATH) == TaskOutcome.SUCCESS
-
-        and: "should write all lines"
+        then: "should write all lines"
         metaFile.text == """\
             main: "com.example.plugin.Plugin"
             name: "TestPlugin"
@@ -132,10 +120,7 @@ class GenerateMetaSpec extends PluginSpecification {
         when: "run processResources"
         run(TASK_PATH)
 
-        then: "the task is successful"
-        taskOutcome(TASK_PATH) == TaskOutcome.SUCCESS
-
-        and: "should write all lines"
+        then: "should write all lines"
         metaFile.text == """\
             main: "com.example.plugin.Plugin"
             name: "TestPlugin"
@@ -161,10 +146,7 @@ class GenerateMetaSpec extends PluginSpecification {
         when: "run processResources"
         run(TASK_PATH)
 
-        then: "the task is successful"
-        taskOutcome(TASK_PATH) == TaskOutcome.SUCCESS
-
-        and: "should write meta with the extra fields"
+        then: "should write meta with the extra fields"
         metaFile.text == """\
             main: "com.example.testplugin.TestPlugin"
             name: "test-plugin"
@@ -195,10 +177,7 @@ class GenerateMetaSpec extends PluginSpecification {
         run(TASK_PATH)
         CharsetUtils.setDefaultCharset('UTF-8')
 
-        then: "the task is successful"
-        taskOutcome(TASK_PATH) == TaskOutcome.SUCCESS
-
-        and:
+        then:
         metaFile.text == """\
             main: "com.example.testplugin.TestPlugin"
             name: "test-plugin"
@@ -206,6 +185,24 @@ class GenerateMetaSpec extends PluginSpecification {
             commands:
               "퀘스트":
                 description: "퀘스트 명령어 입니다."
+        """.stripIndent().trim()
+    }
+
+    void 'when merge meta - and there are fields in source - should prefer values from source'() {
+        given: "source meta file with extra fields"
+        sourceMetaFile << """
+            name: SourceValue
+            version: 1.2
+        """.stripIndent()
+
+        when: "run processResources"
+        run(TASK_PATH, "--stacktrace")
+
+        then: "should write meta and prefer source fields"
+        metaFile.text == """\
+            main: "com.example.testplugin.SourceValue"
+            name: "SourceValue"
+            version: "1.2"
         """.stripIndent().trim()
     }
 }
