@@ -58,6 +58,29 @@ buildscript {
 apply(plugin: "ru.endlesscode.bukkitgradle")
 ```
 
+#### Snapshots
+
+If you want to use snapshots, you can add jitpack repository to `settings.gradle` and use version `develop-SNAPSHOT`:
+```kotlin
+// settings.gradle
+
+pluginManagement {
+    repositories {
+        gradlePluginPortal()
+        maven { setUrl("https://jitpack.io") }
+    }
+}
+
+rootProject.name = "<your project name>"
+```
+```kotlin
+// build.gradle
+
+plugins {
+    id("ru.endlesscode.bukkitgradle") version "develop-SNAPSHOT"
+}
+```
+
 ### First steps
 Simple `build.gradle` file that use BukkitGradle:
 ```kotlin
