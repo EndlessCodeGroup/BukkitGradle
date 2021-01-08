@@ -2,21 +2,52 @@ name: CI
 
 on:
   push:
-    branches: [ develop ]
+    branches: [develop]
   pull_request:
-    branches: [ develop ]
+    branches: [develop]
 
 jobs:
   check:
+    name: Check
     runs-on: ubuntu-latest
 
     steps:
-    - uses: actions/checkout@v2
-    - uses: actions/setup-java@v1
-      with:
-        java-version: 8
+      - name: Checkout sources
+        uses: actions/checkout@v2
 
-    - name: Build and test
-      run: |
-        chmod +x gradlew
-        ./gradlew check
+      - name: Setup Java
+        uses: actions/setup-java@v1
+        with:
+          java-version: 8
+
+      - name: Run Check
+        uses: eskatos/gradle-command-action@v1
+        with:
+          arguments: check
+          wrapper-cache-enabled: true
+          dependencies-cache-enabled: true
+
+  publish:
+    name: Publish
+    needs: check
+    runs-on: ubuntu-latest
+    if: github.ref == 'refs/heads/main'
+
+    steps:
+      - name: Checkout sources
+        uses: actions/checkout@v2
+
+      - name: Setup Java
+        uses: actions/setup-java@v1
+        with:
+          java-version: 8
+
+      - name: Run Publish
+        uses: eskatos/gradle-command-action@v1
+        with:
+          arguments: publish
+          wrapper-cache-enabled: true
+          dependencies-cache-enabled: true
+        env:
+          ORG_GRADLE_PROJECT_githubPackagesUsername: ${{ github.actor }}
+          ORG_GRADLE_PROJECT_githubPackagesPassword: ${{ secrets.GITHUB_TOKEN }}
