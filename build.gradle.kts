@@ -36,6 +36,18 @@ dependencies {
     testImplementation("org.spockframework:spock-junit4")
 }
 
+val runningOnCi = System.getenv("CI") == "true"
+publishing {
+    repositories {
+        if (runningOnCi) {
+            maven("https://maven.pkg.github.com/EndlessCodeGroup/BukkitGradle") {
+                name = "githubPackages"
+                credentials(PasswordCredentials::class)
+            }
+        }
+    }
+}
+
 gradlePlugin {
     plugins {
         create("bukkitGradle") {
