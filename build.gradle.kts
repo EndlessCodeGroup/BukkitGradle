@@ -40,6 +40,8 @@ gradlePlugin {
     plugins {
         create("bukkitGradle") {
             id = "ru.endlesscode.bukkitgradle"
+            displayName = "BukkitGradle Plugin"
+            description = "Gradle plugin providing integration for easier Bukkit plugins development."
             implementationClass = "ru.endlesscode.bukkitgradle.BukkitGradlePlugin"
         }
     }
@@ -47,14 +49,6 @@ gradlePlugin {
 
 pluginBundle {
     website = "https://github.com/EndlessCodeGroup/BukkitGradle"
-    vcsUrl = "$website.git"
-    description = project.description
+    vcsUrl = website
     tags = listOf("minecraft", "bukkit", "plugin", "spigot", "paper")
-
-    (plugins) {
-        "bukkitGradle" {
-            displayName = "Bukkit Plugin development Gradle integration"
-            description = "Gradle plugin providing integration for easier Bukkit plugins developement."
-        }
-    }
 }
