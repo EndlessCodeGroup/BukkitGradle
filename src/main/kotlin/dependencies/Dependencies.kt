@@ -20,9 +20,10 @@ internal object Dependencies {
     const val URL_PAPERMC = "https://papermc.io/repo/repository/maven-public/"
     const val URL_DMULLOY2 = "https://repo.dmulloy2.net/nexus/repository/public/"
     const val URL_MD5 = "https://repo.md-5.net/content/groups/public/"
-    const val URL_JITPACK = "https://jitpack.io"
+    const val URL_JITPACK = "https://jitpack.io/"
     const val URL_PLACEHOLDERAPI = "https://repo.extendedclip.com/content/repositories/placeholderapi/"
     const val URL_AIKAR = "https://repo.aikar.co/content/groups/aikar/"
+    const val URL_CODEMC = "https://repo.codemc.org/repository/maven-public/"
 
     private lateinit var project: Project
     private lateinit var repoHandler: RepositoryHandler
@@ -49,6 +50,7 @@ internal object Dependencies {
         repoExtra["jitpack"] = closureOf<Any?> { repoHandler.addRepo("jitpack", URL_JITPACK) }
         repoExtra["placeholderapi"] = closureOf<Any?> { repoHandler.addRepo("PlaceholderAPI", URL_PLACEHOLDERAPI) }
         repoExtra["aikar"] = closureOf<Any?> { repoHandler.addRepo("aikar", URL_AIKAR) }
+        repoExtra["codemc"] = closureOf<Any?> { repoHandler.addRepo("codemc", URL_CODEMC) }
 
         val depExtra = depHandler.extra
         depExtra["spigot"] = depClosureOf { depHandler.api("org.spigotmc", "spigot", "mavenLocal") }

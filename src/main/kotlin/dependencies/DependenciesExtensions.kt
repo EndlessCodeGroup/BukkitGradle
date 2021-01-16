@@ -4,6 +4,7 @@ import org.gradle.api.artifacts.dsl.DependencyHandler
 import org.gradle.api.artifacts.dsl.RepositoryHandler
 import org.gradle.api.artifacts.repositories.MavenArtifactRepository
 import ru.endlesscode.bukkitgradle.dependencies.Dependencies.URL_AIKAR
+import ru.endlesscode.bukkitgradle.dependencies.Dependencies.URL_CODEMC
 import ru.endlesscode.bukkitgradle.dependencies.Dependencies.URL_DMULLOY2
 import ru.endlesscode.bukkitgradle.dependencies.Dependencies.URL_JITPACK
 import ru.endlesscode.bukkitgradle.dependencies.Dependencies.URL_MD5
@@ -44,6 +45,10 @@ public fun RepositoryHandler.placeholderApi(configure: MavenArtifactRepository.(
 
 public fun RepositoryHandler.aikar(configure: MavenArtifactRepository.() -> Unit = {}) {
     addRepo("aikar", URL_AIKAR, configure)
+}
+
+public fun RepositoryHandler.codemc(configure: MavenArtifactRepository.() -> Unit = {}) {
+    addRepo("codemc", URL_CODEMC, configure)
 }
 
 public val DependencyHandler.spigot: String

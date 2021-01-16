@@ -173,6 +173,7 @@ dependencies {
  jitpack        | https://jitpack.io/
  placeholderapi | https://repo.extendedclip.com/content/repositories/placeholderapi/
  aikar          | https://repo.aikar.co/content/groups/aikar/
+ codemc         | https://repo.codemc.org/repository/maven-public/
 
 #### Dependencies:
 Some dependencies also applies repo needed for them.
