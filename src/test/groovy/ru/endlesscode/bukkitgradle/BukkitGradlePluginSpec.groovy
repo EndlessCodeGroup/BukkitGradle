@@ -21,7 +21,7 @@ class BukkitGradlePluginSpec extends PluginSpecification {
 
     def "when use bukkit extension - and bukkit version not set - should return bukkit dependency with default version"() {
         when: "use bukkit extension"
-        String dependency = project.dependencies.bukkit()
+        String dependency = project.dependencies.bukkitApi()
 
         then: "returned bukkit dependency with default version"
         dependency == 'org.bukkit:bukkit:1.16.4-R0.1-SNAPSHOT'
@@ -32,7 +32,7 @@ class BukkitGradlePluginSpec extends PluginSpecification {
         project.bukkit.apiVersion = "1.7.10"
 
         when: "use bukkit extension"
-        String dependency = project.dependencies.bukkit()
+        String dependency = project.dependencies.bukkitApi()
 
         then: "returned bukkit dependency with the specified version"
         dependency == 'org.bukkit:bukkit:1.7.10-R0.1-SNAPSHOT'
@@ -40,7 +40,7 @@ class BukkitGradlePluginSpec extends PluginSpecification {
 
     def "when use bukkit extension - should add required repo"() {
         when: "use bukkit dependency"
-        project.dependencies.bukkit()
+        project.dependencies.bukkitApi()
 
         then: "required repository is applied"
         project.repositories.findByName("Spigot") != null
