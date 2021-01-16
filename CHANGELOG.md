@@ -1,5 +1,12 @@
 ## [Unreleased]
 
+### Added
+- `codemc()` repository extension
+
+### Changed
+- **BREAKING CHANGE**: `bukkit` dependency extension renamed to `bukkitApi`.
+  This name is more consistent, also it avoids conflict with `BukkitExtension` extension name.
+
 ## [0.9.0] - 2020-01-08
 
 ### Reworked tasks hierarchy
