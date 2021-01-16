@@ -95,7 +95,7 @@ version = "0.1"
 
 // Let's add needed API to project
 dependencies {
-    compileOnly(bukkit())
+    compileOnly(bukkitApi())
     // see section 'Dependencies' for more info
 }
 ```
@@ -182,7 +182,7 @@ Some dependencies also applies repo needed for them.
 -------------|-----------------------------------------------|---------------
  spigot      | org.spigotmc:spigot:$apiVersion               | mavenLocal
  spigotApi   | org.spigotmc:spigot-api:$apiVersion           | spigot
- bukkit      | org.bukkit:bukkit:$apiVersion                 | spigot
+ bukkitApi   | org.bukkit:bukkit:$apiVersion                 | spigot
  paperApi    | com.destroystokyo.paper:paper-api:$apiVersion | destroystokyo
  
  **Note:** `$apiVersion` - is `${version}-R0.1-SNAPSHOT` (where `$version` is `bukkit.version`)

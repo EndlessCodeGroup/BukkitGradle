@@ -55,7 +55,7 @@ internal object Dependencies {
         val depExtra = depHandler.extra
         depExtra["spigot"] = depClosureOf { depHandler.api("org.spigotmc", "spigot", "mavenLocal") }
         depExtra["spigotApi"] = depClosureOf { depHandler.api("org.spigotmc", "spigot-api", "spigot") }
-        depExtra["bukkit"] = depClosureOf { depHandler.api("org.bukkit", "bukkit", "spigot") }
+        depExtra["bukkitApi"] = depClosureOf { depHandler.api("org.bukkit", "bukkit", "spigot") }
         depExtra["paperApi"] = depClosureOf { depHandler.api("com.destroystokyo.paper", "paper-api", "papermc") }
     }
 

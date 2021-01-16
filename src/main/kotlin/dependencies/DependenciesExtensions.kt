@@ -57,7 +57,7 @@ public val DependencyHandler.spigot: String
 public val DependencyHandler.spigotApi: String
     get() = api("org.spigotmc", "spigot-api", "spigot")
 
-public val DependencyHandler.bukkit: String
+public val DependencyHandler.bukkitApi: String
     get() = api("org.bukkit", "bukkit", "spigot")
 
 public val DependencyHandler.paperApi: String
