@@ -55,4 +55,23 @@ class PrepareServerSpec extends PluginSpecification {
         and: "online-mode should be false"
         file("$serverDir/server.properties").readLines().contains("online-mode=false")
     }
+
+    def "when run prepareServer - and there is shadow plugin - should use shadowJar task"() {
+        given: "configured eula and online-mode"
+        buildFile.text = """
+            plugins {
+                id "ru.endlesscode.bukkitgradle"
+                id "com.github.johnrengelman.shadow" version "6.1.0"
+            }
+
+            version = '1.0'
+            group = 'com.example.testplugin'
+        """.stripIndent()
+
+        when: "run prepareServer"
+        run(TASK_NAME, '-x', 'copyServer')
+
+        then: "should run shadowJar"
+        taskOutcome(":shadowJar") == TaskOutcome.SUCCESS
+    }
 }

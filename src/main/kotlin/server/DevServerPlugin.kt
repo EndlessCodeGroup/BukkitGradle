@@ -122,13 +122,12 @@ public class DevServerPlugin : Plugin<Project> {
         copyServerCore: TaskProvider<Copy>,
         serverDir: Provider<Directory>
     ): TaskProvider<PrepareServer> {
-        val jarTaskName = if (project.plugins.hasPlugin("com.github.johnrengelman.shadow")) "shadowJar" else "jar"
-        val jarTask = tasks.named<Jar>(jarTaskName)
         val copyPlugins = tasks.register<Copy>("copyPlugins") {
             group = TASKS_GROUP_BUKKIT
             description = "Copy plugins to dev server."
 
-            from(jarTask)
+            val jarTaskName = if (project.plugins.hasPlugin("com.github.johnrengelman.shadow")) "shadowJar" else "jar"
+            from(tasks.named<Jar>(jarTaskName))
             into(serverDir.map { project.mkdir(it.dir("plugins")) })
             rename { "${pluginMeta.name.get()}.jar" }
         }
