@@ -48,7 +48,7 @@ plugins {
 ```groovy
 buildscript {
   repositories {
-    jcenter()
+    mavenCentral()
   }
   dependencies {
     classpath("gradle.plugin.ru.endlesscode:bukkit-gradle:0.9.2")

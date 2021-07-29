@@ -1,5 +1,9 @@
 ## [Unreleased]
 
+### Changed
+
+- JCenter replaced with MavenCentral
+
 ### Fixed
 
 - Add duplicate strategy to processResources (#58)

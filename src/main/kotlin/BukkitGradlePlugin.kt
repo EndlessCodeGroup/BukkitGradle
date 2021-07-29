@@ -63,7 +63,7 @@ public class BukkitGradlePlugin : Plugin<Project> {
     /** Adds needed repositories. */
     private fun Project.addRepositories() {
         repositories {
-            jcenter()
+            mavenCentral()
         }
     }
 }
