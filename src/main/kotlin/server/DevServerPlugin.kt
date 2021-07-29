@@ -43,7 +43,7 @@ public class DevServerPlugin : Plugin<Project> {
         bukkitGradleDir = File(project.buildDir, "bukkit-gradle")
         bukkitGradleDir.mkdirs()
 
-        val properties = ServerProperties(project.rootDir)
+        val properties = ServerProperties(project.rootDir, project.providers)
         val coreVersion = project.provider { serverConfiguration.version ?: bukkit.apiVersion }
         val serverDir = project.layout.dir(coreVersion.map { File(properties.devServerDir, it) })
         val buildToolsDir = project.provider { properties.buildToolsDir }

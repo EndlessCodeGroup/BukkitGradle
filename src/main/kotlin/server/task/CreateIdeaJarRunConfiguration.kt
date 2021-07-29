@@ -7,6 +7,7 @@ import org.gradle.api.file.RegularFile
 import org.gradle.api.provider.ListProperty
 import org.gradle.api.provider.Property
 import org.gradle.api.provider.Provider
+import org.gradle.api.provider.ProviderFactory
 import org.gradle.api.tasks.Input
 import org.gradle.api.tasks.Internal
 import org.gradle.api.tasks.OutputFile
@@ -15,10 +16,13 @@ import org.gradle.kotlin.dsl.withGroovyBuilder
 import ru.endlesscode.bukkitgradle.TASKS_GROUP_BUKKIT
 import ru.endlesscode.bukkitgradle.server.util.Idea
 import java.io.File
+import javax.inject.Inject
 
 /** Builds and writes to file run configuration in IDEA .xml format. */
 @Suppress("LeakingThis")
-public abstract class CreateIdeaJarRunConfiguration : DefaultTask() {
+public abstract class CreateIdeaJarRunConfiguration @Inject constructor(
+    providers: ProviderFactory
+) : DefaultTask() {
 
     @get:Input
     public abstract val configurationName: Property<String>
@@ -50,7 +54,7 @@ public abstract class CreateIdeaJarRunConfiguration : DefaultTask() {
         vmParameters.convention(emptyList())
         programParameters.convention(emptyList())
 
-        onlyIf { Idea.isActive() }
+        onlyIf { Idea.isActive(providers) }
     }
 
     @TaskAction

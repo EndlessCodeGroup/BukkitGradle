@@ -1,11 +1,13 @@
 package ru.endlesscode.bukkitgradle.server
 
 import org.gradle.api.InvalidUserDataException
+import org.gradle.api.provider.Provider
+import org.gradle.api.provider.ProviderFactory
 import org.slf4j.LoggerFactory
 import java.io.File
 import java.util.*
 
-internal class ServerProperties(projectPath: File) {
+internal class ServerProperties(projectPath: File, private val providers: ProviderFactory) {
 
     val devServerDir: File
         get() = getDir(DEV_SERVER_DIR)
@@ -42,7 +44,7 @@ internal class ServerProperties(projectPath: File) {
     }
 
     private fun setDefault(property: Property, defaultValue: String) {
-        if (System.getenv(property.envVariable) == null) {
+        if (!getEnvProvider(property.envVariable).isPresent) {
             properties.setProperty(property.name, defaultValue)
         }
     }
@@ -55,19 +57,23 @@ internal class ServerProperties(projectPath: File) {
 
     private fun get(property: Property): String {
         val localProp = properties.getProperty(property.name)
-        val globalEnv = System.getenv(property.envVariable)
-        if (localProp == null && globalEnv == null) {
-            logger.error(
-                """
+        val globalEnv = getEnvProvider(property.envVariable).orNull
+        return localProp ?: globalEnv ?: showError(property)
+    }
+
+    private fun getEnvProvider(name: String): Provider<String> {
+        return providers.environmentVariable(name).forUseAtConfigurationTime()
+    }
+
+    private fun showError(property: Property): Nothing {
+        logger.error(
+            """
                 ${property.description} not found. It can be fixed by two ways:
                 1.Define variable "${property.name}" in the $NAME file
                 2.Define ${property.envVariable} environment variable
                 """.trimIndent()
-            )
-            throw InvalidUserDataException()
-        }
-
-        return localProp ?: globalEnv
+        )
+        throw InvalidUserDataException()
     }
 
     private data class Property(val name: String, val envVariable: String, val description: String)
