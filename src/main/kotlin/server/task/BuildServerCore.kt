@@ -19,7 +19,7 @@ public abstract class BuildServerCore : JavaExec() {
     @get:Input
     public abstract val version: Property<String>
 
-    @OutputFile
+    @get:OutputFile
     public val spigotFile: Provider<File> = buildToolsFile.zip(version) { buildToolsFile, version ->
         File(buildToolsFile.parentFile, "spigot-$version.jar")
     }

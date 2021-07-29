@@ -107,7 +107,7 @@ public class DevServerPlugin : Plugin<Project> {
             description = "Copy server core to server directory"
 
             val source = if (serverConfiguration.coreType == CoreType.SPIGOT) {
-                buildServerCore.map { it.buildToolsFile.get() }
+                buildServerCore.map { it.spigotFile.get() }
             } else {
                 downloadPaperclip.map { it.paperclipFile.get() }
             }
