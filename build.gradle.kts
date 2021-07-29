@@ -2,9 +2,9 @@ plugins {
     `kotlin-dsl`
     `maven-publish`
     groovy
-    kotlin("plugin.serialization") version "1.4.20"
-    id("com.gradle.plugin-publish") version "0.12.0"
-    id("com.github.ben-manes.versions") version "0.36.0"
+    kotlin("plugin.serialization") version "1.5.21"
+    id("com.gradle.plugin-publish") version "0.15.0"
+    id("com.github.ben-manes.versions") version "0.39.0"
 }
 
 java {
@@ -22,15 +22,15 @@ tasks.test.configure {
 }
 
 repositories {
-    jcenter()
+    mavenCentral()
 }
 
 dependencies {
-    implementation("de.undercouch:gradle-download-task:4.1.1")
-    implementation("org.jetbrains.kotlinx:kotlinx-serialization-json:1.0.1")
-    implementation("com.charleskorn.kaml:kaml:0.26.0")
+    implementation("de.undercouch:gradle-download-task:4.1.2")
+    implementation("org.jetbrains.kotlinx:kotlinx-serialization-json:1.2.2")
+    implementation("com.charleskorn.kaml:kaml:0.35.0")
     testImplementation("junit:junit:4.13")
-    testImplementation(platform("org.spockframework:spock-bom:2.0-M2-groovy-2.5"))
+    testImplementation(platform("org.spockframework:spock-bom:2.0-groovy-3.0"))
     testImplementation("org.spockframework:spock-core")
     testImplementation("org.spockframework:spock-junit4")
 }
