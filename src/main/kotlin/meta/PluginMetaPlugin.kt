@@ -6,6 +6,7 @@ import com.charleskorn.kaml.YamlConfiguration
 import org.gradle.api.Plugin
 import org.gradle.api.Project
 import org.gradle.api.file.CopySpec
+import org.gradle.api.file.DuplicatesStrategy
 import org.gradle.api.plugins.JavaPluginConvention
 import org.gradle.kotlin.dsl.get
 import org.gradle.kotlin.dsl.getPlugin
@@ -47,6 +48,7 @@ public class PluginMetaPlugin : Plugin<Project> {
 
         project.tasks.named<CopySpec>("processResources").configure {
             from(mergePluginMeta.map { it.target })
+            duplicatesStrategy = DuplicatesStrategy.INCLUDE
         }
     }
 

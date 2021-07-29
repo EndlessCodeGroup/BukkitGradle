@@ -1,5 +1,9 @@
 ## [Unreleased]
 
+### Fixed
+
+- Add duplicate strategy to processResources (#58)
+
 ## [0.9.2] - 2020-01-25
 
 ### Fixed
