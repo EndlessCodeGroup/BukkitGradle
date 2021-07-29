@@ -11,35 +11,34 @@ import org.gradle.api.tasks.Input
 import org.gradle.api.tasks.Internal
 import org.gradle.api.tasks.OutputFile
 import org.gradle.api.tasks.TaskAction
-import org.gradle.kotlin.dsl.listProperty
-import org.gradle.kotlin.dsl.property
 import org.gradle.kotlin.dsl.withGroovyBuilder
 import ru.endlesscode.bukkitgradle.TASKS_GROUP_BUKKIT
 import ru.endlesscode.bukkitgradle.server.util.Idea
 import java.io.File
 
 /** Builds and writes to file run configuration in IDEA .xml format. */
-public open class CreateIdeaJarRunConfiguration : DefaultTask() {
+@Suppress("LeakingThis")
+public abstract class CreateIdeaJarRunConfiguration : DefaultTask() {
 
-    @Input
-    public val configurationName: Property<String> = project.objects.property()
+    @get:Input
+    public abstract val configurationName: Property<String>
 
-    @Input
-    public val vmParameters: ListProperty<String> = project.objects.listProperty()
+    @get:Input
+    public abstract val vmParameters: ListProperty<String>
 
-    @Input
-    public val programParameters: ListProperty<String> = project.objects.listProperty()
+    @get:Input
+    public abstract val programParameters: ListProperty<String>
 
-    @Input
-    public val beforeRunTask: Property<String> = project.objects.property()
+    @get:Input
+    public abstract val beforeRunTask: Property<String>
 
-    @Input
-    public val jarPath: Property<File> = project.objects.property()
+    @get:Input
+    public abstract val jarPath: Property<File>
 
-    @Internal
-    public val configurationsDir: DirectoryProperty = project.objects.directoryProperty()
+    @get:Internal
+    public abstract val configurationsDir: DirectoryProperty
 
-    @OutputFile
+    @get:OutputFile
     public val configurationFile: Provider<RegularFile> = configurationsDir.zip(configurationName) { dir, name ->
         dir.file("${Idea.fileNameSlug(name)}.xml")
     }

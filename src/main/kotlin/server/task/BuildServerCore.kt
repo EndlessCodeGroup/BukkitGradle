@@ -1,25 +1,23 @@
 package ru.endlesscode.bukkitgradle.server.task
 
-import org.gradle.api.model.ObjectFactory
 import org.gradle.api.provider.Property
 import org.gradle.api.provider.Provider
 import org.gradle.api.tasks.Input
 import org.gradle.api.tasks.InputFile
 import org.gradle.api.tasks.JavaExec
 import org.gradle.api.tasks.OutputFile
-import org.gradle.kotlin.dsl.property
 import org.gradle.process.CommandLineArgumentProvider
 import ru.endlesscode.bukkitgradle.TASKS_GROUP_BUKKIT
 import java.io.File
-import javax.inject.Inject
 
-public open class BuildServerCore @Inject constructor(objects: ObjectFactory) : JavaExec() {
+@Suppress("LeakingThis")
+public abstract class BuildServerCore : JavaExec() {
 
-    @InputFile
-    public val buildToolsFile: Property<File> = objects.property()
+    @get:InputFile
+    public abstract val buildToolsFile: Property<File>
 
-    @Input
-    public val version: Property<String> = objects.property()
+    @get:Input
+    public abstract val version: Property<String>
 
     @OutputFile
     public val spigotFile: Provider<File> = buildToolsFile.zip(version) { buildToolsFile, version ->

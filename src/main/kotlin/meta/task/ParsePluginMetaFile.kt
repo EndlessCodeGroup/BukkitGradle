@@ -5,8 +5,8 @@ import kotlinx.serialization.decodeFromString
 import meta.PluginMetaYaml
 import org.gradle.api.DefaultTask
 import org.gradle.api.file.RegularFileProperty
-import org.gradle.api.model.ObjectFactory
 import org.gradle.api.provider.Provider
+import org.gradle.api.provider.ProviderFactory
 import org.gradle.api.tasks.InputFile
 import org.gradle.api.tasks.Internal
 import org.gradle.api.tasks.Optional
@@ -15,22 +15,22 @@ import ru.endlesscode.bukkitgradle.TASKS_GROUP_BUKKIT
 import ru.endlesscode.bukkitgradle.meta.extension.PluginMetaImpl
 import javax.inject.Inject
 
-internal open class ParsePluginMetaFile @Inject constructor(
-    objects: ObjectFactory
+internal abstract class ParsePluginMetaFile @Inject constructor(
+    providers: ProviderFactory
 ) : DefaultTask() {
 
-    @Internal
+    @get:Internal
     lateinit var yaml: Yaml
 
-    @Internal
+    @get:Internal
     lateinit var meta: PluginMetaImpl
 
-    @Optional
-    @InputFile
-    val metaFile: RegularFileProperty = objects.fileProperty()
+    @get:Optional
+    @get:InputFile
+    abstract val metaFile: RegularFileProperty
 
-    @Internal
-    val pluginMetaYaml: Provider<PluginMetaYaml> = project.provider { checkNotNull(metaYaml) }
+    @get:Internal
+    val pluginMetaYaml: Provider<PluginMetaYaml> = providers.provider { checkNotNull(metaYaml) }
 
     private var metaYaml: PluginMetaYaml? = null
 

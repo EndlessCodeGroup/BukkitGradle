@@ -3,7 +3,6 @@ package ru.endlesscode.bukkitgradle.server.task
 import org.gradle.api.DefaultTask
 import org.gradle.api.file.DirectoryProperty
 import org.gradle.api.file.RegularFile
-import org.gradle.api.model.ObjectFactory
 import org.gradle.api.provider.Provider
 import org.gradle.api.tasks.Input
 import org.gradle.api.tasks.Internal
@@ -11,23 +10,22 @@ import org.gradle.api.tasks.OutputFile
 import org.gradle.api.tasks.TaskAction
 import ru.endlesscode.bukkitgradle.TASKS_GROUP_BUKKIT
 import java.util.*
-import javax.inject.Inject
 
-internal open class PrepareServer @Inject constructor(objects: ObjectFactory) : DefaultTask() {
+internal abstract class PrepareServer : DefaultTask() {
 
-    @Internal
-    val serverDir: DirectoryProperty = objects.directoryProperty()
+    @get:Internal
+    abstract val serverDir: DirectoryProperty
 
-    @Input
+    @get:Input
     var eula: Boolean = false
 
-    @Input
+    @get:Input
     var onlineMode: Boolean = true
 
-    @OutputFile
+    @get:OutputFile
     val eulaFile: Provider<RegularFile> = serverDir.map { it.file("eula.txt") }
 
-    @OutputFile
+    @get:OutputFile
     val propertiesFile: Provider<RegularFile> = serverDir.map { it.file("server.properties") }
 
     init {
