@@ -1,5 +1,7 @@
 ## [Unreleased]
 
+## [0.10.0] - 2021-07-20
+
 ### Added
 
 - Plugin should be compatible with [configuration cache](https://docs.gradle.org/current/userguide/configuration_cache.html)
@@ -15,12 +17,12 @@
 - Add duplicate strategy to processResources (#58)
 - Fix spigot core copying (#55)
 
-## [0.9.2] - 2020-01-25
+## [0.9.2] - 2021-01-25
 
 ### Fixed
 - Fixed task `copyPlugins` when shadow plugin is enabled
 
-## [0.9.1] - 2020-01-16
+## [0.9.1] - 2021-01-16
 
 ### Added
 - `codemc()` repository extension
@@ -29,7 +31,7 @@
 - **BREAKING CHANGE**: `bukkit` dependency extension renamed to `bukkitApi`.
   This name is more consistent, also it avoids conflict with `BukkitExtension` extension name.
 
-## [0.9.0] - 2020-01-08
+## [0.9.0] - 2021-01-08
 
 ### Reworked tasks hierarchy
 
@@ -115,7 +117,8 @@ now it is friendly to Kotlin DSL.
 [uptodate]: https://docs.gradle.org/current/userguide/more_about_tasks.html#sec:up_to_date_checks
 [vault]: https://github.com/MilkBowl/VaultAPI
 
-[unreleased]: https://github.com/EndlessCodeGroup/BukkitGradle/compare/0.9.2...develop
+[unreleased]: https://github.com/EndlessCodeGroup/BukkitGradle/compare/0.10.0...develop
+[0.10.0]: https://github.com/EndlessCodeGroup/BukkitGradle/compare/0.9.2...0.10.0
 [0.9.2]: https://github.com/EndlessCodeGroup/BukkitGradle/compare/0.9.1...0.9.2
 [0.9.1]: https://github.com/EndlessCodeGroup/BukkitGradle/compare/0.9.0...0.9.1
 [0.9.0]: https://github.com/EndlessCodeGroup/BukkitGradle/compare/0.8.2...0.9.0
