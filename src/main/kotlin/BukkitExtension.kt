@@ -1,9 +1,8 @@
 package ru.endlesscode.bukkitgradle
 
-import groovy.lang.Closure
+import org.gradle.api.Action
 import org.gradle.api.Project
 import org.gradle.kotlin.dsl.getByType
-import org.gradle.util.ConfigureUtil
 import org.slf4j.LoggerFactory
 import ru.endlesscode.bukkitgradle.extensions.warnSyntaxChanged
 import ru.endlesscode.bukkitgradle.meta.extension.PluginMetaImpl
@@ -31,25 +30,17 @@ public open class BukkitExtension(
         }
 
     @Deprecated("Use 'server { ... }' instead", ReplaceWith("server(body)"))
-    public fun run(body: Closure<out ServerConfigurationImpl>) {
+    public fun run(body: Action<ServerConfigurationImpl>) {
         logger.warnSyntaxChanged("bukkit.run { ... }", "bukkit.server { ... }")
-        ConfigureUtil.configure(body, server)
+        server(body)
     }
 
-    public fun server(body: Closure<out ServerConfigurationImpl>) {
-        ConfigureUtil.configure(body, server)
+    public fun server(body: Action<ServerConfigurationImpl>) {
+        body.execute(server)
     }
 
-    public fun server(body: ServerConfigurationImpl.() -> Unit) {
-        server.run(body)
-    }
-
-    public fun meta(body: Closure<out PluginMetaImpl>) {
-        ConfigureUtil.configure(body, meta)
-    }
-
-    public fun meta(body: PluginMetaImpl.() -> Unit) {
-        meta.run(body)
+    public fun meta(body: Action<PluginMetaImpl>) {
+        body.execute(meta)
     }
 
     @Deprecated("Use apiVersion instead of version.", ReplaceWith("apiVersion = version"))

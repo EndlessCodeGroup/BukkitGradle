@@ -3,7 +3,7 @@ package ru.endlesscode.bukkitgradle
 import org.gradle.api.JavaVersion
 import org.gradle.api.Plugin
 import org.gradle.api.Project
-import org.gradle.api.plugins.JavaPluginConvention
+import org.gradle.api.plugins.JavaPluginExtension
 import org.gradle.api.tasks.compile.JavaCompile
 import org.gradle.kotlin.dsl.*
 import ru.endlesscode.bukkitgradle.dependencies.Dependencies
@@ -36,7 +36,7 @@ public class BukkitGradlePlugin : Plugin<Project> {
             apply<DevServerPlugin>()
         }
 
-        with(convention.getPlugin<JavaPluginConvention>()) {
+        extensions.configure<JavaPluginExtension> {
             sourceCompatibility = JavaVersion.VERSION_1_8
             targetCompatibility = JavaVersion.VERSION_1_8
         }
