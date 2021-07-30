@@ -1,12 +1,19 @@
 ## [Unreleased]
 
+### Added
+
+- Plugin should be compatible with [configuration cache](https://docs.gradle.org/current/userguide/configuration_cache.html)
+
 ### Changed
 
 - JCenter replaced with MavenCentral
+- Improved compatibility with Groovy
+- Removed usages of deprecated APIs
 
 ### Fixed
 
 - Add duplicate strategy to processResources (#58)
+- Fix spigot core copying (#55)
 
 ## [0.9.2] - 2020-01-25
 
