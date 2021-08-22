@@ -1,5 +1,9 @@
 ## [Unreleased]
 
+### Housekeeping
+
+- Gradle 7.1.1 -> 7.2
+
 ## [0.10.0] - 2021-07-20
 
 ### Added
