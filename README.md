@@ -40,7 +40,7 @@ Gradle utilities for easier writing Bukkit plugins.
 #### With new plugins mechanism
 ```kotlin
 plugins {
-  id("ru.endlesscode.bukkitgradle") version "0.10.0"
+  id("ru.endlesscode.bukkitgradle") version "0.10.1"
 }
 ```
 
@@ -51,7 +51,7 @@ buildscript {
     mavenCentral()
   }
   dependencies {
-    classpath("gradle.plugin.ru.endlesscode:bukkit-gradle:0.10.0")
+    classpath("gradle.plugin.ru.endlesscode:bukkit-gradle:0.10.1")
   }
 }
 
@@ -85,7 +85,7 @@ plugins {
 Simple `build.gradle` file that use BukkitGradle:
 ```kotlin
 plugins {
-    id("ru.endlesscode.bukkitgradle") version "0.10.0"
+    id("ru.endlesscode.bukkitgradle") version "0.10.1"
 }
  
 // Project information

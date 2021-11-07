@@ -1,5 +1,7 @@
 ## [Unreleased]
 
+## [0.10.1] - 2021-11-07
+
 ### Added
 
 - Plugin meta now supports field `libraries`.
@@ -125,7 +127,8 @@ now it is friendly to Kotlin DSL.
 [uptodate]: https://docs.gradle.org/current/userguide/more_about_tasks.html#sec:up_to_date_checks
 [vault]: https://github.com/MilkBowl/VaultAPI
 
-[unreleased]: https://github.com/EndlessCodeGroup/BukkitGradle/compare/0.10.0...develop
+[unreleased]: https://github.com/EndlessCodeGroup/BukkitGradle/compare/0.10.1...develop
+[0.10.1]: https://github.com/EndlessCodeGroup/BukkitGradle/compare/0.10.0...0.10.1
 [0.10.0]: https://github.com/EndlessCodeGroup/BukkitGradle/compare/0.9.2...0.10.0
 [0.9.2]: https://github.com/EndlessCodeGroup/BukkitGradle/compare/0.9.1...0.9.2
 [0.9.1]: https://github.com/EndlessCodeGroup/BukkitGradle/compare/0.9.0...0.9.1
