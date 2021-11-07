@@ -1,5 +1,9 @@
 ## [Unreleased]
 
+### Added
+
+- Plugin meta now supports field `libraries`.
+
 ### Housekeeping
 
 - Gradle 7.1.1 -> 7.2

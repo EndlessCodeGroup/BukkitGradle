@@ -49,6 +49,9 @@ internal data class PluginMetaYaml(
     /** A list of plugins that should be loaded after your plugin. */
     val loadbefore: List<String>? = null,
 
+    /** A list of libraries your plugin needs which can be loaded from Maven Central. */
+    val libraries: List<String>? = null,
+
     /** The name of a command the plugin wishes to register, as well as an optional list of command attributes. */
     val commands: Map<String, PluginCommand>? = null,
 
