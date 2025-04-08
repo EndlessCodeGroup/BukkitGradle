@@ -16,8 +16,10 @@ kotlin {
     }
 }
 
-tasks.test.configure {
+tasks.test {
     useJUnitPlatform()
+
+    jvmArgs("--add-opens=java.base/java.nio.charset=ALL-UNNAMED")
 }
 
 repositories {
