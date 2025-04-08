@@ -1,4 +1,4 @@
-package meta
+package ru.endlesscode.bukkitgradle.meta
 
 import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable

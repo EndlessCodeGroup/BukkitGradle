@@ -2,7 +2,6 @@ package ru.endlesscode.bukkitgradle.meta.task
 
 import com.charleskorn.kaml.Yaml
 import kotlinx.serialization.encodeToString
-import meta.PluginMetaYaml
 import org.gradle.api.DefaultTask
 import org.gradle.api.file.ProjectLayout
 import org.gradle.api.file.RegularFileProperty
@@ -11,6 +10,7 @@ import org.gradle.api.provider.ProviderFactory
 import org.gradle.api.tasks.*
 import ru.endlesscode.bukkitgradle.TASKS_GROUP_BUKKIT
 import ru.endlesscode.bukkitgradle.meta.PluginMetaPlugin
+import ru.endlesscode.bukkitgradle.meta.PluginMetaYaml
 import ru.endlesscode.bukkitgradle.meta.extension.PluginMeta
 import java.io.File
 import javax.inject.Inject
