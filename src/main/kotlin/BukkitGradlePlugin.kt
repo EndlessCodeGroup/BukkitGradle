@@ -40,7 +40,7 @@ public class BukkitGradlePlugin : Plugin<Project> {
 
         extensions.configure<JavaPluginExtension> {
             toolchain {
-                languageVersion.convention(provider { resolveRecommendedJavaVersion(bukkit.parsedApiVersion) })
+                languageVersion.convention(bukkit.parsedApiVersion.map(::resolveRecommendedJavaVersion))
             }
         }
     }
@@ -51,7 +51,7 @@ public class BukkitGradlePlugin : Plugin<Project> {
             description.convention(provider { project.description })
             main.convention(name.map { "${project.group}.${StringUtils.toPascalCase(it)}" })
             version.convention(provider { project.version.toString() })
-            apiVersion.convention(provider { resolveDefaultApiVersion(bukkit.parsedApiVersion) })
+            apiVersion.convention(provider { bukkit.parsedApiVersion.get() }.map(::resolveDefaultApiVersion))
             url.convention(provider { providers.gradleProperty("url").orNull })
         }
     }
@@ -70,9 +70,9 @@ public class BukkitGradlePlugin : Plugin<Project> {
         }
     }
 
-    private fun resolveDefaultApiVersion(version: MinecraftVersion): String? = when {
+    private fun resolveDefaultApiVersion(version: MinecraftVersion): String = when {
         // "API version" has been introduced in Spigot 1.13
-        version < MinecraftVersion.V1_13_0 -> null
+        version < MinecraftVersion.V1_13_0 -> ""
         // From 1.20.5 and onward, a patch version is supported.
         version < MinecraftVersion.V1_20_5 -> version.withoutPatch().toString()
         else -> version.toString()

@@ -30,20 +30,26 @@ public class PluginMetaPlugin : Plugin<Project> {
         val metaFile = project.findMetaFile()
 
         val parsePluginMeta = project.tasks.register<ParsePluginMetaFile>("parsePluginMetaFile") {
+            val bukkit = project.bukkit
+
             this.yaml = yaml
-            this.meta = project.bukkit.meta as PluginMetaImpl
+            this.meta = bukkit.meta as PluginMetaImpl
             this.metaFile.set(metaFile)
 
-            onlyIf { project.bukkit.generateMeta }
+            val generateMeta = bukkit.generateMeta
+            onlyIf { generateMeta.get() }
         }
 
         val mergePluginMeta = project.tasks.register<MergePluginMeta>("mergePluginMeta") {
+            val bukkit = project.bukkit
+
             this.yaml = yaml
-            meta = project.bukkit.meta
+            this.meta = bukkit.meta
             metaYaml.set(parsePluginMeta.map { it.pluginMetaYaml.get() })
             dependsOn(parsePluginMeta)
 
-            onlyIf { project.bukkit.generateMeta }
+            val generateMeta = bukkit.generateMeta
+            onlyIf { generateMeta.get() }
         }
 
         project.tasks.named<CopySpec>("processResources").configure {

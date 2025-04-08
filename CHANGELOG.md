@@ -9,6 +9,7 @@
 - Set the default [JVM toolchain](https://docs.gradle.org/current/userguide/toolchains.html) version
   instead of setting JVM target and source compatibility to 1.8.
   The default JVM version depends on [Paper requirements](https://docs.papermc.io/paper/getting-started#requirements).
+- Use lazy API for `bukkit.apiVersion` and `bukkit.generateMeta` properties.
 
 ### Fixed
 

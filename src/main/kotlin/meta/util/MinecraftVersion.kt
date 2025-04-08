@@ -30,4 +30,4 @@ internal value class MinecraftVersion(private val value: Int) : Comparable<Minec
     }
 }
 
-internal val Bukkit.parsedApiVersion get() = MinecraftVersion.parse(apiVersion)
+internal val Bukkit.parsedApiVersion get() = apiVersion.map(MinecraftVersion::parse)

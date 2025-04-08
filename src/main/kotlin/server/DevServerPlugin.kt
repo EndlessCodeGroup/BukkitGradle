@@ -40,7 +40,7 @@ public class DevServerPlugin : Plugin<Project> {
         bukkit = project.bukkit
 
         val properties = ServerProperties(project.rootDir, project.providers)
-        val coreVersion = project.provider { serverConfiguration.version ?: bukkit.apiVersion }
+        val coreVersion = project.provider<String> { serverConfiguration.version }.orElse(bukkit.apiVersion)
         val serverDir = project.layout.dir(coreVersion.map { File(properties.devServerDir, it) })
         val buildToolsDir = project.provider { properties.buildToolsDir }
 

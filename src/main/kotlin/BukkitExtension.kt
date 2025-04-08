@@ -2,23 +2,35 @@ package ru.endlesscode.bukkitgradle
 
 import org.gradle.api.Action
 import org.gradle.api.Project
+import org.gradle.api.model.ObjectFactory
+import org.gradle.api.provider.Property
+import org.gradle.api.provider.Provider
+import org.gradle.kotlin.dsl.assign
 import org.gradle.kotlin.dsl.getByType
+import org.gradle.kotlin.dsl.property
 import org.slf4j.LoggerFactory
+import ru.endlesscode.bukkitgradle.extensions.finalizedOnRead
 import ru.endlesscode.bukkitgradle.extensions.warnSyntaxChanged
 import ru.endlesscode.bukkitgradle.meta.extension.PluginMetaImpl
 import ru.endlesscode.bukkitgradle.server.ServerConstants
 import ru.endlesscode.bukkitgradle.server.extension.ServerConfigurationImpl
 
 // TODO 1.0: Remove deprecated fields on release
-public open class BukkitExtension(
+public open class BukkitExtension internal constructor(
     public final override val meta: PluginMetaImpl,
-    public final override val server: ServerConfigurationImpl
+    public final override val server: ServerConfigurationImpl,
+    objects: ObjectFactory,
 ) : Bukkit {
 
-    public final override var apiVersion: String = ServerConstants.DEFAULT_VERSION
+    public final override val apiVersion: Property<String> = objects.property<String>()
+        .convention(ServerConstants.DEFAULT_VERSION)
+        .finalizedOnRead()
 
-    public final override var generateMeta: Boolean = true
-        private set
+    private val _generateMeta: Property<Boolean> = objects.property<Boolean>()
+        .convention(true)
+        .finalizedOnRead()
+
+    public final override val generateMeta: Provider<Boolean> = _generateMeta
 
     private val logger = LoggerFactory.getLogger("BukkitExtension")
 
@@ -51,7 +63,7 @@ public open class BukkitExtension(
 
     /** Disabled plugin.yml generation. */
     public fun disableMetaGeneration() {
-        generateMeta = false
+        _generateMeta = false
     }
 }
 

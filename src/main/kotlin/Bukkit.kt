@@ -1,5 +1,6 @@
 package ru.endlesscode.bukkitgradle
 
+import org.gradle.api.provider.Provider
 import ru.endlesscode.bukkitgradle.meta.extension.PluginMeta
 import ru.endlesscode.bukkitgradle.server.extension.ServerConfiguration
 
@@ -12,8 +13,8 @@ public interface Bukkit {
     public val server: ServerConfiguration
 
     /** Bukkit version. */
-    public val apiVersion: String
+    public val apiVersion: Provider<String>
 
     /** Plugin Meta generation enabled. */
-    public val generateMeta: Boolean
+    public val generateMeta: Provider<Boolean>
 }

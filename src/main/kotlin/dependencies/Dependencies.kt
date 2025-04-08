@@ -7,6 +7,7 @@ import org.gradle.api.artifacts.dsl.DependencyHandler
 import org.gradle.api.artifacts.dsl.RepositoryHandler
 import org.gradle.api.artifacts.repositories.MavenArtifactRepository
 import org.gradle.api.plugins.ExtraPropertiesExtension
+import org.gradle.api.provider.Provider
 import org.gradle.kotlin.dsl.KotlinClosure0
 import org.gradle.kotlin.dsl.closureOf
 import org.gradle.kotlin.dsl.extra
@@ -27,7 +28,9 @@ internal object Dependencies {
     const val URL_AIKAR = "https://repo.aikar.co/content/groups/aikar/"
     const val URL_CODEMC = "https://repo.codemc.org/repository/maven-public/"
 
-    private lateinit var project: Project
+    private lateinit var apiVersion: Provider<String>
+    private lateinit var parsedApiVersion: Provider<MinecraftVersion>
+
     private lateinit var repoHandler: RepositoryHandler
     private lateinit var depHandler: DependencyHandler
 
@@ -36,7 +39,10 @@ internal object Dependencies {
 
     @JvmStatic
     fun configureProject(project: Project) {
-        Dependencies.project = project
+        val bukkit = project.bukkit
+        apiVersion = bukkit.apiVersion
+        parsedApiVersion = bukkit.parsedApiVersion
+
         repoHandler = project.repositories
         depHandler = project.dependencies
         addGroovyExtensions()
@@ -74,7 +80,7 @@ internal object Dependencies {
 
     @Suppress("unused") // Receiver required for scope
     fun DependencyHandler.api(groupId: String, artifactId: String, vararg requiredRepos: String): String {
-        val version = "${project.bukkit.apiVersion}-R0.1-SNAPSHOT"
+        val version = "${apiVersion.get()}-R0.1-SNAPSHOT"
         return dep(groupId, artifactId, version, *requiredRepos)
     }
 
@@ -91,7 +97,7 @@ internal object Dependencies {
     }
 
     internal fun resolvePaperGroupId(): String {
-        val useNewGroup = project.bukkit.parsedApiVersion >= MinecraftVersion.V1_17_0
+        val useNewGroup = parsedApiVersion.get() >= MinecraftVersion.V1_17_0
         return if (useNewGroup) "io.papermc.paper" else "com.destroystokyo.paper"
     }
 
