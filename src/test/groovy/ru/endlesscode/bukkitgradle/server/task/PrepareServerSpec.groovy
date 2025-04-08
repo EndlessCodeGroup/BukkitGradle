@@ -61,7 +61,7 @@ class PrepareServerSpec extends PluginSpecification {
         buildFile.text = """
             plugins {
                 id "ru.endlesscode.bukkitgradle"
-                id "com.github.johnrengelman.shadow" version "6.1.0"
+                id "com.gradleup.shadow" version "8.3.6"
             }
 
             version = '1.0'

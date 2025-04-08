@@ -1,5 +1,9 @@
 ## [Unreleased]
 
+### Fixed
+
+- Fix compatibility with new versions of Shadow plugin
+
 ### Housekeeping
 
 - Target JVM 1.8 → 17 

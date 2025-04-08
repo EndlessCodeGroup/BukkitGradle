@@ -124,7 +124,7 @@ public class DevServerPlugin : Plugin<Project> {
             group = TASKS_GROUP_BUKKIT
             description = "Copy plugins to dev server."
 
-            val jarTaskName = if (project.plugins.hasPlugin("com.github.johnrengelman.shadow")) "shadowJar" else "jar"
+            val jarTaskName = if (project.plugins.hasPlugin("com.gradleup.shadow")) "shadowJar" else "jar"
             from(tasks.named<Jar>(jarTaskName))
             into(serverDir.map { project.mkdir(it.dir("plugins")) })
             rename { "${pluginMeta.name.get()}.jar" }
