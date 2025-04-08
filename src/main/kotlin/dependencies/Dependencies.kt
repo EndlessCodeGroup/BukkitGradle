@@ -12,12 +12,14 @@ import org.gradle.kotlin.dsl.closureOf
 import org.gradle.kotlin.dsl.extra
 import org.gradle.kotlin.dsl.maven
 import ru.endlesscode.bukkitgradle.bukkit
+import ru.endlesscode.bukkitgradle.meta.util.MinecraftVersion
+import ru.endlesscode.bukkitgradle.meta.util.parsedApiVersion
 
 internal object Dependencies {
 
     const val URL_SPIGOT = "https://hub.spigotmc.org/nexus/content/repositories/snapshots/"
     const val URL_SK89Q = "https://maven.sk89q.com/repo/"
-    const val URL_PAPERMC = "https://papermc.io/repo/repository/maven-public/"
+    const val URL_PAPERMC = "https://repo.papermc.io/repository/maven-public/"
     const val URL_DMULLOY2 = "https://repo.dmulloy2.net/nexus/repository/public/"
     const val URL_MD5 = "https://repo.md-5.net/content/groups/public/"
     const val URL_JITPACK = "https://jitpack.io/"
@@ -56,7 +58,7 @@ internal object Dependencies {
         depExtra["spigot"] = depClosureOf { depHandler.api("org.spigotmc", "spigot", "mavenLocal") }
         depExtra["spigotApi"] = depClosureOf { depHandler.api("org.spigotmc", "spigot-api", "spigot") }
         depExtra["bukkitApi"] = depClosureOf { depHandler.api("org.bukkit", "bukkit", "spigot") }
-        depExtra["paperApi"] = depClosureOf { depHandler.api("com.destroystokyo.paper", "paper-api", "papermc") }
+        depExtra["paperApi"] = depClosureOf { depHandler.api(resolvePaperGroupId(), "paper-api", "papermc") }
     }
 
     fun RepositoryHandler.addRepo(
@@ -86,6 +88,11 @@ internal object Dependencies {
         }
 
         return "$groupId:$artifactId:$version"
+    }
+
+    internal fun resolvePaperGroupId(): String {
+        val useNewGroup = project.bukkit.parsedApiVersion >= MinecraftVersion.V1_17_0
+        return if (useNewGroup) "io.papermc.paper" else "com.destroystokyo.paper"
     }
 
     private fun depClosureOf(body: () -> String) = KotlinClosure0(body)

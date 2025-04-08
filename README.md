@@ -167,7 +167,7 @@ dependencies {
 ----------------|-------------------------------------------------------------------
  spigot         | https://hub.spigotmc.org/nexus/content/repositories/snapshots/
  sk98q          | https://maven.sk89q.com/repo/
- papermc        | https://papermc.io/repo/repository/maven-public/
+ papermc        | https://repo.papermc.io/repository/maven-public/
  dmulloy2       | https://repo.dmulloy2.net/nexus/repository/public/
  md5            | https://repo.md-5.net/content/groups/public/
  jitpack        | https://jitpack.io/
@@ -176,14 +176,14 @@ dependencies {
  codemc         | https://repo.codemc.org/repository/maven-public/
 
 #### Dependencies:
-Some dependencies also applies repo needed for them.
+Some dependencies also add a repository needed for them.
 
- Name        | Signature                                     | Applies repo
--------------|-----------------------------------------------|---------------
- spigot      | org.spigotmc:spigot:$apiVersion               | mavenLocal
- spigotApi   | org.spigotmc:spigot-api:$apiVersion           | spigot
- bukkitApi   | org.bukkit:bukkit:$apiVersion                 | spigot
- paperApi    | com.destroystokyo.paper:paper-api:$apiVersion | destroystokyo
+ Name        | Signature                              | Adds repository
+-------------|----------------------------------------|-----------------
+ spigot      | org.spigotmc:spigot:$apiVersion        | mavenLocal
+ spigotApi   | org.spigotmc:spigot-api:$apiVersion    | spigot
+ bukkitApi   | org.bukkit:bukkit:$apiVersion          | spigot
+ paperApi    | io.papermc.paper:paper-api:$apiVersion | papermc
  
  **Note:** `$apiVersion` - is `${version}-R0.1-SNAPSHOT` (where `$version` is `bukkit.version`)
 

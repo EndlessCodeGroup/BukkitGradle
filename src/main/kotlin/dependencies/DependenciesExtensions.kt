@@ -14,6 +14,7 @@ import ru.endlesscode.bukkitgradle.dependencies.Dependencies.URL_SK89Q
 import ru.endlesscode.bukkitgradle.dependencies.Dependencies.URL_SPIGOT
 import ru.endlesscode.bukkitgradle.dependencies.Dependencies.addRepo
 import ru.endlesscode.bukkitgradle.dependencies.Dependencies.api
+import ru.endlesscode.bukkitgradle.dependencies.Dependencies.resolvePaperGroupId
 
 public fun RepositoryHandler.spigot(configure: MavenArtifactRepository.() -> Unit = {}) {
     addRepo("Spigot", URL_SPIGOT, configure)
@@ -61,4 +62,4 @@ public val DependencyHandler.bukkitApi: String
     get() = api("org.bukkit", "bukkit", "spigot")
 
 public val DependencyHandler.paperApi: String
-    get() = api("com.destroystokyo.paper", "paper-api", "papermc")
+    get() = api(resolvePaperGroupId(), "paper-api", "papermc")

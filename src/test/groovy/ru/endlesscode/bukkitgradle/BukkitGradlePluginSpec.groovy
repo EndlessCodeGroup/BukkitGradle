@@ -13,7 +13,7 @@ class BukkitGradlePluginSpec extends PluginSpecification {
     }
 
     def "when initialized - should set default JVM toolchain"(String apiVersion, int jvmVersion) {
-        when: "apiVersion is set to $apiVersion"
+        when: "apiVersion is set"
         project.bukkit.apiVersion = apiVersion
 
         then: "JVM toolchain version should be"
@@ -43,6 +43,22 @@ class BukkitGradlePluginSpec extends PluginSpecification {
 
         then: "returned bukkit dependency with default version"
         dependency == 'org.bukkit:bukkit:1.16.4-R0.1-SNAPSHOT'
+    }
+
+    def "when using paper extension - should add paper dependency"(String apiVersion, String groupId) {
+        when: "apiVersion is set"
+        project.bukkit.apiVersion = apiVersion
+
+        and: "use paperApi extension"
+        String dependency = project.dependencies.paperApi()
+
+        then: "returns paper dependency with right groupId"
+        dependency == "$groupId:paper-api:$apiVersion-R0.1-SNAPSHOT"
+
+        where:
+        apiVersion | groupId
+        "1.16.5"   | "com.destroystokyo.paper"
+        "1.17"     | "io.papermc.paper"
     }
 
     def "when use bukkit extension - and bukkit version set - should return bukkit with specified version"() {

@@ -12,6 +12,8 @@
 
 ### Fixed
 
+- Fix PaperMC repository URL
+- Fix group ID for PaperMC 1.17+
 - Fix compatibility with new versions of Shadow plugin
 
 ### Housekeeping
