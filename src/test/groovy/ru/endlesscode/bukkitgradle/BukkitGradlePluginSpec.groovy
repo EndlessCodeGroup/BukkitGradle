@@ -1,3 +1,4 @@
+//file:noinspection ConfigurationAvoidance
 package ru.endlesscode.bukkitgradle
 
 class BukkitGradlePluginSpec extends PluginSpecification {

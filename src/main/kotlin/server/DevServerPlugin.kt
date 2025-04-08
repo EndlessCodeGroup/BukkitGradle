@@ -24,7 +24,6 @@ public class DevServerPlugin : Plugin<Project> {
 
     private lateinit var project: Project
     private lateinit var bukkit: Bukkit
-    private lateinit var bukkitGradleDir: File
 
     private val serverConfiguration: ServerConfiguration
         get() = bukkit.server
@@ -39,9 +38,6 @@ public class DevServerPlugin : Plugin<Project> {
     override fun apply(target: Project) {
         project = target
         bukkit = project.bukkit
-
-        bukkitGradleDir = File(project.buildDir, "bukkit-gradle")
-        bukkitGradleDir.mkdirs()
 
         val properties = ServerProperties(project.rootDir, project.providers)
         val coreVersion = project.provider { serverConfiguration.version ?: bukkit.apiVersion }
@@ -80,6 +76,8 @@ public class DevServerPlugin : Plugin<Project> {
     }
 
     private fun registerDownloadPaperclip(coreVersion: Provider<String>): TaskProvider<DownloadPaperclip> {
+        val bukkitGradleDir = project.layout.buildDirectory.file("bukkit-gradle")
+
         val downloadPaperVersions = tasks.register<Download>("downloadPaperVersions") {
             group = TASKS_GROUP_BUKKIT
             description = "Download file with paperclip versions"

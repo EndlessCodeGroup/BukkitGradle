@@ -25,7 +25,7 @@ public class ServerConfigurationImpl : ServerConfiguration {
      */
     public fun setCore(core: String) {
         try {
-            coreType = CoreType.valueOf(core.toUpperCase(Locale.ENGLISH))
+            coreType = CoreType.valueOf(core.uppercase(Locale.ENGLISH))
         } catch (_: IllegalArgumentException) {
             logger.warn(
                 """

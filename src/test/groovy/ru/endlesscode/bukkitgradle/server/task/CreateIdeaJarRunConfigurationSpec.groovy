@@ -32,7 +32,7 @@ class CreateIdeaJarRunConfigurationSpec extends PluginSpecification {
             }
         '''.stripIndent()
 
-        def serverDir = "${project.buildDir}/server/1.15.2"
+        def serverDir = "${project.rootDir}/build/server/1.15.2"
 
         when:
         run(TASK_NAME, IDEA_ACTIVE_PROPERTY)

@@ -62,7 +62,7 @@ internal class ServerProperties(projectPath: File, private val providers: Provid
     }
 
     private fun getEnvProvider(name: String): Provider<String> {
-        return providers.environmentVariable(name).forUseAtConfigurationTime()
+        return providers.environmentVariable(name)
     }
 
     private fun showError(property: Property): Nothing {

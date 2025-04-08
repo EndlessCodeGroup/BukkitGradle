@@ -7,7 +7,7 @@ internal object Idea {
     private const val IDEA_ACTIVE: String = "idea.active"
 
     fun isActive(providers: ProviderFactory): Boolean {
-        return providers.systemProperty(IDEA_ACTIVE).forUseAtConfigurationTime().orNull == "true"
+        return providers.systemProperty(IDEA_ACTIVE).orNull == "true"
     }
 
     @JvmStatic
