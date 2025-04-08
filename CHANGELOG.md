@@ -1,5 +1,10 @@
 ## [Unreleased]
 
+### Housekeeping
+
+- Target JVM 1.8 → 17 
+- Gradle 7.2 → 8.13
+
 ## [0.10.1] - 2021-11-07
 
 ### Added

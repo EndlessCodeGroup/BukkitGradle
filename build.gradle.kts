@@ -2,29 +2,22 @@ plugins {
     `kotlin-dsl`
     `maven-publish`
     groovy
-    kotlin("plugin.serialization") version "1.4.31"
-    id("com.gradle.plugin-publish") version "0.15.0"
-    id("com.github.ben-manes.versions") version "0.39.0"
-}
-
-java {
-    sourceCompatibility = JavaVersion.VERSION_1_8
-    targetCompatibility = JavaVersion.VERSION_1_8
-    withSourcesJar()
+    kotlin("plugin.serialization") version embeddedKotlinVersion
+    id("com.gradle.plugin-publish") version "1.3.1"
+    id("com.github.ben-manes.versions") version "0.52.0"
 }
 
 kotlin {
     explicitApi()
+    jvmToolchain(17)
+
+    compilerOptions {
+        allWarningsAsErrors = true
+    }
 }
 
 tasks.test.configure {
     useJUnitPlatform()
-}
-
-tasks.compileKotlin.configure {
-    kotlinOptions {
-        allWarningsAsErrors = true
-    }
 }
 
 repositories {
@@ -32,11 +25,11 @@ repositories {
 }
 
 dependencies {
-    implementation("de.undercouch:gradle-download-task:4.1.2")
-    implementation("org.jetbrains.kotlinx:kotlinx-serialization-json:1.1.0")
-    implementation("com.charleskorn.kaml:kaml:0.31.0")
-    testImplementation("junit:junit:4.13")
-    testImplementation(platform("org.spockframework:spock-bom:2.0-groovy-3.0"))
+    implementation("de.undercouch:gradle-download-task:5.6.0")
+    implementation("org.jetbrains.kotlinx:kotlinx-serialization-json:1.8.1")
+    implementation("com.charleskorn.kaml:kaml:0.74.0")
+    testImplementation("junit:junit:4.13.1")
+    testImplementation(platform("org.spockframework:spock-bom:2.3-groovy-3.0"))
     testImplementation("org.spockframework:spock-core")
     testImplementation("org.spockframework:spock-junit4")
 }
@@ -54,18 +47,16 @@ publishing {
 }
 
 gradlePlugin {
+    website = "https://github.com/EndlessCodeGroup/BukkitGradle"
+    vcsUrl = website
+
     plugins {
         create("bukkitGradle") {
             id = "ru.endlesscode.bukkitgradle"
             displayName = "BukkitGradle Plugin"
             description = "Gradle plugin providing integration for easier Bukkit plugins development."
             implementationClass = "ru.endlesscode.bukkitgradle.BukkitGradlePlugin"
+            tags = listOf("minecraft", "bukkit", "plugin", "spigot", "paper")
         }
     }
-}
-
-pluginBundle {
-    website = "https://github.com/EndlessCodeGroup/BukkitGradle"
-    vcsUrl = website
-    tags = listOf("minecraft", "bukkit", "plugin", "spigot", "paper")
 }
