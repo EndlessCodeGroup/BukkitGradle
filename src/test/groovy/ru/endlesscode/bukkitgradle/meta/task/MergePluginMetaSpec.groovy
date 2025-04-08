@@ -60,6 +60,31 @@ class MergePluginMetaSpec extends PluginSpecification {
                          """.stripIndent().trim()
     }
 
+    def 'when merge meta - should set api-version'(String apiVersion, String expectedResult) {
+        when: "api version is $apiVersion"
+        buildFile << """
+            bukkit.apiVersion = "$apiVersion"
+        """.stripIndent()
+
+        and: "run generate meta task"
+        run(TASK_PATH)
+
+        then: "meta file content corresponds to default config"
+        metaFile.text == """
+                         main: "com.example.testplugin.TestPlugin"
+                         name: "test-plugin"
+                         version: "1.0"
+                         api-version: "$expectedResult"
+                         """.stripIndent().trim()
+
+        where:
+        apiVersion | expectedResult
+        "1.16.5"   | "1.16"
+        "1.20.4"   | "1.20"
+        "1.20.5"   | "1.20.5"
+        "1.21.1"   | "1.21.1"
+    }
+
     def 'when merge meta - and generate it again - should skip second task run'() {
         when: "run generate meta task"
         run(TASK_PATH)

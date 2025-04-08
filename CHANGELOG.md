@@ -1,5 +1,15 @@
 ## [Unreleased]
 
+### Added
+
+- Support setting "api-version" containing a patch version for v1.20.5+
+
+### Changed
+
+- Set the default [JVM toolchain](https://docs.gradle.org/current/userguide/toolchains.html) version
+  instead of setting JVM target and source compatibility to 1.8.
+  The default JVM version depends on [Paper requirements](https://docs.papermc.io/paper/getting-started#requirements).
+
 ### Fixed
 
 - Fix compatibility with new versions of Shadow plugin

@@ -8,12 +8,4 @@ internal object StringUtils {
         val camelCaseText = text.replace(Regex("[ _-]([A-Za-z0-9])")) { match -> match.groupValues[1].uppercase() }
         return camelCaseText.replaceFirstChar { it.uppercase() }
     }
-
-    @JvmStatic
-    fun parseApiVersion(version: String): String? {
-        val versionParts = version.split('.').mapNotNull { it.toIntOrNull() }
-        require(versionParts.size in 2..3) { "Unable to parse API version '$version'." }
-        val (major, minor) = versionParts
-        return if (major >= 1 && minor >= 13) "$major.$minor" else null
-    }
 }

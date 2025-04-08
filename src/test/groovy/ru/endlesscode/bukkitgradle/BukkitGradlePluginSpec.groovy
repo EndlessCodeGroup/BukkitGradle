@@ -12,6 +12,23 @@ class BukkitGradlePluginSpec extends PluginSpecification {
         project.pluginManager.hasPlugin("java")
     }
 
+    def "when initialized - should set default JVM toolchain"(String apiVersion, int jvmVersion) {
+        when: "apiVersion is set to $apiVersion"
+        project.bukkit.apiVersion = apiVersion
+
+        then: "JVM toolchain version should be"
+        project.java.toolchain.languageVersion.get().asInt() == jvmVersion
+
+        where:
+        apiVersion | jvmVersion
+        "1.11"     | 8
+        "1.12"     | 11
+        "1.16.4"   | 11
+        "1.16.5"   | 16
+        "1.17"     | 16
+        "1.17.1"   | 21
+    }
+
     def "when use custom repos extension - should add repos"() {
         when: "use repo extension"
         project.repositories.sk89q()
