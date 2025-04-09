@@ -1,6 +1,13 @@
-BukkitGradle [![Version](https://img.shields.io/github/release/EndlessCodeGroup/BukkitGradle/all.svg?style=flat-square)](https://plugins.gradle.org/plugin/ru.endlesscode.bukkitgradle) [![Build Status](https://img.shields.io/travis/EndlessCodeGroup/BukkitGradle.svg?style=flat-square)](https://travis-ci.org/EndlessCodeGroup/BukkitGradle) [![license](https://img.shields.io/github/license/EndlessCodeGroup/BukkitGradle.svg?style=flat-square)](https://github.com/EndlessCodeGroup/BukkitGradle/blob/master/LICENSE)
+BukkitGradle
+[![Version](https://img.shields.io/github/release/EndlessCodeGroup/BukkitGradle/all.svg?style=flat-square)](https://plugins.gradle.org/plugin/ru.endlesscode.bukkitgradle)
+[![Build Status](https://img.shields.io/travis/EndlessCodeGroup/BukkitGradle.svg?style=flat-square)](https://travis-ci.org/EndlessCodeGroup/BukkitGradle)
+[![license](https://img.shields.io/github/license/EndlessCodeGroup/BukkitGradle.svg?style=flat-square)](https://github.com/EndlessCodeGroup/BukkitGradle/blob/master/LICENSE)
 ============
 Gradle utilities for easier writing Bukkit plugins.
+
+> [!WARNING]
+> This plugin is not being maintained anymore,
+> consider switching to [spigradle](https://github.com/spigradle/spigradle).
 
 <!-- START doctoc generated TOC please keep comment here to allow auto update -->
 <!-- DON'T EDIT THIS SECTION, INSTEAD RE-RUN doctoc TO UPDATE -->
