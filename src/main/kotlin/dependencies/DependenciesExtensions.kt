@@ -1,3 +1,5 @@
+@file:Suppress("SpellCheckingInspection")
+
 package ru.endlesscode.bukkitgradle.dependencies
 
 import org.gradle.api.artifacts.dsl.DependencyHandler
@@ -16,41 +18,32 @@ import ru.endlesscode.bukkitgradle.dependencies.Dependencies.addRepo
 import ru.endlesscode.bukkitgradle.dependencies.Dependencies.api
 import ru.endlesscode.bukkitgradle.dependencies.Dependencies.resolvePaperGroupId
 
-public fun RepositoryHandler.spigot(configure: MavenArtifactRepository.() -> Unit = {}) {
+public fun RepositoryHandler.spigot(configure: MavenArtifactRepository.() -> Unit = {}): MavenArtifactRepository =
     addRepo("Spigot", URL_SPIGOT, configure)
-}
 
-public fun RepositoryHandler.sk89q(configure: MavenArtifactRepository.() -> Unit = {}) {
+public fun RepositoryHandler.sk89q(configure: MavenArtifactRepository.() -> Unit = {}): MavenArtifactRepository =
     addRepo("sk89q", URL_SK89Q, configure)
-}
 
-public fun RepositoryHandler.papermc(configure: MavenArtifactRepository.() -> Unit = {}) {
+public fun RepositoryHandler.papermc(configure: MavenArtifactRepository.() -> Unit = {}): MavenArtifactRepository =
     addRepo("PaperMC", URL_PAPERMC, configure)
-}
 
-public fun RepositoryHandler.dmulloy2(configure: MavenArtifactRepository.() -> Unit = {}) {
+public fun RepositoryHandler.dmulloy2(configure: MavenArtifactRepository.() -> Unit = {}): MavenArtifactRepository =
     addRepo("dmulloy2", URL_DMULLOY2, configure)
-}
 
-public fun RepositoryHandler.md5(configure: MavenArtifactRepository.() -> Unit = {}) {
+public fun RepositoryHandler.md5(configure: MavenArtifactRepository.() -> Unit = {}): MavenArtifactRepository =
     addRepo("md5", URL_MD5, configure)
-}
 
-public fun RepositoryHandler.jitpack(configure: MavenArtifactRepository.() -> Unit = {}) {
+public fun RepositoryHandler.jitpack(configure: MavenArtifactRepository.() -> Unit = {}): MavenArtifactRepository =
     addRepo("jitpack", URL_JITPACK, configure)
-}
 
-public fun RepositoryHandler.placeholderApi(configure: MavenArtifactRepository.() -> Unit = {}) {
+public fun RepositoryHandler.placeholderApi(configure: MavenArtifactRepository.() -> Unit = {}): MavenArtifactRepository =
     addRepo("PlaceholderAPI", URL_PLACEHOLDERAPI, configure)
-}
 
-public fun RepositoryHandler.aikar(configure: MavenArtifactRepository.() -> Unit = {}) {
+public fun RepositoryHandler.aikar(configure: MavenArtifactRepository.() -> Unit = {}): MavenArtifactRepository =
     addRepo("aikar", URL_AIKAR, configure)
-}
 
-public fun RepositoryHandler.codemc(configure: MavenArtifactRepository.() -> Unit = {}) {
+public fun RepositoryHandler.codemc(configure: MavenArtifactRepository.() -> Unit = {}): MavenArtifactRepository =
     addRepo("codemc", URL_CODEMC, configure)
-}
 
 public val DependencyHandler.spigot: String
     get() = api("org.spigotmc", "spigot", "mavenLocal")

@@ -9,12 +9,13 @@ import org.gradle.api.artifacts.repositories.MavenArtifactRepository
 import org.gradle.api.plugins.ExtraPropertiesExtension
 import org.gradle.api.provider.Provider
 import org.gradle.kotlin.dsl.KotlinClosure0
-import org.gradle.kotlin.dsl.closureOf
 import org.gradle.kotlin.dsl.extra
 import org.gradle.kotlin.dsl.maven
 import ru.endlesscode.bukkitgradle.bukkit
 import ru.endlesscode.bukkitgradle.meta.util.MinecraftVersion
 import ru.endlesscode.bukkitgradle.meta.util.parsedApiVersion
+
+private typealias RepositoryClosure = Closure<MavenArtifactRepository>
 
 internal object Dependencies {
 
@@ -50,15 +51,15 @@ internal object Dependencies {
 
     private fun addGroovyExtensions() {
         val repoExtra = repoHandler.extra
-        repoExtra["spigot"] = closureOf<Any?> { repoHandler.addRepo("Spigot", URL_SPIGOT) }
-        repoExtra["sk89q"] = closureOf<Any?> { repoHandler.addRepo("sk89q", URL_SK89Q) }
-        repoExtra["papermc"] = closureOf<Any?> { repoHandler.addRepo("PaperMC", URL_PAPERMC) }
-        repoExtra["dmulloy2"] = closureOf<Any?> { repoHandler.addRepo("dmulloy2", URL_DMULLOY2) }
-        repoExtra["md5"] = closureOf<Any?> { repoHandler.addRepo("md5", URL_MD5) }
-        repoExtra["jitpack"] = closureOf<Any?> { repoHandler.addRepo("jitpack", URL_JITPACK) }
-        repoExtra["placeholderapi"] = closureOf<Any?> { repoHandler.addRepo("PlaceholderAPI", URL_PLACEHOLDERAPI) }
-        repoExtra["aikar"] = closureOf<Any?> { repoHandler.addRepo("aikar", URL_AIKAR) }
-        repoExtra["codemc"] = closureOf<Any?> { repoHandler.addRepo("codemc", URL_CODEMC) }
+        repoExtra["spigot"] = repoHandler.repositoryClosure("Spigot", URL_SPIGOT)
+        repoExtra["sk89q"] = repoHandler.repositoryClosure("sk89q", URL_SK89Q)
+        repoExtra["papermc"] = repoHandler.repositoryClosure("PaperMC", URL_PAPERMC)
+        repoExtra["dmulloy2"] = repoHandler.repositoryClosure("dmulloy2", URL_DMULLOY2)
+        repoExtra["md5"] = repoHandler.repositoryClosure("md5", URL_MD5)
+        repoExtra["jitpack"] = repoHandler.repositoryClosure("jitpack", URL_JITPACK)
+        repoExtra["placeholderapi"] = repoHandler.repositoryClosure("PlaceholderAPI", URL_PLACEHOLDERAPI)
+        repoExtra["aikar"] = repoHandler.repositoryClosure("aikar", URL_AIKAR)
+        repoExtra["codemc"] = repoHandler.repositoryClosure("codemc", URL_CODEMC)
 
         val depExtra = depHandler.extra
         depExtra["spigot"] = depClosureOf { depHandler.api("org.spigotmc", "spigot", "mavenLocal") }
@@ -67,12 +68,18 @@ internal object Dependencies {
         depExtra["paperApi"] = depClosureOf { depHandler.api(resolvePaperGroupId(), "paper-api", "papermc") }
     }
 
+    private fun RepositoryHandler.repositoryClosure(name: String, url: String): RepositoryClosure =
+        object : RepositoryClosure(this, this) {
+            @Suppress("unused") // to be called dynamically by Groovy
+            fun doCall() = (delegate as RepositoryHandler).addRepo(name, url)
+        }
+
     fun RepositoryHandler.addRepo(
         repoName: String,
         repoUrl: String,
         configure: MavenArtifactRepository.() -> Unit = {}
-    ) {
-        maven(repoUrl) {
+    ): MavenArtifactRepository {
+        return maven(repoUrl) {
             name = repoName
             configure()
         }
@@ -89,7 +96,8 @@ internal object Dependencies {
             if (repo == "mavenLocal") {
                 repoHandler.mavenLocal()
             } else {
-                (repoHandler.extra[repo] as Closure<*>).call(repoHandler)
+                @Suppress("UNCHECKED_CAST")
+                (repoHandler.extra[repo] as RepositoryClosure).call()
             }
         }
 
