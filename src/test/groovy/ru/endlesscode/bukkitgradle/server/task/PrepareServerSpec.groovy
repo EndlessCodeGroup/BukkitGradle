@@ -1,6 +1,5 @@
 package ru.endlesscode.bukkitgradle.server.task
 
-
 import org.gradle.testkit.runner.TaskOutcome
 import ru.endlesscode.bukkitgradle.PluginSpecification
 
@@ -8,28 +7,25 @@ class PrepareServerSpec extends PluginSpecification {
 
     private final static TASK_NAME = ':prepareServer'
 
-    def "when run prepareServer - should also run task dependencies"() {
+    def "when run prepareServer - should run successfully"() {
         when: "run prepareServer"
-        run(TASK_NAME, '-x', 'copyServer')
+        run(TASK_NAME)
 
-        then: "copyPlugins should be successful"
-        taskOutcome(':copyPlugins') == TaskOutcome.SUCCESS
-
-        and: "task should be also successful"
+        then: "task should be successful"
         taskOutcome(TASK_NAME) == TaskOutcome.SUCCESS
     }
 
-    def "when run prepareServer again - should be uo-to-date"() {
+    def "when run prepareServer again - should be up-to-date"() {
         when: "run prepareServer"
-        run(TASK_NAME, '-x', 'copyServer')
+        run(TASK_NAME)
 
         then: "task should be successful"
         taskOutcome(TASK_NAME) == TaskOutcome.SUCCESS
 
         when: "run prepareServer again"
-        run(TASK_NAME, '-x', 'copyServer')
+        run(TASK_NAME)
 
-        then: "task should be uo-to-date"
+        then: "task should be up-to-date"
         taskOutcome(TASK_NAME) == TaskOutcome.UP_TO_DATE
     }
 
@@ -44,34 +40,15 @@ class PrepareServerSpec extends PluginSpecification {
                 }
             }
         """.stripIndent()
-        def serverDir = "build/server/1.16.2/"
+        def serverDir = "run/"
 
         when: "run prepareServer"
-        run(TASK_NAME, '-x', 'copyServer')
+        run(TASK_NAME)
 
         then: "eula should be true"
         file("$serverDir/eula.txt").readLines().contains("eula=true")
 
         and: "online-mode should be false"
         file("$serverDir/server.properties").readLines().contains("online-mode=false")
-    }
-
-    def "when run prepareServer - and there is shadow plugin - should use shadowJar task"() {
-        given: "configured eula and online-mode"
-        buildFile.text = """
-            plugins {
-                id "ru.endlesscode.bukkitgradle"
-                id "com.gradleup.shadow" version "8.3.6"
-            }
-
-            version = '1.0'
-            group = 'com.example.testplugin'
-        """.stripIndent()
-
-        when: "run prepareServer"
-        run(TASK_NAME, '-x', 'copyServer')
-
-        then: "should run shadowJar"
-        taskOutcome(":shadowJar") == TaskOutcome.SUCCESS
     }
 }

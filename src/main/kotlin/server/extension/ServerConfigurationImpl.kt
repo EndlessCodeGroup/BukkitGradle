@@ -15,7 +15,7 @@ public class ServerConfigurationImpl : ServerConfiguration {
     override var encoding: String = "UTF-8"
 
     override var javaArgs: List<String> = listOf("-Xmx1G")
-    override var bukkitArgs: List<String> = listOf("nogui")
+    override var bukkitArgs: List<String> = emptyList()
 
     override var coreType: CoreType = CoreType.SPIGOT
 

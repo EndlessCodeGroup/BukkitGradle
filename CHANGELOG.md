@@ -6,6 +6,9 @@
 
 ### Changed
 
+- **Breaking change!**
+  Refactor development server implementation to use [jpenilla/run-task](https://github.com/jpenilla/run-task/) plugin and integrate run-paper for server execution,
+  improving maintainability and compatibility with various server versions.
 - Set the default [JVM toolchain](https://docs.gradle.org/current/userguide/toolchains.html) version
   instead of setting JVM target and source compatibility to 1.8.
   The default JVM version depends on [Paper requirements](https://docs.papermc.io/paper/getting-started#requirements).

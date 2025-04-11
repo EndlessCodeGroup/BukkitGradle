@@ -39,6 +39,9 @@ public abstract class CreateIdeaJarRunConfiguration @Inject constructor(
     @get:Input
     public abstract val jarPath: Property<File>
 
+    @get:Input
+    public abstract val workingDirectory: Property<File>
+
     @get:Internal
     public abstract val configurationsDir: DirectoryProperty
 
@@ -75,7 +78,7 @@ public abstract class CreateIdeaJarRunConfiguration @Inject constructor(
                     "option"("name" to "JAR_PATH", "value" to jarPath.get())
                     "option"("name" to "VM_PARAMETERS", "value" to vmParameters.get().joinToString(" "))
                     "option"("name" to "PROGRAM_PARAMETERS", "value" to programParameters.get().joinToString(" "))
-                    "option"("name" to "WORKING_DIRECTORY", "value" to jarPath.get().parentFile)
+                    "option"("name" to "WORKING_DIRECTORY", "value" to workingDirectory.get())
                     "method"("v" to 2) {
                         "option"(
                             "name" to "Gradle.BeforeRunTask",

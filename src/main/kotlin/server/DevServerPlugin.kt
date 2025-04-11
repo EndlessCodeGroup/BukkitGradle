@@ -1,23 +1,19 @@
 package ru.endlesscode.bukkitgradle.server
 
-import de.undercouch.gradle.tasks.download.Download
 import org.gradle.api.Plugin
 import org.gradle.api.Project
 import org.gradle.api.file.Directory
 import org.gradle.api.provider.Provider
-import org.gradle.api.tasks.Copy
 import org.gradle.api.tasks.TaskContainer
 import org.gradle.api.tasks.TaskProvider
-import org.gradle.jvm.tasks.Jar
 import org.gradle.kotlin.dsl.named
 import org.gradle.kotlin.dsl.register
 import ru.endlesscode.bukkitgradle.Bukkit
-import ru.endlesscode.bukkitgradle.TASKS_GROUP_BUKKIT
 import ru.endlesscode.bukkitgradle.bukkit
-import ru.endlesscode.bukkitgradle.meta.extension.PluginMeta
-import ru.endlesscode.bukkitgradle.server.extension.CoreType
 import ru.endlesscode.bukkitgradle.server.extension.ServerConfiguration
-import ru.endlesscode.bukkitgradle.server.task.*
+import ru.endlesscode.bukkitgradle.server.task.CreateIdeaJarRunConfiguration
+import ru.endlesscode.bukkitgradle.server.task.PrepareServer
+import xyz.jpenilla.runpaper.task.RunServer
 import java.io.File
 
 public class DevServerPlugin : Plugin<Project> {
@@ -28,9 +24,6 @@ public class DevServerPlugin : Plugin<Project> {
     private val serverConfiguration: ServerConfiguration
         get() = bukkit.server
 
-    private val pluginMeta: PluginMeta
-        get() = bukkit.meta
-
     private val tasks: TaskContainer
         get() = project.tasks
 
@@ -39,125 +32,49 @@ public class DevServerPlugin : Plugin<Project> {
         project = target
         bukkit = project.bukkit
 
-        val properties = ServerProperties(project.rootDir, project.providers)
-        val coreVersion = project.provider<String> { serverConfiguration.version }.orElse(bukkit.apiVersion)
-        val serverDir = project.layout.dir(coreVersion.map { File(properties.devServerDir, it) })
-        val buildToolsDir = project.provider { properties.buildToolsDir }
+        target.plugins.apply("xyz.jpenilla.run-paper")
+        val configuredServerDir = target.resolveConfiguredServerDir()
 
-        // Register tasks
-        val buildServerCore = registerBuildServerCoreTask(buildToolsDir, coreVersion)
-        val downloadPaperclip = registerDownloadPaperclip(coreVersion)
-        val copyServerCore = registerCopyServerCoreTask(buildServerCore, downloadPaperclip, serverDir)
+        // Preconfigure RunServer task
+        val serverVersion = project.provider<String> { serverConfiguration.version }.orElse(bukkit.apiVersion)
+        val runServer = tasks.named<RunServer>("runServer") {
+            version.convention(serverVersion)
+            if (configuredServerDir != null) runDirectory.convention(configuredServerDir)
+            jvmArgs(serverConfiguration.buildJvmArgs())
+            args(serverConfiguration.bukkitArgs)
+        }
 
-        val prepareServer = registerPrepareServerTask(copyServerCore, serverDir)
-        registerRunServerTask(prepareServer, serverDir)
+        val prepareServer = registerPrepareServerTask(runServer)
+        runServer.configure { dependsOn(prepareServer) }
 
-        registerBuildIdeRunTask(serverDir)
+        registerBuildIdeRunTask(runServer)
     }
 
-    private fun registerBuildServerCoreTask(
-        buildToolsDir: Provider<File>,
-        coreVersion: Provider<String>
-    ): TaskProvider<BuildServerCore> {
-        val downloadBuildTools = tasks.register<Download>("downloadBuildTools") {
-            group = TASKS_GROUP_BUKKIT
-            description = "Download BuildTools"
-
-            src(BuildToolsConstants.URL)
-            dest(buildToolsDir)
-            onlyIfModified(true)
-        }
-
-        return tasks.register<BuildServerCore>("buildServerCore") {
-            buildToolsFile.set(downloadBuildTools.map { it.outputFiles.single() })
-            workingDir(buildToolsDir)
-            version.set(coreVersion)
-        }
-    }
-
-    private fun registerDownloadPaperclip(coreVersion: Provider<String>): TaskProvider<DownloadPaperclip> {
-        val bukkitGradleDir = project.layout.buildDirectory.file("bukkit-gradle")
-
-        val downloadPaperVersions = tasks.register<Download>("downloadPaperVersions") {
-            group = TASKS_GROUP_BUKKIT
-            description = "Download file with paperclip versions"
-
-            src(PaperConstants.URL_PAPER_VERSIONS)
-            dest(bukkitGradleDir)
-            quiet(true)
-            onlyIfModified(true)
-        }
-
-        return tasks.register<DownloadPaperclip>("downloadPaperclip") {
-            paperVersionsFile.set(downloadPaperVersions.map { it.outputFiles.single() })
-            version.set(coreVersion)
-            dest(bukkitGradleDir)
-        }
-    }
-
-    private fun registerCopyServerCoreTask(
-        buildServerCore: TaskProvider<BuildServerCore>,
-        downloadPaperclip: TaskProvider<DownloadPaperclip>,
-        serverDir: Provider<Directory>
-    ): TaskProvider<Copy> {
-        return tasks.register<Copy>("copyServerCore") {
-            group = TASKS_GROUP_BUKKIT
-            description = "Copy server core to server directory"
-
-            val source = if (serverConfiguration.coreType == CoreType.SPIGOT) {
-                buildServerCore.map { it.spigotFile.get() }
-            } else {
-                downloadPaperclip.map { it.paperclipFile.get() }
-            }
-
-            from(source)
-            rename { ServerConstants.FILE_CORE }
-            into(serverDir)
-        }
+    private fun Project.resolveConfiguredServerDir(): Provider<Directory>? {
+        val serverDirProperty = providers.gradleProperty("bukkitgradle.server.dir").orNull ?: return null
+        val serverDirFile = provider { File(serverDirProperty).absoluteFile }
+        return layout.dir(serverDirFile)
     }
 
     private fun registerPrepareServerTask(
-        copyServerCore: TaskProvider<Copy>,
-        serverDir: Provider<Directory>
+        runServer: Provider<RunServer>,
     ): TaskProvider<PrepareServer> {
-        val copyPlugins = tasks.register<Copy>("copyPlugins") {
-            group = TASKS_GROUP_BUKKIT
-            description = "Copy plugins to dev server."
-
-            val jarTaskName = if (project.plugins.hasPlugin("com.gradleup.shadow")) "shadowJar" else "jar"
-            from(tasks.named<Jar>(jarTaskName))
-            into(serverDir.map { project.mkdir(it.dir("plugins")) })
-            rename { "${pluginMeta.name.get()}.jar" }
-        }
-
         return tasks.register<PrepareServer>("prepareServer") {
-            this.serverDir.set(serverDir)
+            this.serverDir.set(runServer.map { it.runDirectory.get() })
             eula = serverConfiguration.eula
             onlineMode = serverConfiguration.onlineMode
-            dependsOn(copyServerCore, copyPlugins)
         }
     }
 
-    private fun registerRunServerTask(
-        prepareServer: TaskProvider<PrepareServer>,
-        serverDir: Provider<Directory>
-    ) {
-        tasks.register<RunServer>("runServer") {
-            workingDir(serverDir)
-            jvmArgs = serverConfiguration.buildJvmArgs()
-            bukkitArgs = serverConfiguration.bukkitArgs
-            dependsOn(prepareServer)
-        }
-    }
-
-    private fun registerBuildIdeRunTask(serverDir: Provider<Directory>) {
+    private fun registerBuildIdeRunTask(runServer: Provider<RunServer>) {
         tasks.register<CreateIdeaJarRunConfiguration>("buildIdeaRun") {
             configurationName.set("${project.name}: Run server")
             beforeRunTask.set("prepareServer")
-            vmParameters.set(serverConfiguration.buildJvmArgs(debug = false))
-            programParameters.set(serverConfiguration.bukkitArgs)
+            vmParameters.set(runServer.map { it.jvmArgs })
+            programParameters.set(runServer.map { it.args })
             configurationsDir.set(project.rootProject.layout.projectDirectory.dir(".idea/runConfigurations"))
-            jarPath.set(serverDir.map { it.file(ServerConstants.FILE_CORE).asFile })
+            jarPath.set(runServer.map { it.classpath.singleFile })
+            workingDirectory.set(runServer.map { it.runDirectory.get().asFile })
         }
     }
 }

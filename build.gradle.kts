@@ -24,9 +24,11 @@ tasks.test {
 
 repositories {
     mavenCentral()
+    gradlePluginPortal()
 }
 
 dependencies {
+    implementation("xyz.jpenilla.run-paper:xyz.jpenilla.run-paper.gradle.plugin:2.3.1")
     implementation("de.undercouch:gradle-download-task:5.6.0")
     implementation("org.jetbrains.kotlinx:kotlinx-serialization-json:1.8.1")
     implementation("com.charleskorn.kaml:kaml:0.74.0")

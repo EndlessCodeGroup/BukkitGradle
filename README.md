@@ -33,9 +33,7 @@ Gradle utilities for easier writing Bukkit plugins.
 - Provides short extension functions to add common repositories and dependencies
 - Generates plugin.yml from Gradle project information
 - Allows running dev server from IDE
-- Supports two cores for dev server: Spigot and Paper
-- Automatically downloads and updates BuildTools or Paperclip
-- Automatically copies your plugin to plugins dir on server running
+- Runs server using [jpenilla/run-task]
 
 #### TODO:
 - Add smart dependency system
@@ -197,25 +195,29 @@ Some dependencies also add a repository needed for them.
 If you need more extension-functions, [create issue][issue].
 
 ## Running Dev server
-Before running server you should configure dev server location.
 
-You can define it in `local.properties` file (that was automatically created in project directory on refresh):
+This plugin pre-configures [jpenilla/run-task] according to the specified [configuration](#dev-server-configuration).
+By default, the server will be located at `<projectDir>/run` but you can change it by providing Gradle property `bukkitgradle.server.dir`:
+
 ```properties
-# Absolute path to dev server
-server.dir=/path/to/buildtools/
+# gradle.properties
+bukkitgradle.server.dir=build/run
 ```
 
-If you use Spigot (see `bukkit.server.core`) you also should specify BuildTools location. For Paper no additional actions 
-needed.
-```properties
-# Absolute path to directory that contains BuildTools.jar
-buildtools.dir=/path/to/buildtools/
-```
-If there no BuildTools.jar it will be automatically downloaded.
+Alternatively, you can configure `runServer` task:
 
-> **Tip:** you can define it globally, for all projects that uses BukkitGradle.
-> Specify environment variables `BUKKIT_DEV_SERVER_HOME` 
-and `BUKKIT_BUILDTOOLS_HOME`.
+```kotlin
+tasks.runServer {
+    runDirectory.set(file("build/run"))
+}
+```
+
+> [!TIP]
+> It is possible to configure server directory shared between multiple projects.
+> Set the `bukkitgradle.server.dir` property in `$HOME/.gradle/gradle.properties`.
+> 
+> This file contains local configurations to be used for all Gradle projects.
+> The value specified in project's `gradle.properties` takes precedence over the global one.
 
 #### On IntelliJ IDEA
 Run `:buildIdeaRun` task.
@@ -228,31 +230,34 @@ It will be automatically refreshed when you change server configurations.
 Run `:runServer` task.
 
 ### Dev server configuration
-To accept EULA and change settings use `bukkit.server` section:
+
+Use `bukkit.server` section to accept EULA and configure the server:
+
 ```groovy
 bukkit {
-    // INFO: Here used default values
+    // INFO: Default values are used here
     server {
-        // Core type. It can be 'spigot' or 'paper'
-        core = "spigot"
         // Server version
-        version = "1.16.4" // If not specified, apiVersion will be used
+        version = "1.16.4" // If not specified, bukkit.apiVersion will be used
         // Accept EULA
         eula = false
         // Set online-mode flag
         onlineMode = false
-        // Debug mode (listen 5005 port, if you use running from IDEA this option will be ignored)
+        // Debug mode (listen to 5005 port)
         debug = true
-        // Set server encoding (flag -Dfile.encoding)
+        // Set default file encoding (flag -Dfile.encoding)
         encoding = "UTF-8"
         // JVM arguments
         javaArgs("-Xmx1G")
         // Bukkit arguments
-        bukkitArgs("nogui")
+        bukkitArgs()
     }
 }
 ```
-EULA and online-mode settings in `build.gradle` always rewrites settings in `eula.txt` and `server.properties`
+
+> [!NOTE]
+> `eula` and `online-mode` options specified in `bukkit.server` always take precedence over the values specified
+> in `eula.txt` and `server.properties`
 
 ## Migration Guide
 
@@ -321,4 +326,5 @@ If there are any problems, [create an issue][issue].
 
 [MIT](LICENSE) (c) 2020 EndlessCode Group
 
+[jpenilla/run-task]: https://github.com/jpenilla/run-task/
 [issue]: https://github.com/EndlessCodeGroup/BukkitGradle/issues/new
