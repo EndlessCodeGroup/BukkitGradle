@@ -59,7 +59,11 @@ public class DevServerPlugin : Plugin<Project> {
     }
 
     private fun Project.resolveConfiguredServerDir(): Provider<Directory>? {
-        val serverDirProperty = providers.gradleProperty("bukkitgradle.server.dir").orNull ?: return null
+        val deprecated = DeprecatedServerProperties(rootDir, providers)
+
+        val serverDirProperty = providers.gradleProperty("bukkitgradle.server.dir")
+            .orElse(provider { deprecated.devServerDir?.absolutePath })
+            .orNull ?: return null
         val serverDirFile = provider { File(serverDirProperty).absoluteFile }
         return layout.dir(serverDirFile)
     }
