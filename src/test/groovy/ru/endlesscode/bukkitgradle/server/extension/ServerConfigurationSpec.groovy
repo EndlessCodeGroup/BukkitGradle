@@ -11,20 +11,13 @@ class ServerConfigurationSpec extends Specification {
         serverConfiguration = new ServerConfigurationImpl()
     }
 
-    void 'when build args - should return args with debug flags'() {
+    void 'when build args - should return args with eula flag'() {
         when:
-        def args = serverConfiguration.buildJvmArgs(true)
+        serverConfiguration.eula = true
+        def args = serverConfiguration.buildJvmArgs()
 
         then:
-        ["-agentlib:jdwp=transport=dt_socket,server=y,suspend=n,address=5005", "-Dfile.encoding=UTF-8", "-Xmx1G"] == args
-    }
-
-    void 'when build args - and debug disabled - should return args without debug flags'() {
-        when:
-        def args = serverConfiguration.buildJvmArgs(false)
-
-        then:
-        ["-Dfile.encoding=UTF-8", "-Xmx1G"] == args
+        ["-Dcom.mojang.eula.agree=true", "-Xmx1G"] == args
     }
 
     void 'when set existing core - should set core successfully'() {

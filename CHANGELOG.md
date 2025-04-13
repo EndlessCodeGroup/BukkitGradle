@@ -14,6 +14,8 @@
   By default, the minimal supported JVM version compatible with the specified `bukkit.server.version` is used.
 - Use lazy API for `bukkit.apiVersion` and `bukkit.generateMeta` properties.
 - Accept EULA using CLI parameter `-Dcom.mojang.eula.agree=true` instead of changing `eula.txt`
+- Change the default value of `bukkit.server.debug` to `false`.
+  It is recommended to use IDE facilities to run server with enabled debugging.
 
 ### Fixed
 

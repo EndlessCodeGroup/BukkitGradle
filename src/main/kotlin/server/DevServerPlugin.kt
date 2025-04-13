@@ -6,6 +6,7 @@ import org.gradle.api.file.Directory
 import org.gradle.api.provider.Provider
 import org.gradle.api.tasks.TaskContainer
 import org.gradle.api.tasks.TaskProvider
+import org.gradle.kotlin.dsl.apply
 import org.gradle.kotlin.dsl.named
 import org.gradle.kotlin.dsl.register
 import ru.endlesscode.bukkitgradle.Bukkit
@@ -13,6 +14,7 @@ import ru.endlesscode.bukkitgradle.bukkit
 import ru.endlesscode.bukkitgradle.server.extension.ServerConfiguration
 import ru.endlesscode.bukkitgradle.server.task.CreateIdeaGradleRunConfiguration
 import ru.endlesscode.bukkitgradle.server.task.PrepareServer
+import xyz.jpenilla.runpaper.RunPaperPlugin
 import xyz.jpenilla.runpaper.task.RunServer
 import java.io.File
 
@@ -32,7 +34,7 @@ public class DevServerPlugin : Plugin<Project> {
         project = target
         bukkit = project.bukkit
 
-        target.plugins.apply("xyz.jpenilla.run-paper")
+        target.apply<RunPaperPlugin>()
         val configuredServerDir = target.resolveConfiguredServerDir()
 
         // Preconfigure RunServer task
@@ -42,6 +44,12 @@ public class DevServerPlugin : Plugin<Project> {
             if (configuredServerDir != null) runDirectory.convention(configuredServerDir)
             jvmArgs(serverConfiguration.buildJvmArgs())
             args(serverConfiguration.bukkitArgs)
+
+            defaultCharacterEncoding = serverConfiguration.encoding
+            debugOptions {
+                enabled.convention(serverConfiguration.debug)
+                suspend.convention(false)
+            }
         }
 
         val prepareServer = registerPrepareServerTask(runServer)

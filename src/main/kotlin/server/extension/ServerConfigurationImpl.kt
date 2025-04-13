@@ -11,7 +11,7 @@ public class ServerConfigurationImpl : ServerConfiguration {
     override var version: String? = null
     override var eula: Boolean = false
     override var onlineMode: Boolean = false
-    override var debug: Boolean = true
+    override var debug: Boolean = false
     override var encoding: String = "UTF-8"
 
     override var javaArgs: List<String> = listOf("-Xmx1G")
@@ -48,11 +48,9 @@ public class ServerConfigurationImpl : ServerConfiguration {
         bukkitArgs = bukkitArgs + args.toList()
     }
 
-    override fun buildJvmArgs(debug: Boolean): List<String> {
+    override fun buildJvmArgs(): List<String> {
         return listOfNotNull(
-            DEBUG_ARGS.takeIf { debug },
             ACCEPT_EULA_ARGS.takeIf { eula },
-            "-Dfile.encoding=$encoding"
         ) + javaArgs
     }
 
@@ -69,7 +67,6 @@ public class ServerConfigurationImpl : ServerConfiguration {
     }
 
     private companion object {
-        const val DEBUG_ARGS: String = "-agentlib:jdwp=transport=dt_socket,server=y,suspend=n,address=5005"
         const val ACCEPT_EULA_ARGS: String = "-Dcom.mojang.eula.agree=true"
     }
 }
