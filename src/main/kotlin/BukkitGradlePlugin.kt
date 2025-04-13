@@ -6,12 +6,12 @@ import org.gradle.api.plugins.JavaPluginExtension
 import org.gradle.api.tasks.compile.JavaCompile
 import org.gradle.kotlin.dsl.*
 import ru.endlesscode.bukkitgradle.dependencies.Dependencies
-import ru.endlesscode.bukkitgradle.meta.PluginMetaPlugin
-import ru.endlesscode.bukkitgradle.meta.extension.PluginMetaImpl
-import ru.endlesscode.bukkitgradle.meta.util.MinecraftVersion
-import ru.endlesscode.bukkitgradle.meta.util.StringUtils
-import ru.endlesscode.bukkitgradle.meta.util.parsedApiVersion
-import ru.endlesscode.bukkitgradle.meta.util.resolveMinimalJavaVersion
+import ru.endlesscode.bukkitgradle.plugin.PluginConfigurationPlugin
+import ru.endlesscode.bukkitgradle.plugin.extension.PluginConfigurationImpl
+import ru.endlesscode.bukkitgradle.plugin.util.MinecraftVersion
+import ru.endlesscode.bukkitgradle.plugin.util.StringUtils
+import ru.endlesscode.bukkitgradle.plugin.util.parsedApiVersion
+import ru.endlesscode.bukkitgradle.plugin.util.resolveMinimalJavaVersion
 import ru.endlesscode.bukkitgradle.server.DevServerPlugin
 import ru.endlesscode.bukkitgradle.server.extension.ServerConfigurationImpl
 
@@ -30,11 +30,11 @@ public class BukkitGradlePlugin : Plugin<Project> {
 
     /** Adds needed plugins. */
     private fun Project.addPlugins() {
-        val bukkit = extensions.create<BukkitExtension>("bukkit", configurePluginMeta(), ServerConfigurationImpl())
+        val bukkit = extensions.create<BukkitExtension>("bukkit", createPluginConfiguration(), ServerConfigurationImpl())
 
         with(plugins) {
             apply("java")
-            apply<PluginMetaPlugin>()
+            apply<PluginConfigurationPlugin>()
             apply<DevServerPlugin>()
         }
 
@@ -45,8 +45,8 @@ public class BukkitGradlePlugin : Plugin<Project> {
         }
     }
 
-    private fun Project.configurePluginMeta(): PluginMetaImpl {
-        return PluginMetaImpl(objects).apply {
+    private fun Project.createPluginConfiguration(): PluginConfigurationImpl {
+        return PluginConfigurationImpl(objects).apply {
             name.convention(project.name)
             description.convention(provider { project.description })
             main.convention(name.map { "${project.group}.${StringUtils.toPascalCase(it)}" })

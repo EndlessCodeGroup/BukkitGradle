@@ -1,58 +1,58 @@
-package ru.endlesscode.bukkitgradle.meta.task
+package ru.endlesscode.bukkitgradle.plugin.task
 
 
 import org.gradle.testkit.runner.TaskOutcome
 import ru.endlesscode.bukkitgradle.PluginSpecification
-import ru.endlesscode.bukkitgradle.meta.PluginMetaPlugin
+import ru.endlesscode.bukkitgradle.plugin.PluginConfigurationPlugin
 import ru.endlesscode.bukkitgradle.util.CharsetUtils
 
-class MergePluginMetaSpec extends PluginSpecification {
+class MergePluginYamlSpec extends PluginSpecification {
 
-    private final static TASK_PATH = ':mergePluginMeta'
+    private final static MERGE_PLUGIN_YAML = ':mergePluginYaml'
 
-    private File sourceMetaFile
-    private File metaFile
+    private File sourcePluginYamlFile
+    private File pluginYamlFile
 
     def setup() {
-        sourceMetaFile = file("src/main/resources/$PluginMetaPlugin.FILE_NAME")
-        metaFile = file("build/tmp/mergePluginMeta/$PluginMetaPlugin.FILE_NAME")
+        sourcePluginYamlFile = file("src/main/resources/$PluginConfigurationPlugin.FILE_NAME")
+        pluginYamlFile = file("build/tmp/mergePluginYaml/$PluginConfigurationPlugin.FILE_NAME")
 
         buildFile << """
             bukkit.apiVersion = "1.16.2"
         """.stripIndent()
     }
 
-    def 'when run processResources - should also run generatePluginMeta'() {
+    def 'when run processResources - should also run mergePluginYaml'() {
+        when:
+        run(':processResources')
+
+        then:
+        taskOutcome(MERGE_PLUGIN_YAML) == TaskOutcome.SUCCESS
+
+        and:
+        taskOutcome(":parsePluginYaml") == TaskOutcome.SUCCESS
+    }
+
+    def 'when run processResources - and plugin.yaml generation disabled - should not run mergePluginYaml'() {
+        given: "plugin generation disabled"
+        buildFile << "bukkit.plugin.disablePluginYamlGeneration()"
+
         when: "run processResources"
         run(':processResources')
 
-        then: "task generatePluginMeta completed successfully"
-        taskOutcome(TASK_PATH) == TaskOutcome.SUCCESS
+        then: "task mergePluginYaml completed successfully"
+        taskOutcome(MERGE_PLUGIN_YAML) == TaskOutcome.SKIPPED
 
-        and: "task generatePluginMeta completed successfully"
-        taskOutcome(":parsePluginMetaFile") == TaskOutcome.SUCCESS
+        and: "task mergePluginYaml completed successfully"
+        taskOutcome(":parsePluginYaml") == TaskOutcome.SKIPPED
     }
 
-    def 'when run processResources - and meta generation disabled - should not run generatePluginMeta'() {
-        given: "meta generation disabled"
-        buildFile << "bukkit.disableMetaGeneration()"
+    def 'when merge plugin.yaml - should generate default plugin.yaml successfully'() {
+        when:
+        run(MERGE_PLUGIN_YAML)
 
-        when: "run processResources"
-        run(':processResources')
-
-        then: "task generatePluginMeta completed successfully"
-        taskOutcome(TASK_PATH) == TaskOutcome.SKIPPED
-
-        and: "task generatePluginMeta completed successfully"
-        taskOutcome(":parsePluginMetaFile") == TaskOutcome.SKIPPED
-    }
-
-    def 'when merge meta - should generate default plugin meta successfully'() {
-        when: "run generate meta task"
-        run(TASK_PATH)
-
-        then: "meta file content corresponds to default config"
-        metaFile.text == """
+        then: "plugin file content corresponds to default config"
+        pluginYamlFile.text == """
                          main: "com.example.testplugin.TestPlugin"
                          name: "test-plugin"
                          version: "1.0"
@@ -60,17 +60,17 @@ class MergePluginMetaSpec extends PluginSpecification {
                          """.stripIndent().trim()
     }
 
-    def 'when merge meta - should set api-version'(String apiVersion, String expectedResult) {
+    def 'when merge plugin.yaml - should set api-version'(String apiVersion, String expectedResult) {
         when: "api version is $apiVersion"
         buildFile << """
             bukkit.apiVersion = "$apiVersion"
         """.stripIndent()
 
-        and: "run generate meta task"
-        run(TASK_PATH)
+        and:
+        run(MERGE_PLUGIN_YAML)
 
-        then: "meta file content corresponds to default config"
-        metaFile.text == """
+        then: "plugin file content corresponds to default config"
+        pluginYamlFile.text == """
                          main: "com.example.testplugin.TestPlugin"
                          name: "test-plugin"
                          version: "1.0"
@@ -85,32 +85,32 @@ class MergePluginMetaSpec extends PluginSpecification {
         "1.21.1"   | "1.21.1"
     }
 
-    def 'when merge meta - and generate it again - should skip second task run'() {
-        when: "run generate meta task"
-        run(TASK_PATH)
+    def 'when merge plugin.yaml - and generate it again - should skip second task run'() {
+        when:
+        run(MERGE_PLUGIN_YAML)
 
-        and: "run generate meta again"
-        run(TASK_PATH)
+        and: "run generate again"
+        run(MERGE_PLUGIN_YAML)
 
         then: "the task is skipped due to up-to-date"
-        taskOutcome(TASK_PATH) == TaskOutcome.UP_TO_DATE
+        taskOutcome(MERGE_PLUGIN_YAML) == TaskOutcome.UP_TO_DATE
     }
 
-    def 'when merge meta - and generate changed meta - should generate new meta'() {
-        when: "run generate meta task"
-        run(TASK_PATH)
+    def 'when merge plugin.yaml - and changed plugin configuration - should update plugin.yaml'() {
+        when:
+        run(MERGE_PLUGIN_YAML)
 
-        and: "change description"
+        and: "changed description"
         buildFile << 'description = "Plugin can has description"'
 
-        and: "run generate meta task again"
-        run(TASK_PATH)
+        and: "run the task again"
+        run(MERGE_PLUGIN_YAML)
 
         then: "the task is successful"
-        taskOutcome(TASK_PATH) == TaskOutcome.SUCCESS
+        taskOutcome(MERGE_PLUGIN_YAML) == TaskOutcome.SUCCESS
 
-        and: "meta generated with new description"
-        metaFile.text == """
+        and: "plugin generated with new description"
+        pluginYamlFile.text == """
                          main: "com.example.testplugin.TestPlugin"
                          name: "test-plugin"
                          description: "Plugin can has description"
@@ -119,12 +119,12 @@ class MergePluginMetaSpec extends PluginSpecification {
                          """.stripIndent().trim()
     }
 
-    void 'when merge meta - and all properties configured - should write all lines'() {
-        given: "configured all meta properties"
+    void 'when merge plugin.yaml - and all properties configured - should write all lines'() {
+        given: "configured all plugin properties"
         //language=gradle
         buildFile << """
             bukkit {
-                meta {
+                plugin {
                     name.set('TestPlugin')
                     description.set('Test plugin description')
                     main.set('com.example.plugin.Plugin')
@@ -137,10 +137,10 @@ class MergePluginMetaSpec extends PluginSpecification {
         """.stripIndent()
 
         when: "run processResources"
-        run(TASK_PATH)
+        run(MERGE_PLUGIN_YAML)
 
         then: "should write all lines"
-        metaFile.text == """
+        pluginYamlFile.text == """
                          main: "com.example.plugin.Plugin"
                          name: "TestPlugin"
                          description: "Test plugin description"
@@ -151,12 +151,12 @@ class MergePluginMetaSpec extends PluginSpecification {
                          """.stripIndent().trim()
     }
 
-    void 'when merge meta - and all properties configured old way - should write all lines'() {
-        given: "configured all meta properties in old way"
+    void 'when merge plugin.yaml - and all properties configured old way - should write all lines'() {
+        given: "configured all plugin properties in old way"
         //language=gradle
         buildFile << """
             bukkit {
-                meta {
+                plugin {
                     name = 'TestPlugin'
                     description = 'Test plugin description'
                     main = 'com.example.plugin.Plugin'
@@ -168,10 +168,10 @@ class MergePluginMetaSpec extends PluginSpecification {
         """.stripIndent()
 
         when: "run processResources"
-        run(TASK_PATH)
+        run(MERGE_PLUGIN_YAML)
 
         then: "should write all lines"
-        metaFile.text == """
+        pluginYamlFile.text == """
                          main: "com.example.plugin.Plugin"
                          name: "TestPlugin"
                          description: "Test plugin description"
@@ -182,9 +182,9 @@ class MergePluginMetaSpec extends PluginSpecification {
                          """.stripIndent().trim()
     }
 
-    void 'when merge meta - and there are extra fields in source - should write all lines'() {
-        given: "source meta file with extra fields"
-        sourceMetaFile << """
+    void 'when merge plugin.yaml - and there are extra fields in source - should write all lines'() {
+        given: "source plugin file with extra fields"
+        sourcePluginYamlFile << """
             depend: [Vault, ProtocolLib]
             commands:
               example:
@@ -195,10 +195,10 @@ class MergePluginMetaSpec extends PluginSpecification {
         """.stripIndent()
 
         when: "run processResources"
-        run(TASK_PATH)
+        run(MERGE_PLUGIN_YAML)
 
-        then: "should write meta with the extra fields"
-        metaFile.text == """
+        then: "should write plugin with the extra fields"
+        pluginYamlFile.text == """
                          main: "com.example.testplugin.TestPlugin"
                          name: "test-plugin"
                          version: "1.0"
@@ -214,9 +214,9 @@ class MergePluginMetaSpec extends PluginSpecification {
     }
 
     // BukkitGradle-26
-    void 'when merge meta - and there are exotic chars in source - should read it correctly'() {
-        given: "source meta file with exotic chars"
-        sourceMetaFile << """
+    void 'when merge plugin.yaml - and there are exotic chars in source - should read it correctly'() {
+        given: "source plugin file with exotic chars"
+        sourcePluginYamlFile << """
             commands:
               퀘스트:
                 description: 퀘스트 명령어 입니다.
@@ -226,11 +226,11 @@ class MergePluginMetaSpec extends PluginSpecification {
         CharsetUtils.setDefaultCharset('CP866')
 
         when: "run processResources"
-        run(TASK_PATH)
+        run(MERGE_PLUGIN_YAML)
         CharsetUtils.setDefaultCharset('UTF-8')
 
         then:
-        metaFile.text == """
+        pluginYamlFile.text == """
                          main: "com.example.testplugin.TestPlugin"
                          name: "test-plugin"
                          version: "1.0"
@@ -241,18 +241,18 @@ class MergePluginMetaSpec extends PluginSpecification {
                          """.stripIndent().trim()
     }
 
-    void 'when merge meta - and there are fields in source - should prefer values from source'() {
-        given: "source meta file with extra fields"
-        sourceMetaFile << """
+    void 'when merge plugin.yaml - and there are fields in source - should prefer values from source'() {
+        given: "source plugin file with extra fields"
+        sourcePluginYamlFile << """
             name: SourceValue
             version: 1.2
         """.stripIndent()
 
         when: "run processResources"
-        run(TASK_PATH, "--stacktrace")
+        run(MERGE_PLUGIN_YAML)
 
-        then: "should write meta and prefer source fields"
-        metaFile.text == """
+        then: "should write plugin and prefer source fields"
+        pluginYamlFile.text == """
                          main: "com.example.testplugin.SourceValue"
                          name: "SourceValue"
                          version: "1.2"
@@ -260,28 +260,28 @@ class MergePluginMetaSpec extends PluginSpecification {
                          """.stripIndent().trim()
     }
 
-    void 'when merge meta - and there are conflicting fields in source and in build script - should prefer values from build script'() {
-        given: "source meta file with extra fields"
-        sourceMetaFile << """
+    void 'when merge plugin.yaml - and there are conflicting fields in source and in build script - should prefer values from build script'() {
+        given: "source plugin.yaml file with extra fields"
+        sourcePluginYamlFile << """
             name: SourceValue
             version: 1.2
         """.stripIndent()
 
-        and: "conflicting gields in build script"
+        and: "conflicting fields in build script"
         buildFile << """
             bukkit {
-                meta {
+                plugin {
                     name.set("BuildscriptValue")
                     version.set("1.3")
                 }
             }
         """.stripIndent()
 
-        when: "run processResources"
-        run(TASK_PATH, "--stacktrace")
+        when:
+        run(MERGE_PLUGIN_YAML)
 
-        then: "should write meta and prefer source fields"
-        metaFile.text == """
+        then: "should overwrite source fields"
+        pluginYamlFile.text == """
                          main: "com.example.testplugin.BuildscriptValue"
                          name: "BuildscriptValue"
                          version: "1.3"

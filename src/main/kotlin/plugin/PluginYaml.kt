@@ -1,10 +1,10 @@
-package ru.endlesscode.bukkitgradle.meta
+package ru.endlesscode.bukkitgradle.plugin
 
 import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
 
 @Serializable
-internal data class PluginMetaYaml(
+internal data class PluginYaml(
 
     /** The class of the plugin that extends JavaPlugin. */
     val main: String? = null,

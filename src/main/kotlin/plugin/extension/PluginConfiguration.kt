@@ -1,10 +1,14 @@
-package ru.endlesscode.bukkitgradle.meta.extension
+package ru.endlesscode.bukkitgradle.plugin.extension
 
 import org.gradle.api.provider.Provider
 import org.gradle.api.tasks.Input
+import org.gradle.api.tasks.Internal
 import org.gradle.api.tasks.Optional
 
-public interface PluginMeta {
+public interface PluginConfiguration {
+
+    @get:Internal
+    public val generatePluginYaml: Provider<Boolean>
 
     @get:Input
     public val name: Provider<String>

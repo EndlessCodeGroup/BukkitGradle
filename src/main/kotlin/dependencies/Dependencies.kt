@@ -12,8 +12,8 @@ import org.gradle.kotlin.dsl.KotlinClosure0
 import org.gradle.kotlin.dsl.extra
 import org.gradle.kotlin.dsl.maven
 import ru.endlesscode.bukkitgradle.bukkit
-import ru.endlesscode.bukkitgradle.meta.util.MinecraftVersion
-import ru.endlesscode.bukkitgradle.meta.util.parsedApiVersion
+import ru.endlesscode.bukkitgradle.plugin.util.MinecraftVersion
+import ru.endlesscode.bukkitgradle.plugin.util.parsedApiVersion
 
 private typealias RepositoryClosure = Closure<MavenArtifactRepository>
 

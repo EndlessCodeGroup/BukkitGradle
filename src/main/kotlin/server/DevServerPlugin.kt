@@ -11,7 +11,7 @@ import org.gradle.jvm.toolchain.JavaToolchainService
 import org.gradle.kotlin.dsl.*
 import ru.endlesscode.bukkitgradle.Bukkit
 import ru.endlesscode.bukkitgradle.bukkit
-import ru.endlesscode.bukkitgradle.meta.util.resolveMinimalJavaVersion
+import ru.endlesscode.bukkitgradle.plugin.util.resolveMinimalJavaVersion
 import ru.endlesscode.bukkitgradle.server.extension.ServerConfiguration
 import ru.endlesscode.bukkitgradle.server.task.CreateIdeaGradleRunConfiguration
 import ru.endlesscode.bukkitgradle.server.task.PrepareServer

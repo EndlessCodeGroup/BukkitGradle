@@ -1,4 +1,4 @@
-package ru.endlesscode.bukkitgradle.meta.util
+package ru.endlesscode.bukkitgradle.plugin.util
 
 import spock.lang.Specification
 

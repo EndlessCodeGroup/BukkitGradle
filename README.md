@@ -123,7 +123,7 @@ bukkit {
     apiVersion = "1.15.2"
  
     // Attributes for plugin.yml
-    meta {
+    plugin {
         name.set("MyPlugin")
         description.set("My amazing plugin, that doing nothing")
         main.set("com.example.plugin.MyPlugin")
