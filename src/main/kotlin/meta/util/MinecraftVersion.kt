@@ -1,5 +1,6 @@
 package ru.endlesscode.bukkitgradle.meta.util
 
+import org.gradle.jvm.toolchain.JavaLanguageVersion
 import ru.endlesscode.bukkitgradle.Bukkit
 
 @JvmInline
@@ -29,3 +30,15 @@ internal value class MinecraftVersion(private val value: Int) : Comparable<Minec
 }
 
 internal val Bukkit.parsedApiVersion get() = apiVersion.map(MinecraftVersion::parse)
+
+internal fun resolveMinimalJavaVersion(version: String) = resolveMinimalJavaVersion(MinecraftVersion.parse(version))
+
+internal fun resolveMinimalJavaVersion(version: MinecraftVersion): JavaLanguageVersion = when {
+    // https://minecraft.wiki/w/Java_Edition_1.20.5#General_2
+    version >= MinecraftVersion.V1_20_5 -> JavaLanguageVersion.of(21)
+    // https://minecraft.wiki/w/Java_Edition_1.18#General_2
+    version >= MinecraftVersion.V1_18_0 -> JavaLanguageVersion.of(17)
+    // https://minecraft.wiki/w/Java_Edition_1.17#General_2
+    version >= MinecraftVersion.V1_17_0 -> JavaLanguageVersion.of(16)
+    else -> JavaLanguageVersion.of(8)
+}

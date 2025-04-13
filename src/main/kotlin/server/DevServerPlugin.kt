@@ -3,14 +3,15 @@ package ru.endlesscode.bukkitgradle.server
 import org.gradle.api.Plugin
 import org.gradle.api.Project
 import org.gradle.api.file.Directory
+import org.gradle.api.plugins.JavaPluginExtension
 import org.gradle.api.provider.Provider
 import org.gradle.api.tasks.TaskContainer
 import org.gradle.api.tasks.TaskProvider
-import org.gradle.kotlin.dsl.apply
-import org.gradle.kotlin.dsl.named
-import org.gradle.kotlin.dsl.register
+import org.gradle.jvm.toolchain.JavaToolchainService
+import org.gradle.kotlin.dsl.*
 import ru.endlesscode.bukkitgradle.Bukkit
 import ru.endlesscode.bukkitgradle.bukkit
+import ru.endlesscode.bukkitgradle.meta.util.resolveMinimalJavaVersion
 import ru.endlesscode.bukkitgradle.server.extension.ServerConfiguration
 import ru.endlesscode.bukkitgradle.server.task.CreateIdeaGradleRunConfiguration
 import ru.endlesscode.bukkitgradle.server.task.PrepareServer
@@ -52,10 +53,29 @@ public class DevServerPlugin : Plugin<Project> {
             }
         }
 
+        // RunPaperPlugin uses afterEvaluate under the hood, so we have to use afterEvaluate
+        // to set our conventions after theirs
+        project.afterEvaluate { configureDefaultJvmForServer() }
+
         val prepareServer = registerPrepareServerTask(runServer)
         runServer.configure { dependsOn(prepareServer) }
 
         registerBuildIdeRunTask(runServer)
+    }
+
+    private fun Project.configureDefaultJvmForServer() {
+        val toolchains = project.extensions.findByType<JavaToolchainService>() ?: return
+        val spec = the<JavaPluginExtension>().toolchain
+
+        tasks.withType<RunServer>().configureEach {
+            javaLauncher.convention(
+                toolchains.launcherFor {
+                    languageVersion.convention(version.map(::resolveMinimalJavaVersion))
+                    implementation.convention(spec.implementation)
+                    vendor.convention(spec.vendor)
+                }
+            )
+        }
     }
 
     private fun Project.resolveConfiguredServerDir(): Provider<Directory>? {
