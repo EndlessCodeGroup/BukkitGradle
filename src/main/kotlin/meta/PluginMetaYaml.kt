@@ -32,10 +32,13 @@ internal data class PluginMetaYaml(
     val author: String? = null,
 
     /**
-     * Allows to list multiple authors, if it is a collaborative project.
+     * Allows listing multiple authors if it is a collaborative project.
      * @see author
      */
     val authors: List<String>? = null,
+
+    /** The contributors to the plugin that aren't the managing author(s). */
+    val contributors: List<String>? = null,
 
     /** The plugin's or author's website. */
     val website: String? = null,
@@ -49,6 +52,14 @@ internal data class PluginMetaYaml(
     /** A list of plugins that should be loaded after your plugin. */
     val loadbefore: List<String>? = null,
 
+    /**
+     * This can be used to tell the server that this plugin will provide the functionality
+     * of some library or other plugin (like an alias system).
+     * Plugins that (soft)depend on the other plugin will treat your plugin
+     * as if the other plugin exists when resolving dependencies or using `PluginManager#getPlugin(String)`.
+     */
+    val provides: List<String>? = null,
+
     /** A list of libraries your plugin needs which can be loaded from Maven Central. */
     val libraries: List<String>? = null,
 
@@ -56,7 +67,11 @@ internal data class PluginMetaYaml(
     val commands: Map<String, PluginCommand>? = null,
 
     /** Permission that the plugin wishes to register. */
-    val permissions: Map<String, PluginPermission>? = null
+    val permissions: Map<String, PluginPermission>? = null,
+
+    /** The default value that permissions that don't have a `default` specified will have. */
+    @SerialName("default-permission")
+    val defaultPermission: String? = null,
 ) : java.io.Serializable
 
 @Serializable
