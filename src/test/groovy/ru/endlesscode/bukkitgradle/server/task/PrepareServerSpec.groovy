@@ -33,7 +33,7 @@ class PrepareServerSpec extends PluginSpecification {
         given: "configured online-mode"
         buildFile << """
             bukkit {
-                run {
+                server {
                     onlineMode = false
                 }
             }

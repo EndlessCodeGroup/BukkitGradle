@@ -32,6 +32,7 @@
 
 - Target JVM 1.8 → 17 
 - Gradle 7.2 → 8.13
+- Remove old deprecated APIs
 
 ## [0.10.1] - 2021-11-07
 
