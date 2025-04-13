@@ -21,12 +21,12 @@ class BukkitGradlePluginSpec extends PluginSpecification {
 
         where:
         apiVersion | jvmVersion
-        "1.11"     | 8
-        "1.12"     | 11
-        "1.16.4"   | 11
-        "1.16.5"   | 16
+        "1.16.5"   | 8
         "1.17"     | 16
-        "1.17.1"   | 21
+        "1.17.1"   | 16
+        "1.18"     | 17
+        "1.20.4"   | 17
+        "1.20.5"   | 21
     }
 
     def "when use custom repos extension - should add repos"() {

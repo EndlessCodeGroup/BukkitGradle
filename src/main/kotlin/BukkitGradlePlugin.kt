@@ -40,7 +40,7 @@ public class BukkitGradlePlugin : Plugin<Project> {
 
         extensions.configure<JavaPluginExtension> {
             toolchain {
-                languageVersion.convention(bukkit.parsedApiVersion.map(::resolveRecommendedJavaVersion))
+                languageVersion.convention(bukkit.parsedApiVersion.map(::resolveMinimalJavaVersion))
             }
         }
     }
@@ -78,11 +78,13 @@ public class BukkitGradlePlugin : Plugin<Project> {
         else -> version.toString()
     }
 
-    // See: https://docs.papermc.io/paper/getting-started#requirements
-    private fun resolveRecommendedJavaVersion(version: MinecraftVersion): JavaLanguageVersion = when {
-        version >= MinecraftVersion.V1_17_1 -> JavaLanguageVersion.of(21)
-        version >= MinecraftVersion.V1_16_5 -> JavaLanguageVersion.of(16)
-        version >= MinecraftVersion.V1_12_0 -> JavaLanguageVersion.of(11)
+    private fun resolveMinimalJavaVersion(version: MinecraftVersion): JavaLanguageVersion = when {
+        // https://minecraft.wiki/w/Java_Edition_1.20.5#General_2
+        version >= MinecraftVersion.V1_20_5 -> JavaLanguageVersion.of(21)
+        // https://minecraft.wiki/w/Java_Edition_1.18#General_2
+        version >= MinecraftVersion.V1_18_0 -> JavaLanguageVersion.of(17)
+        // https://minecraft.wiki/w/Java_Edition_1.17#General_2
+        version >= MinecraftVersion.V1_17_0 -> JavaLanguageVersion.of(16)
         else -> JavaLanguageVersion.of(8)
     }
 }

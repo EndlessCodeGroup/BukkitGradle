@@ -21,11 +21,9 @@ internal value class MinecraftVersion(private val value: Int) : Comparable<Minec
             return MinecraftVersion(major * 1_00_00 + minor * 1_00 + patch)
         }
 
-        val V1_12_0 = MinecraftVersion(1_12_00)
         val V1_13_0 = MinecraftVersion(1_13_00)
-        val V1_16_5 = MinecraftVersion(1_16_05)
         val V1_17_0 = MinecraftVersion(1_17_00)
-        val V1_17_1 = MinecraftVersion(1_17_01)
+        val V1_18_0 = MinecraftVersion(1_18_00)
         val V1_20_5 = MinecraftVersion(1_20_05)
     }
 }

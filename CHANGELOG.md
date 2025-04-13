@@ -11,7 +11,7 @@
   improving maintainability and compatibility with various server versions.
 - Set the default [JVM toolchain](https://docs.gradle.org/current/userguide/toolchains.html) version
   instead of setting JVM target and source compatibility to 1.8.
-  The default JVM version depends on [Paper requirements](https://docs.papermc.io/paper/getting-started#requirements).
+  By default, the minimal supported JVM version compatible with the specified `bukkit.server.version` is used.
 - Use lazy API for `bukkit.apiVersion` and `bukkit.generateMeta` properties.
 - Accept EULA using CLI parameter `-Dcom.mojang.eula.agree=true` instead of changing `eula.txt`
 
