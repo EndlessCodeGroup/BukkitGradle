@@ -1,9 +1,9 @@
 BukkitGradle
 [![Version](https://img.shields.io/github/release/EndlessCodeGroup/BukkitGradle/all.svg?style=flat-square)](https://plugins.gradle.org/plugin/ru.endlesscode.bukkitgradle)
-[![Build Status](https://img.shields.io/travis/EndlessCodeGroup/BukkitGradle.svg?style=flat-square)](https://travis-ci.org/EndlessCodeGroup/BukkitGradle)
 [![license](https://img.shields.io/github/license/EndlessCodeGroup/BukkitGradle.svg?style=flat-square)](https://github.com/EndlessCodeGroup/BukkitGradle/blob/master/LICENSE)
+
 ============
-Gradle utilities for easier writing Bukkit plugins.
+Gradle utilities to simplify Bukkit/Spigot plugins writing and debugging.
 
 > [!WARNING]
 > This plugin is not being maintained anymore,
@@ -39,8 +39,9 @@ Gradle utilities for easier writing Bukkit plugins.
 - Add smart dependency system
 
 ## Installation
+
 [BukkitGradle on plugins.gradle.org](https://plugins.gradle.org/plugin/ru.endlesscode.bukkitgradle)
-> **Note:** Gradle 6.6+ required
+> **Note:** Gradle 8.0+ is required
 
 #### With new plugins mechanism
 ```kotlin
@@ -197,6 +198,22 @@ If you need more extension-functions, [create issue][issue].
 ## Running Dev server
 
 This plugin pre-configures [jpenilla/run-task] according to the specified [configuration](#dev-server-configuration).
+Use `:runServer` task to run the dev server:
+
+```bash
+./gradlew runServer
+```
+
+> [!TIP]
+> It is possible to create a run configuration for IDEA by running `:buildIdeaRun` task.
+> The configuration will be stored in `<projectDir>/.run` directory so it can be shared through VCS.
+> The directory can be changed by configuring the `:buildIdeaRun` task:
+> ```kotlin
+> tasks.buildIdeaRun {
+>     configurationsDir = file(".idea/runConfigurations")
+> }
+> ```
+
 By default, the server will be located at `<projectDir>/run` but you can change it by providing Gradle property `bukkitgradle.server.dir`:
 
 ```properties
@@ -218,16 +235,6 @@ tasks.runServer {
 > 
 > This file contains local configurations to be used for all Gradle projects.
 > The value specified in project's `gradle.properties` takes precedence over the global one.
-
-#### On IntelliJ IDEA
-Run `:buildIdeaRun` task.
-Run Configuration will be added to your IDE.
-It will be automatically refreshed when you change server configurations.
-
-![Run Configuration](http://image.prntscr.com/image/1a12a03b8ac54fccb7d5b70a335fa996.png)
-
-#### On other IDEs
-Run `:runServer` task.
 
 ### Dev server configuration
 

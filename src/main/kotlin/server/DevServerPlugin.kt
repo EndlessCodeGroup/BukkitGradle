@@ -11,7 +11,7 @@ import org.gradle.kotlin.dsl.register
 import ru.endlesscode.bukkitgradle.Bukkit
 import ru.endlesscode.bukkitgradle.bukkit
 import ru.endlesscode.bukkitgradle.server.extension.ServerConfiguration
-import ru.endlesscode.bukkitgradle.server.task.CreateIdeaJarRunConfiguration
+import ru.endlesscode.bukkitgradle.server.task.CreateIdeaGradleRunConfiguration
 import ru.endlesscode.bukkitgradle.server.task.PrepareServer
 import xyz.jpenilla.runpaper.task.RunServer
 import java.io.File
@@ -66,15 +66,10 @@ public class DevServerPlugin : Plugin<Project> {
         }
     }
 
-    private fun registerBuildIdeRunTask(runServer: Provider<RunServer>) {
-        tasks.register<CreateIdeaJarRunConfiguration>("buildIdeaRun") {
-            configurationName.set("${project.name}: Run server")
-            beforeRunTask.set("prepareServer")
-            vmParameters.set(runServer.map { it.jvmArgs })
-            programParameters.set(runServer.map { it.args })
-            configurationsDir.set(project.rootProject.layout.projectDirectory.dir(".idea/runConfigurations"))
-            jarPath.set(runServer.map { it.classpath.singleFile })
-            workingDirectory.set(runServer.map { it.runDirectory.get().asFile })
+    private fun registerBuildIdeRunTask(runServer: TaskProvider<RunServer>) {
+        tasks.register<CreateIdeaGradleRunConfiguration>("buildIdeaRun") {
+            configurationName.set("Run Server [${project.name}]")
+            taskNames.add(runServer.name)
         }
     }
 }

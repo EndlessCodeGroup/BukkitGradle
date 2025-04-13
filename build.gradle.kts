@@ -52,7 +52,7 @@ publishing {
 
 gradlePlugin {
     website = "https://github.com/EndlessCodeGroup/BukkitGradle"
-    vcsUrl = website
+    vcsUrl = "$website.git"
 
     plugins {
         create("bukkitGradle") {

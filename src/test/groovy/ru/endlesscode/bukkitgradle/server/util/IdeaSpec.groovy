@@ -4,16 +4,17 @@ import spock.lang.Specification
 
 class IdeaSpec extends Specification {
 
-    def "test fileNameSlug"(String name, String slug) {
+    def "test sanitizeFileName"(String name, String slug) {
         when:
-        def nameSlug = Idea.fileNameSlug(name)
+        def nameSlug = Idea.sanitizeFileName(name)
 
         then:
         nameSlug == slug
 
         where:
-        name                    | slug
-        'Run Server'            | 'Run_Server'
-        'my-plugin: Run Server' | 'my_plugin__Run_Server'
+        name                     | slug
+        'Run Server'             | 'Run Server'
+        'my-plugin: Run Server'  | 'my-plugin_ Run Server'
+        'Run Server [my-plugin]' | 'Run Server [my-plugin]'
     }
 }
