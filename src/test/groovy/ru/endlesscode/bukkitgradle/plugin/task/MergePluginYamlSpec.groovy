@@ -121,17 +121,17 @@ class MergePluginYamlSpec extends PluginSpecification {
 
     void 'when merge plugin.yaml - and all properties configured - should write all lines'() {
         given: "configured all plugin properties"
-        //language=gradle
+        //language=kotlin
         buildFile << """
             bukkit {
                 plugin {
-                    name.set('TestPlugin')
-                    description.set('Test plugin description')
-                    main.set('com.example.plugin.Plugin')
-                    version.set('0.1')
-                    apiVersion.set('1.13')
-                    url.set('http://www.example.com/')
-                    authors.set(["OsipXD", "Contributors"])
+                    name.set("TestPlugin")
+                    description.set("Test plugin description")
+                    main.set("com.example.plugin.Plugin")
+                    version.set("0.1")
+                    apiVersion.set("1.13")
+                    url.set("https://www.example.com/")
+                    authors.set(listOf("OsipXD", "Contributors"))
                 }
             }
         """.stripIndent()
@@ -147,22 +147,22 @@ class MergePluginYamlSpec extends PluginSpecification {
                          version: "0.1"
                          api-version: "1.13"
                          authors: ["OsipXD", "Contributors"]
-                         website: "http://www.example.com/"
+                         website: "https://www.example.com/"
                          """.stripIndent().trim()
     }
 
-    void 'when merge plugin.yaml - and all properties configured old way - should write all lines'() {
+    void 'when merge plugin.yaml - and all properties configured with assignment - should write all lines'() {
         given: "configured all plugin properties in old way"
-        //language=gradle
+        //language=kotlin
         buildFile << """
             bukkit {
                 plugin {
-                    name = 'TestPlugin'
-                    description = 'Test plugin description'
-                    main = 'com.example.plugin.Plugin'
-                    version = '0.1'
-                    url = 'http://www.example.com/'
-                    authors = ["OsipXD", "Contributors"]
+                    name = "TestPlugin"
+                    description = "Test plugin description"
+                    main = "com.example.plugin.Plugin"
+                    version = "0.1"
+                    url = "https://www.example.com/"
+                    authors = listOf("OsipXD", "Contributors")
                 }
             }
         """.stripIndent()
@@ -178,7 +178,7 @@ class MergePluginYamlSpec extends PluginSpecification {
                          version: "0.1"
                          api-version: "1.16"
                          authors: ["OsipXD", "Contributors"]
-                         website: "http://www.example.com/"
+                         website: "https://www.example.com/"
                          """.stripIndent().trim()
     }
 

@@ -22,21 +22,21 @@ class PluginSpecification extends Specification {
     protected BuildResult result
 
     def setup() {
-        buildFile = file('build.gradle')
-        settingsFile = file('settings.gradle')
+        buildFile = file('build.gradle.kts')
+        settingsFile = file('settings.gradle.kts')
 
-        //language=gradle
+        //language=kotlin
         buildFile << '''
             plugins {
-                id 'ru.endlesscode.bukkitgradle'
+                id("ru.endlesscode.bukkitgradle")
             }
 
-            version = '1.0'
-            group = 'com.example.testplugin'
+            version = "1.0"
+            group = "com.example.testplugin"
         '''.stripIndent()
 
         settingsFile << '''
-            rootProject.name = 'test-plugin'
+            rootProject.name = "test-plugin"
         '''.stripIndent()
     }
 
