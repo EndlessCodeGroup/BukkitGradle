@@ -29,13 +29,11 @@ class PrepareServerSpec extends PluginSpecification {
         taskOutcome(TASK_NAME) == TaskOutcome.UP_TO_DATE
     }
 
-    def "when run prepareServer - should set eula and online-mode"() {
-        given: "configured eula and online-mode"
+    def "when run prepareServer - should set online-mode"() {
+        given: "configured online-mode"
         buildFile << """
             bukkit {
-                version = '1.16.2'
                 run {
-                    eula = true
                     onlineMode = false
                 }
             }
@@ -45,10 +43,7 @@ class PrepareServerSpec extends PluginSpecification {
         when: "run prepareServer"
         run(TASK_NAME)
 
-        then: "eula should be true"
-        file("$serverDir/eula.txt").readLines().contains("eula=true")
-
-        and: "online-mode should be false"
+        then: "online-mode should be false"
         file("$serverDir/server.properties").readLines().contains("online-mode=false")
     }
 }

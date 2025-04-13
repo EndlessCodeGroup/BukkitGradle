@@ -23,9 +23,6 @@ internal abstract class PrepareServer : DefaultTask() {
     var onlineMode: Boolean = true
 
     @get:OutputFile
-    val eulaFile: Provider<RegularFile> = serverDir.map { it.file("eula.txt") }
-
-    @get:OutputFile
     val propertiesFile: Provider<RegularFile> = serverDir.map { it.file("server.properties") }
 
     init {
@@ -35,23 +32,7 @@ internal abstract class PrepareServer : DefaultTask() {
 
     @TaskAction
     fun prepareServer() {
-        resolveEula()
         resolveOnlineMode()
-    }
-
-    private fun resolveEula() {
-        val eulaFile = eulaFile.get().asFile
-        if (!eulaFile.exists()) {
-            eulaFile.createNewFile()
-        }
-
-        val properties = Properties()
-        properties.load(eulaFile.reader())
-        properties.setProperty("eula", "$eula")
-        properties.store(
-            eulaFile.writer(),
-            "By changing the setting below to TRUE you are indicating your agreement to our EULA (https://account.mojang.com/documents/minecraft_eula)."
-        )
     }
 
     private fun resolveOnlineMode() {

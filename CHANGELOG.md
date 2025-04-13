@@ -13,6 +13,7 @@
   instead of setting JVM target and source compatibility to 1.8.
   The default JVM version depends on [Paper requirements](https://docs.papermc.io/paper/getting-started#requirements).
 - Use lazy API for `bukkit.apiVersion` and `bukkit.generateMeta` properties.
+- Accept EULA using CLI parameter `-Dcom.mojang.eula.agree=true` instead of changing `eula.txt`
 
 ### Fixed
 

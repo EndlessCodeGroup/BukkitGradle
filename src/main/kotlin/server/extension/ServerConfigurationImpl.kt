@@ -49,7 +49,11 @@ public class ServerConfigurationImpl : ServerConfiguration {
     }
 
     override fun buildJvmArgs(debug: Boolean): List<String> {
-        return listOfNotNull(DEBUG_ARGS.takeIf { debug }, "-Dfile.encoding=$encoding") + javaArgs
+        return listOfNotNull(
+            DEBUG_ARGS.takeIf { debug },
+            ACCEPT_EULA_ARGS.takeIf { eula },
+            "-Dfile.encoding=$encoding"
+        ) + javaArgs
     }
 
     override fun toString(): String {
@@ -66,5 +70,6 @@ public class ServerConfigurationImpl : ServerConfiguration {
 
     private companion object {
         const val DEBUG_ARGS: String = "-agentlib:jdwp=transport=dt_socket,server=y,suspend=n,address=5005"
+        const val ACCEPT_EULA_ARGS: String = "-Dcom.mojang.eula.agree=true"
     }
 }
