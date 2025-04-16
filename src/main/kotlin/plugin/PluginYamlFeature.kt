@@ -1,24 +1,42 @@
 package ru.endlesscode.bukkitgradle.plugin
 
+import com.charleskorn.kaml.Yaml
+import com.charleskorn.kaml.YamlConfiguration
+import com.charleskorn.kaml.YamlNamingStrategy
 import org.gradle.api.Project
+import org.gradle.api.file.RegularFile
 import org.gradle.api.plugins.ExtensionAware
 import org.gradle.api.plugins.JavaBasePlugin
-import org.gradle.kotlin.dsl.apply
-import org.gradle.kotlin.dsl.configure
-import org.gradle.kotlin.dsl.the
-import org.gradle.kotlin.dsl.withType
+import org.gradle.api.provider.Provider
+import org.gradle.api.tasks.SourceSet
+import org.gradle.kotlin.dsl.*
 import ru.endlesscode.bukkitgradle.Bukkit
 import ru.endlesscode.bukkitgradle.BukkitExtension
+import ru.endlesscode.bukkitgradle.extensions.mapNotNull
 import ru.endlesscode.bukkitgradle.extensions.resourceFactory
 import ru.endlesscode.bukkitgradle.extensions.sourceSets
+import ru.endlesscode.bukkitgradle.plugin.task.ParsePluginYaml
 import ru.endlesscode.bukkitgradle.plugin.util.MinecraftVersion
 import ru.endlesscode.bukkitgradle.plugin.util.StringUtils
 import ru.endlesscode.bukkitgradle.plugin.util.parsedApiVersion
+import xyz.jpenilla.resourcefactory.ExecuteResourceFactories
 import xyz.jpenilla.resourcefactory.ResourceFactoryPlugin
 import xyz.jpenilla.resourcefactory.bukkit.BukkitPluginYaml
 import xyz.jpenilla.resourcefactory.bukkit.bukkitPluginYaml
 
 private const val PLUGIN_EXTENSION_NAME: String = "plugin"
+private const val SOURCE_SET_NAME: String = "main" // Make it configurable, maybe?
+internal const val PLUGIN_YML: String = "plugin.yml"
+
+private val defaultYaml by lazy {
+    Yaml(
+        configuration = YamlConfiguration(
+            strictMode = false,
+            decodeEnumCaseInsensitive = true,
+            yamlNamingStrategy = YamlNamingStrategy.KebabCase,
+        )
+    )
+}
 
 internal fun Project.configurePluginYamlFeature(bukkit: BukkitExtension) {
     project.apply<ResourceFactoryPlugin>()
@@ -29,10 +47,42 @@ internal fun Project.configurePluginYamlFeature(bukkit: BukkitExtension) {
     (bukkit as ExtensionAware).extensions.add(PLUGIN_EXTENSION_NAME, bukkitPluginYaml)
 
     plugins.withType<JavaBasePlugin> {
-        sourceSets.named("main") {
+        val mainSourceSet = sourceSets.named(SOURCE_SET_NAME) {
             resourceFactory.factory(bukkitPluginYaml.resourceFactory())
         }
+
+        val parsePluginYamlProvider = tasks.register<ParsePluginYaml>("parsePluginYaml") {
+            yaml.set(defaultYaml)
+            pluginYaml.set(bukkitPluginYaml)
+            pluginYamlFile.set(findPluginYaml(mainSourceSet))
+        }
+
+        tasks.named<ExecuteResourceFactories>("${SOURCE_SET_NAME}ResourceFactory") {
+            val parsePluginYaml = parsePluginYamlProvider.get()
+
+            // Switch to in-place generation mode if the plugin.yml exists
+            val pluginYamlFile = parsePluginYaml.pluginYamlFile.orNull?.asFile
+            if (pluginYamlFile != null) {
+                dependsOn(parsePluginYaml)
+
+                outputDir.set(pluginYamlFile.parentFile)
+                // Deduplicate resource dirs after changing outputDir
+                mainSourceSet.configure {
+                    resources.setSrcDirs(resources.srcDirs.distinct())
+                }
+            }
+        }
     }
+}
+
+private fun Project.findPluginYaml(sourceSetProvider: Provider<SourceSet>): Provider<RegularFile> {
+    val fileProvider = sourceSetProvider.mapNotNull { sourceSet ->
+        sourceSet.resources.sourceDirectories
+            .map { it.resolve(PLUGIN_YML) }
+            .find { it.isFile }
+    }
+
+    return layout.file(fileProvider)
 }
 
 /**
