@@ -18,7 +18,7 @@ public interface Bukkit {
     public val apiVersion: Provider<String>
 
     /** Plugin Meta generation enabled. */
-    @Deprecated("Use 'plugin.generatePluginYaml' instead", ReplaceWith("plugin.generatePluginYaml"))
+    @Deprecated("Use 'generatePluginYaml' instead", ReplaceWith("generatePluginYaml"))
     public val generateMeta: Provider<Boolean>
         get() = generatePluginYaml
 

@@ -33,17 +33,17 @@ class GeneratePluginYamlSpec extends PluginSpecification {
     }
 
     def 'when run processResources - and plugin.yml generation disabled - should not run resource factory'() {
-        given: "plugin generation disabled"
-        buildFile << "bukkit.disablePluginYamlGeneration()"
+        given:
+        buildFile << "bukkit.generatePluginYaml = false"
 
-        when: "run processResources"
+        when:
         run(':processResources')
 
-        then: "task mergePluginYaml completed successfully"
+        then:
         taskOutcome(RESOURCE_FACTORY) == TaskOutcome.SKIPPED
 
-        and: "task mergePluginYaml completed successfully"
-        taskOutcome(PARSE_PLUGIN_YAML) == TaskOutcome.SKIPPED
+        and:
+        taskOutcome(PARSE_PLUGIN_YAML) == null
     }
 
     def 'when run processResources - and plugin.yml doesnt exist - should skip parsing'() {

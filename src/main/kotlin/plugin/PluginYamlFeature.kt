@@ -55,9 +55,15 @@ internal fun Project.configurePluginYamlFeature(bukkit: BukkitExtension) {
             yaml.set(defaultYaml)
             pluginYaml.set(bukkitPluginYaml)
             pluginYamlFile.set(findPluginYaml(mainSourceSet))
+
+            onlyIf { bukkit.generatePluginYaml.get() }
         }
 
         tasks.named<ExecuteResourceFactories>("${SOURCE_SET_NAME}ResourceFactory") {
+            val generatePluginYaml = bukkit.generatePluginYaml.get()
+            onlyIf("Flag generatePluginYaml is enabled") { generatePluginYaml }
+            if (!generatePluginYaml) return@named
+
             val parsePluginYaml = parsePluginYamlProvider.get()
 
             // Switch to in-place generation mode if the plugin.yml exists

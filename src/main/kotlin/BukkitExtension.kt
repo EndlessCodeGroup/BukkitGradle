@@ -4,7 +4,6 @@ import org.gradle.api.Action
 import org.gradle.api.Project
 import org.gradle.api.model.ObjectFactory
 import org.gradle.api.provider.Property
-import org.gradle.api.provider.Provider
 import org.gradle.kotlin.dsl.getByType
 import org.gradle.kotlin.dsl.property
 import ru.endlesscode.bukkitgradle.extensions.finalizedOnRead
@@ -18,10 +17,9 @@ public open class BukkitExtension internal constructor(
     objects: ObjectFactory,
 ) : Bukkit {
 
-    private val _generatePluginYaml: Property<Boolean> = objects.property<Boolean>()
+    override val generatePluginYaml: Property<Boolean> = objects.property<Boolean>()
         .convention(true)
         .finalizedOnRead()
-    override val generatePluginYaml: Provider<Boolean> = _generatePluginYaml
 
     public final override val apiVersion: Property<String> = objects.property<String>()
         .convention(ServerConstants.DEFAULT_VERSION)
@@ -38,16 +36,11 @@ public open class BukkitExtension internal constructor(
 
     /** Disables plugin.yml generation. */
     @Deprecated(
-        "Use 'plugin.disablePluginYamlGeneration()' instead",
-        ReplaceWith("plugin.disablePluginYamlGeneration()")
+        "Use 'generatePluginYaml.set(false)' instead",
+        ReplaceWith("generatePluginYaml.set(false)")
     )
     public fun disableMetaGeneration() {
-        disablePluginYamlGeneration()
-    }
-
-    /** Disables plugin.yaml parsing and generation. */
-    public fun disablePluginYamlGeneration() {
-        _generatePluginYaml.set(false)
+        generatePluginYaml.set(false)
     }
 
     public companion object {
