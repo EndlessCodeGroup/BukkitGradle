@@ -10,9 +10,7 @@ import org.gradle.api.file.DuplicatesStrategy
 import org.gradle.kotlin.dsl.get
 import org.gradle.kotlin.dsl.named
 import org.gradle.kotlin.dsl.register
-import ru.endlesscode.bukkitgradle.bukkit
 import ru.endlesscode.bukkitgradle.extensions.java
-import ru.endlesscode.bukkitgradle.plugin.extension.PluginConfigurationImpl
 import ru.endlesscode.bukkitgradle.plugin.task.MergePluginYaml
 import ru.endlesscode.bukkitgradle.plugin.task.ParsePluginYaml
 import java.io.File
@@ -28,25 +26,23 @@ public class PluginConfigurationPlugin : Plugin<Project> {
         )
 
         val parsePluginYaml = project.tasks.register<ParsePluginYaml>("parsePluginYaml") {
-            val bukkit = project.bukkit
-
             this.yaml = yaml
-            this.plugin = bukkit.plugin as PluginConfigurationImpl
+            //val bukkit = project.bukkit
+            //this.plugin = bukkit.plugin as PluginConfigurationImpl
             this.pluginYamlFile.set(project.findPluginYaml())
 
-            val predicate = bukkit.plugin.generatePluginYaml
-            onlyIf { predicate.get() }
+            //val predicate = bukkit.plugin.generatePluginYaml
+            //onlyIf { predicate.get() }
         }
 
         val mergePluginYaml = project.tasks.register<MergePluginYaml>("mergePluginYaml") {
-            val bukkit = project.bukkit
-
             this.yaml = yaml
-            this.plugin = bukkit.plugin
+            //val bukkit = project.bukkit
+            //this.plugin = bukkit.plugin
             pluginYaml.set(parsePluginYaml.map { it.pluginYaml.get() })
 
-            val predicate = bukkit.plugin.generatePluginYaml
-            onlyIf { predicate.get() }
+            //val predicate = bukkit.plugin.generatePluginYaml
+            //onlyIf { predicate.get() }
         }
 
         project.tasks.named<CopySpec>("processResources") {

@@ -29,6 +29,7 @@ repositories {
 
 dependencies {
     implementation("xyz.jpenilla.run-paper:xyz.jpenilla.run-paper.gradle.plugin:2.3.1")
+    implementation("xyz.jpenilla.resource-factory:xyz.jpenilla.resource-factory.gradle.plugin:1.2.0")
     implementation("org.jetbrains.kotlinx:kotlinx-serialization-json:1.8.1")
     implementation("com.charleskorn.kaml:kaml:0.74.0")
     testImplementation("junit:junit:4.13.1")

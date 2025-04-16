@@ -21,7 +21,6 @@ Gradle utilities to simplify Bukkit/Spigot plugins writing and debugging.
 <!-- END doctoc generated TOC please keep comment here to allow auto update -->
 
 #### Features:
-- Automatically applies plugin: java
 - Sets up compiler encoding to UTF-8
 - Sets archivesBaseName to plugin name
 - Supports APIs: Bukkit, CraftBukkit, Spigot, Paper

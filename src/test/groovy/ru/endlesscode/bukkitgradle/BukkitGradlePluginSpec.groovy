@@ -1,15 +1,13 @@
 //file:noinspection ConfigurationAvoidance
 package ru.endlesscode.bukkitgradle
 
+import org.gradle.api.plugins.JavaPlugin
+
 class BukkitGradlePluginSpec extends PluginSpecification {
 
     def setup() {
+        project.apply(plugin: JavaPlugin)
         project.apply(plugin: BukkitGradlePlugin)
-    }
-
-    def "when initialized - should add required plugins"() {
-        expect: "java plugin added"
-        project.pluginManager.hasPlugin("java")
     }
 
     def "when initialized - should set default JVM toolchain"(String apiVersion, int jvmVersion) {

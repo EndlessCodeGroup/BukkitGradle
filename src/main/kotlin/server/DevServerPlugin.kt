@@ -3,7 +3,6 @@ package ru.endlesscode.bukkitgradle.server
 import org.gradle.api.Plugin
 import org.gradle.api.Project
 import org.gradle.api.file.Directory
-import org.gradle.api.plugins.JavaPluginExtension
 import org.gradle.api.provider.Provider
 import org.gradle.api.tasks.TaskContainer
 import org.gradle.api.tasks.TaskProvider
@@ -11,6 +10,7 @@ import org.gradle.jvm.toolchain.JavaToolchainService
 import org.gradle.kotlin.dsl.*
 import ru.endlesscode.bukkitgradle.Bukkit
 import ru.endlesscode.bukkitgradle.bukkit
+import ru.endlesscode.bukkitgradle.extensions.java
 import ru.endlesscode.bukkitgradle.plugin.util.resolveMinimalJavaVersion
 import ru.endlesscode.bukkitgradle.server.extension.ServerConfiguration
 import ru.endlesscode.bukkitgradle.server.task.CreateIdeaGradleRunConfiguration
@@ -54,7 +54,7 @@ public class DevServerPlugin : Plugin<Project> {
         }
 
         // RunPaperPlugin uses afterEvaluate under the hood, so we have to use afterEvaluate
-        // to set our conventions after theirs
+        // to set our conventions after their ones
         project.afterEvaluate { configureDefaultJvmForServer() }
 
         val prepareServer = registerPrepareServerTask(runServer)
@@ -65,7 +65,7 @@ public class DevServerPlugin : Plugin<Project> {
 
     private fun Project.configureDefaultJvmForServer() {
         val toolchains = project.extensions.findByType<JavaToolchainService>() ?: return
-        val spec = the<JavaPluginExtension>().toolchain
+        val spec = java.toolchain
 
         tasks.withType<RunServer>().configureEach {
             javaLauncher.convention(
