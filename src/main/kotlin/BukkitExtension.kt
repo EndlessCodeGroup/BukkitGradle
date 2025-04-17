@@ -7,15 +7,18 @@ import org.gradle.api.provider.Property
 import org.gradle.kotlin.dsl.getByType
 import org.gradle.kotlin.dsl.property
 import ru.endlesscode.bukkitgradle.extensions.finalizedOnRead
-import ru.endlesscode.bukkitgradle.plugin.extension.PluginConfigurationImpl
+import ru.endlesscode.bukkitgradle.plugin.plugin
 import ru.endlesscode.bukkitgradle.server.ServerConstants
 import ru.endlesscode.bukkitgradle.server.extension.ServerConfigurationImpl
+import xyz.jpenilla.resourcefactory.bukkit.BukkitPluginYaml
 
 public open class BukkitExtension internal constructor(
-    public final override val plugin: PluginConfigurationImpl,
     public final override val server: ServerConfigurationImpl,
     objects: ObjectFactory,
 ) : Bukkit {
+
+    override val generatePluginYaml: Property<Boolean> = objects.property<Boolean>()
+        .convention(true)
 
     public final override val apiVersion: Property<String> = objects.property<String>()
         .convention(ServerConstants.DEFAULT_VERSION)
@@ -25,22 +28,22 @@ public open class BukkitExtension internal constructor(
         body.execute(server)
     }
 
-    public fun plugin(body: Action<PluginConfigurationImpl>) {
-        body.execute(plugin)
-    }
-
     @Deprecated("Use 'plugin' instead", ReplaceWith("plugin(body)"))
-    public fun meta(body: Action<PluginConfigurationImpl>) {
-        plugin(body)
+    public fun meta(body: Action<BukkitPluginYaml>) {
+        body.execute(plugin)
     }
 
     /** Disables plugin.yml generation. */
     @Deprecated(
-        "Use 'plugin.disablePluginYamlGeneration()' instead",
-        ReplaceWith("plugin.disablePluginYamlGeneration()")
+        "Use 'generatePluginYaml.set(false)' instead",
+        ReplaceWith("generatePluginYaml.set(false)")
     )
     public fun disableMetaGeneration() {
-        plugin.disablePluginYamlGeneration()
+        generatePluginYaml.set(false)
+    }
+
+    public companion object {
+        public const val NAME: String = "bukkit"
     }
 }
 

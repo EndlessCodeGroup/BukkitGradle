@@ -1,69 +1,102 @@
 package ru.endlesscode.bukkitgradle.plugin.task
 
-import com.charleskorn.kaml.EmptyYamlDocumentException
-import com.charleskorn.kaml.Yaml
-import com.charleskorn.kaml.decodeFromStream
+import com.charleskorn.kaml.*
 import org.gradle.api.DefaultTask
+import org.gradle.api.GradleException
 import org.gradle.api.file.RegularFileProperty
-import org.gradle.api.provider.Provider
-import org.gradle.api.provider.ProviderFactory
-import org.gradle.api.tasks.InputFile
-import org.gradle.api.tasks.Internal
-import org.gradle.api.tasks.Optional
-import org.gradle.api.tasks.TaskAction
+import org.gradle.api.provider.Property
+import org.gradle.api.tasks.*
 import ru.endlesscode.bukkitgradle.TASKS_GROUP_BUKKIT
-import ru.endlesscode.bukkitgradle.plugin.PluginYaml
-import ru.endlesscode.bukkitgradle.plugin.extension.PluginConfigurationImpl
-import javax.inject.Inject
+import ru.endlesscode.bukkitgradle.plugin.BukkitPluginYamlDefaults
+import xyz.jpenilla.resourcefactory.bukkit.BukkitPluginYaml
+import xyz.jpenilla.resourcefactory.bukkit.Permission
 
-internal abstract class ParsePluginYaml @Inject constructor(
-    providers: ProviderFactory
-) : DefaultTask() {
+internal abstract class ParsePluginYaml : DefaultTask() {
+
+    private val yaml by lazy {
+        Yaml(
+            configuration = YamlConfiguration(
+                strictMode = false,
+                decodeEnumCaseInsensitive = true,
+                yamlNamingStrategy = YamlNamingStrategy.KebabCase,
+            )
+        )
+    }
 
     @get:Internal
-    lateinit var yaml: Yaml
+    abstract val pluginYaml: Property<BukkitPluginYaml>
 
-    @get:Internal
-    lateinit var plugin: PluginConfigurationImpl
-
-    @get:Optional
+    @get:SkipWhenEmpty
     @get:InputFile
+    @get:PathSensitive(PathSensitivity.NONE)
     abstract val pluginYamlFile: RegularFileProperty
-
-    private var _pluginYaml: PluginYaml? = null
-
-    @get:Internal
-    val pluginYaml: Provider<PluginYaml> = providers.provider { checkNotNull(_pluginYaml) }
 
     init {
         group = TASKS_GROUP_BUKKIT
-        description = "Parse plugin.yml file if it exists"
+        description = "Parse plugin.yml file if it exists and add its content as defaults to generation"
     }
 
     @TaskAction
-    fun parse() {
-        _pluginYaml = readFromFile()
+    fun parseAndSetDefaults() {
+        val defaults = readFromFile()
+        if (defaults != null) pluginYaml.get().applyConventions(defaults)
     }
 
-    /** Reads plugin.yaml from [pluginYamlFile] and adds conventions for specified fields. */
-    private fun readFromFile(): PluginYaml {
-        if (!pluginYamlFile.isPresent) return PluginYaml()
-
-        val file = pluginYamlFile.get().asFile
-        val pluginYaml = try {
-            file.inputStream().use { yaml.decodeFromStream<PluginYaml>(it) }
+    private fun readFromFile(): BukkitPluginYamlDefaults? {
+        return try {
+            pluginYamlFile.get().asFile
+                .inputStream()
+                .use { yaml.decodeFromStream<BukkitPluginYamlDefaults>(it) }
         } catch (cause: EmptyYamlDocumentException) {
-            return PluginYaml()
-        }
-
-        return pluginYaml.apply {
-            main?.let(plugin.main::convention)
-            name?.let(plugin.name::convention)
-            description?.let(plugin.description::convention)
-            version?.let(plugin.version::convention)
-            apiVersion?.let(plugin.apiVersion::convention)
-            website?.let(plugin.url::convention)
-            authors?.let(plugin.authors::convention)
+            logger.debug("plugin.yml is empty – skipping defaults setting", cause)
+            null
+        } catch (cause: Exception) {
+            throw GradleException("Failed to parse plugin.yml: ${cause.message}.\n" +
+                "Ensure the file is valid YAML that matches plugin.yml schema.", cause)
         }
     }
+}
+
+private fun BukkitPluginYaml.applyConventions(defaults: BukkitPluginYamlDefaults) {
+    defaults.main?.let(main::convention)
+    defaults.name?.let(name::convention)
+    defaults.description?.let(description::convention)
+    defaults.prefix?.let(prefix::convention)
+    defaults.version?.let(version::convention)
+    defaults.apiVersion?.let(apiVersion::convention)
+    defaults.load?.let(load::convention)
+    defaults.author?.let(author::convention)
+    defaults.authors?.let(authors::convention)
+    defaults.website?.let(website::convention)
+    defaults.depend?.let(depend::convention)
+    defaults.softdepend?.let(softDepend::convention)
+    defaults.loadbefore?.let(loadBefore::convention)
+    defaults.provides?.let(provides::convention)
+    defaults.libraries?.let(libraries::convention)
+    defaults.defaultPermission?.let(defaultPermission::convention)
+    defaults.foliaSupported?.let(foliaSupported::convention)
+    defaults.paperPluginLoader?.let(paperPluginLoader::convention)
+    defaults.paperSkipLibraries?.let(paperSkipLibraries::convention)
+
+    for ((name, command) in defaults.commands) {
+        commands.maybeCreate(name).applyConventions(command)
+    }
+
+    for ((name, permission) in defaults.permissions) {
+        permissions.maybeCreate(name).applyConventions(permission)
+    }
+}
+
+private fun BukkitPluginYaml.Command.applyConventions(defaults: BukkitPluginYamlDefaults.Command) {
+    defaults.description?.let(description::convention)
+    defaults.aliases?.let(aliases::convention)
+    defaults.permission?.let(permission::convention)
+    defaults.permissionMessage?.let(permissionMessage::convention)
+    defaults.usage?.let(usage::convention)
+}
+
+private fun Permission.applyConventions(defaults: BukkitPluginYamlDefaults.Permission) {
+    defaults.description?.let(description::convention)
+    defaults.default?.let(default::convention)
+    defaults.children?.let(children::convention)
 }

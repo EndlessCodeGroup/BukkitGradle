@@ -1,16 +1,14 @@
 package ru.endlesscode.bukkitgradle
 
 import org.gradle.api.provider.Provider
-import ru.endlesscode.bukkitgradle.plugin.extension.PluginConfiguration
+import ru.endlesscode.bukkitgradle.plugin.plugin
 import ru.endlesscode.bukkitgradle.server.extension.ServerConfiguration
+import xyz.jpenilla.resourcefactory.bukkit.BukkitPluginYaml
 
 public interface Bukkit {
 
-    /** Plugin plugin. */
-    public val plugin: PluginConfiguration
-
     @Deprecated("Use 'plugin' field instead", ReplaceWith("plugin"))
-    public val meta: PluginConfiguration
+    public val meta: BukkitPluginYaml
         get() = plugin
 
     /** Dev server configuration. */
@@ -20,7 +18,10 @@ public interface Bukkit {
     public val apiVersion: Provider<String>
 
     /** Plugin Meta generation enabled. */
-    @Deprecated("Use 'plugin.generatePluginYaml' instead", ReplaceWith("plugin.generatePluginYaml"))
+    @Deprecated("Use 'generatePluginYaml' instead", ReplaceWith("generatePluginYaml"))
     public val generateMeta: Provider<Boolean>
-        get() = plugin.generatePluginYaml
+        get() = generatePluginYaml
+
+    /** Whether plugin.yml generation enabled or not. */
+    public val generatePluginYaml: Provider<Boolean>
 }

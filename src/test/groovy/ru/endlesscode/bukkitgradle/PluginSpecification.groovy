@@ -82,6 +82,6 @@ class PluginSpecification extends Specification {
     }
 
     protected TaskOutcome taskOutcome(String task) {
-        return result.task(task).outcome
+        return result.task(task)?.outcome
     }
 }

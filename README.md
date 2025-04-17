@@ -9,7 +9,7 @@ Gradle utilities to simplify Bukkit/Spigot plugins writing and debugging.
 
 
 - [Installation](#installation)
-  - [First steps](#first-steps)
+  - [Quick Start](#quick-start)
 - [Configuration](#configuration)
 - [Repositories and Dependencies](#repositories-and-dependencies)
 - [Running Dev server](#running-dev-server)
@@ -21,7 +21,6 @@ Gradle utilities to simplify Bukkit/Spigot plugins writing and debugging.
 <!-- END doctoc generated TOC please keep comment here to allow auto update -->
 
 #### Features:
-- Automatically applies plugin: java
 - Sets up compiler encoding to UTF-8
 - Sets archivesBaseName to plugin name
 - Supports APIs: Bukkit, CraftBukkit, Spigot, Paper
@@ -35,33 +34,22 @@ Gradle utilities to simplify Bukkit/Spigot plugins writing and debugging.
 
 ## Installation
 
-[BukkitGradle on plugins.gradle.org](https://plugins.gradle.org/plugin/ru.endlesscode.bukkitgradle)
-> **Note:** Gradle 8.0+ is required
+> [!NOTE] 
+> BukkitGradle requires Gradle 8.0+ to run
 
-#### With new plugins mechanism
 ```kotlin
 plugins {
   id("ru.endlesscode.bukkitgradle") version "0.10.1"
 }
 ```
 
-#### With buildscript and apply
-```groovy
-buildscript {
-  repositories {
-    mavenCentral()
-  }
-  dependencies {
-    classpath("gradle.plugin.ru.endlesscode:bukkit-gradle:0.10.1")
-  }
-}
+[BukkitGradle on plugins.gradle.org](https://plugins.gradle.org/plugin/ru.endlesscode.bukkitgradle)
 
-apply(plugin: "ru.endlesscode.bukkitgradle")
-```
+<details>
 
-#### Snapshots
+<summary>Using snapshots</summary>
 
-If you want to use snapshots, you can add jitpack repository to `settings.gradle` and use version `develop-SNAPSHOT`:
+To use snapshots, add jitpack repository to the `settings.gradle.kts` and specify version `develop-SNAPSHOT`:
 ```kotlin
 // settings.gradle
 
@@ -82,88 +70,86 @@ plugins {
 }
 ```
 
-### First steps
-Simple `build.gradle` file that use BukkitGradle:
+</details>
+
+### Quick Start
+
+Apply the plugin and configure project's `group`, `description` and `version`.
+These values will be used to generate the `plugin.yml` file:
+
 ```kotlin
 plugins {
     id("ru.endlesscode.bukkitgradle") version "0.10.1"
 }
- 
-// Project information
+
 group = "com.example.myplugin"
-description = "My first Bukkit plugin with Gradle"
+description = "My first Bukkit plugin built by Gradle"
 version = "0.1"
 
-// Let's add needed API to project
+bukkit {
+    apiVersion = "1.16.5"
+}
+
+// Add the necessary API to the project
 dependencies {
     compileOnly(bukkitApi())
-    // see section 'Dependencies' for more info
+    // See the 'Dependencies' section for more info
 }
 ```
-> **Note:** `compileOnly` - it's like `provided` scope in Maven.
-It means that this dependency will not be included to your final jar.
 
-It's enough!
-Will be hooked the latest version of Bukkit and automatically generated `plugin.yml` with next content:
+That's it!
+During the plugin compilation `plugin.yml` will be generated with the following content:
+
 ```yaml
+api-version: '1.16'
 name: MyPlugin
-description: My first Bukkit plugin with Gradle
+version: '0.1'
 main: com.example.myplugin.MyPlugin
-version: 0.1
-api-version: 1.16
+description: My first Bukkit plugin built by Gradle
 ```
-> **Note:** Main class built by following pattern: `<groupId>.<name>`
+
+> [!NOTE]
+> By default, main class is built by the following pattern: `<groupId>.<name>`
+
+Next, you might need to [configure](#configuration) `plugin.yml` content or [run dev server](#running-dev-server).
 
 ## Configuration
-You can configure attributes that will be placed to `plugin.yml`:
+
+The `plugin.yml` content can be configured using `bukkit.plugin { ... }` block.
+
 ```kotlin
-// Override default configurations
 bukkit {
-    // Version of API (if you will not set this property, will be used latest version at moment of BukkitGradle release)
+    // Version of API. By default, 1.16.5 is used
     apiVersion = "1.15.2"
  
-    // Attributes for plugin.yml
+    // Configure plugin.yml content
     plugin {
-        name.set("MyPlugin")
-        description.set("My amazing plugin, that doing nothing")
-        main.set("com.example.plugin.MyPlugin")
-        version.set("1.0")
-        url.set("http://www.example.com") // Attribute website
-        authors.set(["OsipXD", "Contributors"])
+        name = "MyPlugin"
+        description = "My amazing plugin"
+        main = "com.example.plugin.MyPlugin"
+        version = "1.0"
+        authors = listOf("osipxd", "contributors")
+        depend = listOf("Vault", "Mimic")
     }
 }
 ```
 
-Will be generated `plugin.yml` file:
-```yaml
-name: MyPlugin
-description: My amazing plugin, that doing nothing
-main: com.example.plugin.MyPlugin
-version: 1.0
-api-version: 1.15
-website: http://www.example.com
-authors: [OsipXD, Contributors]
-```
-
-If you want to add unsupported by BukkitGradle attributes, like a `depend`, `commands` etc.
-Create `plugin.yml` file and put custom attributes there.
-
 ## Repositories and Dependencies
-BukkitGradle provides short extension-functions to add common repositories and dependencies.
-There are list of its.
 
-Usage example:
+BukkitGradle provides shortcuts to add common repositories and dependencies:
+
 ```kotlin
 repositories {
-    spigot() // Adds spigot repo
+    spigot()
 }
 
 dependencies {
-    compileOnly(paperApi()) // Adds paper-api dependency
+    compileOnly(paperApi())
 }
 ```
 
-#### Repositories:
+#### Repositories
+
  Name           | Url
 ----------------|-------------------------------------------------------------------
  spigot         | https://hub.spigotmc.org/nexus/content/repositories/snapshots/
@@ -176,7 +162,8 @@ dependencies {
  aikar          | https://repo.aikar.co/content/groups/aikar/
  codemc         | https://repo.codemc.org/repository/maven-public/
 
-#### Dependencies:
+#### Dependencies
+
 Some dependencies also add a repository needed for them.
 
  Name        | Signature                              | Adds repository
@@ -188,7 +175,7 @@ Some dependencies also add a repository needed for them.
  
  **Note:** `$apiVersion` - is `${version}-R0.1-SNAPSHOT` (where `$version` is `bukkit.version`)
 
-If you need more extension-functions, [create issue][issue].
+If you need more extension-functions, [file an issue][issue].
 
 ## Running Dev server
 
@@ -263,21 +250,29 @@ bukkit {
 
 ## Migration Guide
 
-### Upgrade from 0.8.x
+### Upgrade from 0.10.x
 
-1. Update gradle to 6.6 or newer:
-   ```shell
-   $ ./gradlew wrapper --gradle-version 6.7.1
-   ```
-1. Use syntax `.set` in `bukkit.meta` instead of `=`:
+1. Update Gradle to 8.0 or newer (the latest version is recommended):
+```shell
+./gradlew wrapper --gradle-version 8.13
+```
+
+2. Replace deprecated and removed APIs:
    ```diff
    bukkit {
-       meta {
-   -        desctiption = "My plugin's description"
-   +        description.set("My plugin's description")
+   -   meta {
+   +   plugin {
+           name = "MyPlugin"
+   -       url = "https://example.com/"
+   +       website = "https://example.com/"
        }
    }
-   ```
+   ``` 
+
+3. If you have `plugin.yml`, move it's content to `bukkit.plugin { ... }` block
+
+### Upgrade from 0.8.x
+
 1. Use `bukkit.apiVersion` instead of `bukkit.version`:
    ```diff
    bukkit {
@@ -285,7 +280,7 @@ bukkit {
    +   apiVersion = "1.16.4"
    }
    ```
-1. Use `build.server` block instead of `build.run`:
+2. Use `build.server` block instead of `build.run`:
    ```diff
    bukkit {
    -   run {
@@ -294,7 +289,7 @@ bukkit {
        }
    }
    ```
-1. Update arguments assignment syntax:
+3. Update arguments assignment syntax:
    ```diff
    bukkit {
        server {
@@ -304,7 +299,7 @@ bukkit {
        }
    }
    ```
-1. Replace removed APIs:
+4. Replace removed APIs:
    ```diff
    repositories {
    -   destroystokyo()
@@ -319,8 +314,8 @@ bukkit {
    +   compileOnly(spigot())
    }
    ```
-1. Remove `q` and `qq` functions calls in `meta { ... }`
-1. Check generated plugin.yml contents after build.
+5. Remove `q` and `qq` functions calls in `meta { ... }`
+6. Check generated plugin.yml contents after build.
    
 If there are any problems, [create an issue][issue].
 
