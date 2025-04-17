@@ -9,6 +9,10 @@
 - **Breaking change!**
   Refactor development server implementation to use [jpenilla/run-task](https://github.com/jpenilla/run-task/) plugin and integrate run-paper for server execution,
   improving maintainability and compatibility with various server versions.
+  - Remove `bukkit.server.coreType` property.
+    Spigot is not supported anymore, PaperMC is the only supported server.
+    If you need to run other server cores,
+    please [file an issue](https://github.com/EndlessCodeGroup/BukkitGradle/issues/new).
 - **Breaking change!**
   Use [jpenilla/resource-factory](https://github.com/jpenilla/resource-factory) to generate `plugin.yml`.
   This change comes with some renames:

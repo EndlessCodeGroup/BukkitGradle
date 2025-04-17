@@ -2,7 +2,6 @@ package ru.endlesscode.bukkitgradle.server.extension
 
 import org.slf4j.Logger
 import org.slf4j.LoggerFactory
-import java.util.*
 
 public class ServerConfigurationImpl : ServerConfiguration {
 
@@ -17,25 +16,17 @@ public class ServerConfigurationImpl : ServerConfiguration {
     override var javaArgs: List<String> = listOf("-Xmx1G")
     override var bukkitArgs: List<String> = emptyList()
 
-    override var coreType: CoreType = CoreType.SPIGOT
-
-    /**
-     * Sets core from string.
-     * @see coreType
-     */
+    @Suppress("UNUSED_PARAMETER")
+    @Deprecated("Core selecting is not supported anymore. Paper is always used.")
     public fun setCore(core: String) {
-        try {
-            coreType = CoreType.valueOf(core.uppercase(Locale.ENGLISH))
-        } catch (_: IllegalArgumentException) {
-            logger.warn(
-                """
-                Core type '$core' not found. May be it doesn't supported by BukkitGradle yet.
-                Fallback core type is '${coreType.name}'.
-                Supported types: ${CoreType.values().joinToString(", ")}
-                Write an issue on GitHub to request support of other cores.
-                """.trimIndent()
-            )
-        }
+        logger.warn(
+            """
+            Server core selecting is not supported anymore. Paper is always used.
+            Please, remove `bukkit.server.setCore(...)` from your build script.
+            If you want to use other server core, file an issue:
+              https://github.com/EndlessCodeGroup/BukkitGradle/issues/new
+            """.trimIndent()
+        )
     }
 
     /** Append the given [args] to `javaArgs`. */
@@ -62,7 +53,6 @@ public class ServerConfigurationImpl : ServerConfiguration {
             ", encoding='$encoding'" +
             ", javaArgs='$javaArgs'" +
             ", bukkitArgs='$bukkitArgs'" +
-            ", coreType=$coreType" +
             "}"
     }
 

@@ -253,9 +253,9 @@ bukkit {
 ### Upgrade from 0.10.x
 
 1. Update Gradle to 8.0 or newer (the latest version is recommended):
-```shell
-./gradlew wrapper --gradle-version 8.13
-```
+   ```shell
+   ./gradlew wrapper --gradle-version 8.13
+   ```
 
 2. Replace deprecated and removed APIs:
    ```diff
@@ -269,7 +269,10 @@ bukkit {
    }
    ``` 
 
-3. If you have `plugin.yml`, move it's content to `bukkit.plugin { ... }` block
+3. Remove server core selection: `bukkit.server.coreType` and `bukkit.server.setCore(...)`.
+   Paper is the only supported server core now.
+
+4. If you have `plugin.yml`, move it's content to `bukkit.plugin { ... }` block and delete the file.
 
 ### Upgrade from 0.8.x
 

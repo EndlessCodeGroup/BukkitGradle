@@ -9,7 +9,6 @@ public interface ServerConfiguration {
     public val encoding: String
     public val javaArgs: List<String>
     public val bukkitArgs: List<String>
-    public val coreType: CoreType
 
     /** Returns arguments for JVM. */
     public fun buildJvmArgs(): List<String>
