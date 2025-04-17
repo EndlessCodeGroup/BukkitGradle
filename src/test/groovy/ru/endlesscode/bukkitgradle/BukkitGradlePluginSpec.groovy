@@ -1,8 +1,6 @@
 //file:noinspection ConfigurationAvoidance
 package ru.endlesscode.bukkitgradle
 
-import org.gradle.api.plugins.JavaPlugin
-
 class BukkitGradlePluginSpec extends PluginSpecification {
 
     def setup() {
