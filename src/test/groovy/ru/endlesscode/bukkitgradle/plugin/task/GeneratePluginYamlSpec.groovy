@@ -259,8 +259,11 @@ class GeneratePluginYamlSpec extends PluginSpecification {
         CharsetUtils.setDefaultCharset('CP866')
 
         when: "run processResources"
-        run(RESOURCE_FACTORY)
-        CharsetUtils.setDefaultCharset('UTF-8')
+        try {
+            run(RESOURCE_FACTORY)
+        } finally {
+            CharsetUtils.setDefaultCharset('UTF-8')
+        }
 
         then:
         pluginYamlFile.text == """\

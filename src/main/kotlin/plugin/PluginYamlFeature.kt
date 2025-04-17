@@ -99,7 +99,10 @@ private fun BukkitPluginYaml.setConventionsFromProjectMeta(project: Project, buk
 
     // Kept for backward compatibility
     // TODO: This is a bit unobvious behavior, so probably we should remove defaults for these properties
-    main.convention(name.map { "${project.group}.${StringUtils.toPascalCase(it)}" })
+    main.convention(name.mapNotNull {
+        if (project.group.toString().isEmpty()) return@mapNotNull null
+        "${project.group}.${StringUtils.toPascalCase(it)}" }
+    )
     website.convention(
         project.providers.gradleProperty("url")
             .orElse(project.providers.gradleProperty("website"))

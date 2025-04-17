@@ -4,6 +4,7 @@ import com.charleskorn.kaml.EmptyYamlDocumentException
 import com.charleskorn.kaml.Yaml
 import com.charleskorn.kaml.decodeFromStream
 import org.gradle.api.DefaultTask
+import org.gradle.api.GradleException
 import org.gradle.api.file.RegularFileProperty
 import org.gradle.api.provider.Property
 import org.gradle.api.tasks.InputFile
@@ -44,7 +45,11 @@ internal abstract class ParsePluginYaml : DefaultTask() {
                 .inputStream()
                 .use { yaml.get().decodeFromStream<BukkitPluginYamlDefaults>(it) }
         } catch (cause: EmptyYamlDocumentException) {
+            logger.debug("plugin.yml is empty – skipping defaults setting", cause)
             null
+        } catch (cause: Exception) {
+            throw GradleException("Failed to parse plugin.yml: ${cause.message}.\n" +
+                "Ensure the file is valid YAML that matches plugin.yml schema.", cause)
         }
     }
 }

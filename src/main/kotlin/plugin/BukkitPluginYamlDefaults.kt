@@ -67,7 +67,10 @@ internal object PermissionDefaultSerializer : KSerializer<PermissionDefault> {
 
     override fun deserialize(decoder: Decoder): PermissionDefault {
         val string = decoder.decodeString()
-        return PermissionDefault.values().first { it.serialized.equals(string, ignoreCase = true) }
+        return requireNotNull(PermissionDefault.values().find { it.serialized.equals(string, ignoreCase = true) }) {
+            val knownValues = PermissionDefault.values().joinToString { it.serialized }
+            "Unknown permission default '$string'. Allowed: $knownValues"
+        }
     }
 
     override fun serialize(encoder: Encoder, value: PermissionDefault) {
