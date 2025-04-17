@@ -6,7 +6,6 @@ import org.gradle.api.plugins.JavaPlugin
 class BukkitGradlePluginSpec extends PluginSpecification {
 
     def setup() {
-        project.apply(plugin: JavaPlugin)
         project.apply(plugin: BukkitGradlePlugin)
     }
 

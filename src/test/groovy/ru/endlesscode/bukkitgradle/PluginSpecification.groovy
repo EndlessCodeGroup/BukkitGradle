@@ -28,7 +28,6 @@ class PluginSpecification extends Specification {
         //language=kotlin
         buildFile << '''
             plugins {
-                id("java")
                 id("ru.endlesscode.bukkitgradle")
             }
 

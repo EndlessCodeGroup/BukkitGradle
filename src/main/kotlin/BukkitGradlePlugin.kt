@@ -3,11 +3,9 @@ package ru.endlesscode.bukkitgradle
 import org.gradle.api.Plugin
 import org.gradle.api.Project
 import org.gradle.api.plugins.JavaBasePlugin
+import org.gradle.api.plugins.JavaPlugin
 import org.gradle.api.tasks.compile.JavaCompile
-import org.gradle.kotlin.dsl.apply
-import org.gradle.kotlin.dsl.create
-import org.gradle.kotlin.dsl.repositories
-import org.gradle.kotlin.dsl.withType
+import org.gradle.kotlin.dsl.*
 import ru.endlesscode.bukkitgradle.dependencies.Dependencies
 import ru.endlesscode.bukkitgradle.extensions.java
 import ru.endlesscode.bukkitgradle.plugin.configurePluginYamlFeature
@@ -29,8 +27,12 @@ public class BukkitGradlePlugin : Plugin<Project> {
         Dependencies.configureProject(project)
     }
 
-    /** Adds needed plugins. */
     private fun Project.addPlugins() {
+        // Apply Java plugin, but only if another JVM-language plugin wasn't applied before
+        if (!plugins.hasPlugin(JavaBasePlugin::class)) {
+            plugins.apply(JavaPlugin::class)
+        }
+
         val bukkit = extensions.create<BukkitExtension>(
             BukkitExtension.NAME,
             ServerConfigurationImpl(),
@@ -39,21 +41,17 @@ public class BukkitGradlePlugin : Plugin<Project> {
         configurePluginYamlFeature(bukkit)
         apply<DevServerPlugin>()
 
-        plugins.withType<JavaBasePlugin> {
-            java.toolchain {
-                languageVersion.convention(bukkit.parsedApiVersion.map(::resolveMinimalJavaVersion))
-            }
+        java.toolchain {
+            languageVersion.convention(bukkit.parsedApiVersion.map(::resolveMinimalJavaVersion))
         }
     }
 
-    /** Sets encoding on compile to UTF-8. */
     private fun Project.configureEncoding() {
         tasks.withType<JavaCompile>().configureEach {
             options.encoding = "UTF-8"
         }
     }
 
-    /** Adds needed repositories. */
     private fun Project.addRepositories() {
         repositories {
             mavenCentral()

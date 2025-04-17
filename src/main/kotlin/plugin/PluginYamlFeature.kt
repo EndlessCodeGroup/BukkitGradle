@@ -6,7 +6,6 @@ import com.charleskorn.kaml.YamlNamingStrategy
 import org.gradle.api.Project
 import org.gradle.api.file.RegularFile
 import org.gradle.api.plugins.ExtensionAware
-import org.gradle.api.plugins.JavaBasePlugin
 import org.gradle.api.provider.Provider
 import org.gradle.api.tasks.SourceSet
 import org.gradle.kotlin.dsl.*
@@ -46,36 +45,34 @@ internal fun Project.configurePluginYamlFeature(bukkit: BukkitExtension) {
     }
     (bukkit as ExtensionAware).extensions.add(PLUGIN_EXTENSION_NAME, bukkitPluginYaml)
 
-    plugins.withType<JavaBasePlugin> {
-        val mainSourceSet = sourceSets.named(SOURCE_SET_NAME) {
-            resourceFactory.factory(bukkitPluginYaml.resourceFactory())
-        }
+    val mainSourceSet = sourceSets.named(SOURCE_SET_NAME) {
+        resourceFactory.factory(bukkitPluginYaml.resourceFactory())
+    }
 
-        val parsePluginYamlProvider = tasks.register<ParsePluginYaml>("parsePluginYaml") {
-            yaml.set(defaultYaml)
-            pluginYaml.set(bukkitPluginYaml)
-            pluginYamlFile.set(findPluginYaml(mainSourceSet))
+    val parsePluginYamlProvider = tasks.register<ParsePluginYaml>("parsePluginYaml") {
+        yaml.set(defaultYaml)
+        pluginYaml.set(bukkitPluginYaml)
+        pluginYamlFile.set(findPluginYaml(mainSourceSet))
 
-            onlyIf { bukkit.generatePluginYaml.get() }
-        }
+        onlyIf { bukkit.generatePluginYaml.get() }
+    }
 
-        tasks.named<ExecuteResourceFactories>("${SOURCE_SET_NAME}ResourceFactory") {
-            val generatePluginYaml = bukkit.generatePluginYaml.get()
-            onlyIf("Flag generatePluginYaml is enabled") { generatePluginYaml }
-            if (!generatePluginYaml) return@named
+    tasks.named<ExecuteResourceFactories>("${SOURCE_SET_NAME}ResourceFactory") {
+        val generatePluginYaml = bukkit.generatePluginYaml.get()
+        onlyIf("Flag generatePluginYaml is enabled") { generatePluginYaml }
+        if (!generatePluginYaml) return@named
 
-            val parsePluginYaml = parsePluginYamlProvider.get()
+        val parsePluginYaml = parsePluginYamlProvider.get()
 
-            // Switch to in-place generation mode if the plugin.yml exists
-            val pluginYamlFile = parsePluginYaml.pluginYamlFile.orNull?.asFile
-            if (pluginYamlFile != null) {
-                dependsOn(parsePluginYaml)
+        // Switch to in-place generation mode if the plugin.yml exists
+        val pluginYamlFile = parsePluginYaml.pluginYamlFile.orNull?.asFile
+        if (pluginYamlFile != null) {
+            dependsOn(parsePluginYaml)
 
-                outputDir.set(pluginYamlFile.parentFile)
-                // Deduplicate resource dirs after changing outputDir
-                mainSourceSet.configure {
-                    resources.setSrcDirs(resources.srcDirs.distinct())
-                }
+            outputDir.set(pluginYamlFile.parentFile)
+            // Deduplicate resource dirs after changing outputDir
+            mainSourceSet.configure {
+                resources.setSrcDirs(resources.srcDirs.distinct())
             }
         }
     }
