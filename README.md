@@ -84,7 +84,7 @@ plugins {
 }
 
 group = "com.example.myplugin"
-description = "My first Bukkit plugin built by Gradle"
+description = "My first Bukkit plugin built with Gradle"
 version = "0.1"
 
 bukkit {
@@ -111,7 +111,7 @@ api-version: 1.21.5
 name: MyPlugin
 version: '0.1'
 main: com.example.myplugin.MyPlugin
-description: My first Bukkit plugin built by Gradle
+description: My first Bukkit plugin built with Gradle
 ```
 
 > [!NOTE]

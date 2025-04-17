@@ -1,37 +1,36 @@
 ## [Unreleased]
 
-### Added
+### Pivot!
 
-- Support setting "api-version" containing a patch version for v1.20.5+
-- Add dependency substitution rules fixing paper groupId and substituting bukkit version.
-  In version catalogs placeholder value `{bukkit.version}` can be used, and it will be replaced with the actual version:
-  ```toml
-  [libraries]
-  paperApi = { module = "io.papermc.paper:paper-api", version = "{bukkit.apiVersion}" }
-  ```
+After a 4-year hiatus in releases, the plugin landscape has evolved significantly.
+jpenilla's excellent plugins [run-task](https://github.com/jpenilla/run-task/) and [resource-factory](https://github.com/jpenilla/resource-factory) have been released,
+and they're perfect for running Paper servers and generating `plugin.yml`.
 
-### Changed
+Rather than maintaining our own implementations, BukkitGradle now leverages jpenilla's work, allowing us to:
+
+1. **Reduce maintenance burden**: By delegating core functionality to actively maintained projects
+2. **Focus on innovation**: Instead of reinventing the wheel, we can add new features
+
+The main goal of BukkitGradle is now to provide nice defaults and a unified API
+that simplifies plugin development by seamlessly integrating these plugins.
+
+### Features
 
 - **Breaking change!**
-  Refactor development server implementation to use [jpenilla/run-task](https://github.com/jpenilla/run-task/) plugin and integrate run-paper for server execution,
+  Use [jpenilla/run-task](https://github.com/jpenilla/run-task/) plugin and integrate run-paper for server execution,
   improving maintainability and compatibility with various server versions.
   - Remove `bukkit.server.coreType` property.
     Spigot is not supported anymore, PaperMC is the only supported server.
     If you need to run other server cores,
     please [file an issue](https://github.com/EndlessCodeGroup/BukkitGradle/issues/new).
 - **Breaking change!**
-  Use [jpenilla/resource-factory](https://github.com/jpenilla/resource-factory) to generate `plugin.yml`.
-  This change comes with some renames:
+  Use [jpenilla/resource-factory](https://github.com/jpenilla/resource-factory) under the hood to generate `plugin.yml`.
+  This change enables full configuration of `plugin.yml` from a build script, but it comes with some renaming:
   - Configuration block `bukkit.meta { ... }` -> `bukkit.plugin { ... }`
   - Property `bukkit.plugin.url` -> `bukkit.plugin.website`
   - Task `:parsePluginMetaFile` -> `:parsePluginYaml`
   - Task `:mergePluginMeta` has been dropped. Use `:mainResourceFactory` instead
   - Package `ru.endlesscode.bukkitgradle.meta` -> `ru.endlesscode.bukkitgradle.plugin`
-- - **Breaking change!** Change API for disabling `plugin.yml` generation:
-  ```diff
-  -bukkit.disableMetaGeneration()
-  +bukkit.generatePluginYaml.set(false)
-  ```
 - **Breaking change!** Don't add repositories implicitly.
   It was impossible to opt out from automatic repositories adding. 
   From now, repositories should be added manually. For example:
@@ -50,13 +49,28 @@
       apiVersion = "1.20.5"
   }
   ```
+- Support setting "api-version" containing a patch version for v1.20.5+
+- Add dependency substitution rules fixing paper groupId and substituting bukkit version.
+  In version catalogs placeholder value `{bukkit.version}` can be used, and it will be replaced with the actual version:
+  ```toml
+  [libraries]
+  paperApi = { module = "io.papermc.paper:paper-api", version = "{bukkit.apiVersion}" }
+  ```
 - Set the default [JVM toolchain](https://docs.gradle.org/current/userguide/toolchains.html) version
   instead of setting JVM target and source compatibility to 1.8.
-  By default, the minimal supported JVM version compatible with the specified `bukkit.server.version` is used.
-- Use lazy API for `bukkit.apiVersion` and `bukkit.generateMeta` properties.
+  By default, the minimal supported JVM version compatible with the specified `bukkit.apiVersion` is used.
 - Accept EULA using CLI parameter `-Dcom.mojang.eula.agree=true` instead of changing `eula.txt`
+
+### Changed
+
 - Change the default value of `bukkit.server.debug` to `false`.
   It is recommended to use IDE facilities to run server with enabled debugging.
+- Change API for disabling `plugin.yml` generation:
+  ```diff
+  -bukkit.disableMetaGeneration()
+  +bukkit.generatePluginYaml.set(false)
+  ```
+- Use lazy API for `bukkit.apiVersion` property.
 
 ### Fixed
 
@@ -66,7 +80,7 @@
 
 ### Housekeeping
 
-- Target JVM 1.8 → 17 
+- Target JVM 1.8 → 17
 - Gradle 7.2 → 8.13
 - Remove old deprecated APIs
 
@@ -152,7 +166,7 @@ It will be parsed from `bukkit.apiVersion` but you can override it with `bukkit.
 ```kotlin
 bukkit {
     apiVersion = "1.16.4" // Inferred api-version is 1.16
-    
+
     meta {
         apiVersion.set("1.13") // But here you can override it
     }
