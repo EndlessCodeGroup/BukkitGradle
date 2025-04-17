@@ -112,12 +112,15 @@ class GeneratePluginYamlSpec extends PluginSpecification {
     def 'when generate plugin.yml - and generate it again - should skip second task run'() {
         when:
         run(RESOURCE_FACTORY)
+        def firstRunOutcome = taskOutcome(RESOURCE_FACTORY)
 
         and: "run generation again"
         run(RESOURCE_FACTORY)
+        def secondRunOutcome = taskOutcome(RESOURCE_FACTORY)
 
         then:
-        taskOutcome(RESOURCE_FACTORY) == TaskOutcome.UP_TO_DATE
+        firstRunOutcome == TaskOutcome.SUCCESS
+        secondRunOutcome == TaskOutcome.UP_TO_DATE
     }
 
     def 'when generate plugin.yml - and changed plugin configuration - should update plugin.yml'() {
@@ -296,17 +299,17 @@ class GeneratePluginYamlSpec extends PluginSpecification {
             """.stripIndent()
     }
 
-    void 'when generate plugin.yml - and there are conflicting values - should prefer values from build script'() {
+    void 'when generate plugin.yml - and there are conflicting values'() {
         given:
         pluginYamlFile << """\
             name: SourceValue
             version: 1.2
             commands:
               source-command:
-                description: Should be ignored
+                description: A command from source
             permissions:
               source.permission:
-                description: Should be ignored
+                description: A permission from source
             """.stripIndent()
 
         and: "conflicting fields in build script"
@@ -341,9 +344,13 @@ class GeneratePluginYamlSpec extends PluginSpecification {
             commands:
                 buildscript-command:
                     description: A command from build script
+                source-command:
+                    description: A command from source
             permissions:
                 buildscript.permission:
                     description: A permission from build script
+                source.permission:
+                    description: A permission from source
             """.stripIndent()
     }
 

@@ -1,8 +1,5 @@
 package ru.endlesscode.bukkitgradle.plugin
 
-import com.charleskorn.kaml.Yaml
-import com.charleskorn.kaml.YamlConfiguration
-import com.charleskorn.kaml.YamlNamingStrategy
 import org.gradle.api.Project
 import org.gradle.api.file.RegularFile
 import org.gradle.api.plugins.ExtensionAware
@@ -27,16 +24,6 @@ private const val PLUGIN_EXTENSION_NAME: String = "plugin"
 private const val SOURCE_SET_NAME: String = "main" // Make it configurable, maybe?
 internal const val PLUGIN_YML: String = "plugin.yml"
 
-private val defaultYaml by lazy {
-    Yaml(
-        configuration = YamlConfiguration(
-            strictMode = false,
-            decodeEnumCaseInsensitive = true,
-            yamlNamingStrategy = YamlNamingStrategy.KebabCase,
-        )
-    )
-}
-
 internal fun Project.configurePluginYamlFeature(bukkit: BukkitExtension) {
     project.apply<ResourceFactoryPlugin>()
 
@@ -50,7 +37,6 @@ internal fun Project.configurePluginYamlFeature(bukkit: BukkitExtension) {
     }
 
     val parsePluginYamlProvider = tasks.register<ParsePluginYaml>("parsePluginYaml") {
-        yaml.set(defaultYaml)
         pluginYaml.set(bukkitPluginYaml)
         pluginYamlFile.set(findPluginYaml(mainSourceSet))
 
@@ -65,10 +51,10 @@ internal fun Project.configurePluginYamlFeature(bukkit: BukkitExtension) {
         val parsePluginYaml = parsePluginYamlProvider.get()
 
         // Switch to in-place generation mode if the plugin.yml exists
-        val pluginYamlFile = parsePluginYaml.pluginYamlFile.orNull?.asFile
-        if (pluginYamlFile != null) {
+        if (parsePluginYaml.pluginYamlFile.isPresent) {
             dependsOn(parsePluginYaml)
 
+            val pluginYamlFile = parsePluginYaml.pluginYamlFile.get().asFile
             outputDir.set(pluginYamlFile.parentFile)
             // Deduplicate resource dirs after changing outputDir
             mainSourceSet.configure {

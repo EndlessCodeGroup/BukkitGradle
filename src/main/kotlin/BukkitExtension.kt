@@ -19,7 +19,6 @@ public open class BukkitExtension internal constructor(
 
     override val generatePluginYaml: Property<Boolean> = objects.property<Boolean>()
         .convention(true)
-        .finalizedOnRead()
 
     public final override val apiVersion: Property<String> = objects.property<String>()
         .convention(ServerConstants.DEFAULT_VERSION)
@@ -31,7 +30,7 @@ public open class BukkitExtension internal constructor(
 
     @Deprecated("Use 'plugin' instead", ReplaceWith("plugin(body)"))
     public fun meta(body: Action<BukkitPluginYaml>) {
-        plugin { body.execute(this) }
+        body.execute(plugin)
     }
 
     /** Disables plugin.yml generation. */

@@ -1,8 +1,6 @@
 package ru.endlesscode.bukkitgradle.plugin.task
 
-import com.charleskorn.kaml.EmptyYamlDocumentException
-import com.charleskorn.kaml.Yaml
-import com.charleskorn.kaml.decodeFromStream
+import com.charleskorn.kaml.*
 import org.gradle.api.DefaultTask
 import org.gradle.api.GradleException
 import org.gradle.api.file.RegularFileProperty
@@ -18,8 +16,15 @@ import xyz.jpenilla.resourcefactory.bukkit.Permission
 
 internal abstract class ParsePluginYaml : DefaultTask() {
 
-    @get:Internal
-    abstract val yaml: Property<Yaml>
+    private val yaml by lazy {
+        Yaml(
+            configuration = YamlConfiguration(
+                strictMode = false,
+                decodeEnumCaseInsensitive = true,
+                yamlNamingStrategy = YamlNamingStrategy.KebabCase,
+            )
+        )
+    }
 
     @get:Internal
     abstract val pluginYaml: Property<BukkitPluginYaml>
@@ -43,7 +48,7 @@ internal abstract class ParsePluginYaml : DefaultTask() {
         return try {
             pluginYamlFile.get().asFile
                 .inputStream()
-                .use { yaml.get().decodeFromStream<BukkitPluginYamlDefaults>(it) }
+                .use { yaml.decodeFromStream<BukkitPluginYamlDefaults>(it) }
         } catch (cause: EmptyYamlDocumentException) {
             logger.debug("plugin.yml is empty – skipping defaults setting", cause)
             null
@@ -75,16 +80,12 @@ private fun BukkitPluginYaml.applyConventions(defaults: BukkitPluginYamlDefaults
     defaults.paperPluginLoader?.let(paperPluginLoader::convention)
     defaults.paperSkipLibraries?.let(paperSkipLibraries::convention)
 
-    if (commands.isEmpty() && defaults.commands != null) {
-        for ((name, command) in defaults.commands) {
-            commands.register(name) { applyConventions(command) }
-        }
+    for ((name, command) in defaults.commands) {
+        commands.maybeCreate(name).applyConventions(command)
     }
 
-    if (permissions.isEmpty() && defaults.permissions != null) {
-        for ((name, permission) in defaults.permissions) {
-            permissions.register(name) { applyConventions(permission) }
-        }
+    for ((name, permission) in defaults.permissions) {
+        permissions.maybeCreate(name).applyConventions(permission)
     }
 }
 
