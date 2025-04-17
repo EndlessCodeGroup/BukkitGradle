@@ -10,10 +10,18 @@
   Refactor development server implementation to use [jpenilla/run-task](https://github.com/jpenilla/run-task/) plugin and integrate run-paper for server execution,
   improving maintainability and compatibility with various server versions.
 - **Breaking change!**
-  Rename `bukkit.meta { ... }` to `bukkit.plugin { ... }`.
-  - Task `:parsePluginMetaFile` and `:mergePluginMeta` renamed to `:parsePluginYaml` and `:mergePluginYaml` respectively.
-  - `bukkit.disableMetaGeneration()` replaced by `bukkit.plugin.disablePluginYamlGeneration()`
-  - Package `.meta` renamed to `.plugin` to reflect this change
+  Use [jpenilla/resource-factory](https://github.com/jpenilla/resource-factory) to generate `plugin.yml`.
+  This change comes with some renames:
+  - Configuration block `bukkit.meta { ... }` -> `bukkit.plugin { ... }`
+  - Property `bukkit.plugin.url` -> `bukkit.plugin.website`
+  - Task `:parsePluginMetaFile` -> `:parsePluginYaml`
+  - Task `:mergePluginMeta` has been dropped. Use `:mainResourceFactory` instead
+  - Package `ru.endlesscode.bukkitgradle.meta` -> `ru.endlesscode.bukkitgradle.plugin`
+- Change API for disabling `plugin.yml` generation:
+  ```diff
+  -bukkit.disableMetaGeneration()
+  +bukkit.generatePluginYaml.set(false)
+  ```
 - Set the default [JVM toolchain](https://docs.gradle.org/current/userguide/toolchains.html) version
   instead of setting JVM target and source compatibility to 1.8.
   By default, the minimal supported JVM version compatible with the specified `bukkit.server.version` is used.
