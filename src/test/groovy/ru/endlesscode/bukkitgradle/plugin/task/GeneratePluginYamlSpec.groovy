@@ -216,7 +216,7 @@ class GeneratePluginYamlSpec extends PluginSpecification {
 
     void 'when generate plugin.yml - should parse commands and permissions'() {
         given:
-        pluginYamlFile << """\
+        pluginYamlFile.text = """\
             depend: [Vault, ProtocolLib]
             default-permission: not op
             commands:
@@ -252,7 +252,7 @@ class GeneratePluginYamlSpec extends PluginSpecification {
     // BukkitGradle-26
     void 'when generate plugin.yml - and there are exotic chars in source - should read it correctly'() {
         given: "source plugin file with exotic chars"
-        pluginYamlFile << """\
+        pluginYamlFile.text = """\
             commands:
               퀘스트:
                 description: 퀘스트 명령어 입니다.
@@ -282,7 +282,7 @@ class GeneratePluginYamlSpec extends PluginSpecification {
 
     void 'when generate plugin.yml - and there are fields in source - should prefer values from source'() {
         given: "plugin.yml file with some fields"
-        pluginYamlFile << """\
+        pluginYamlFile.text = """\
             name: SourceValue
             version: 1.2
             """.stripIndent()
@@ -301,7 +301,7 @@ class GeneratePluginYamlSpec extends PluginSpecification {
 
     void 'when generate plugin.yml - and there are conflicting values'() {
         given:
-        pluginYamlFile << """\
+        pluginYamlFile.text = """\
             name: SourceValue
             version: 1.2
             commands:
@@ -404,7 +404,7 @@ class GeneratePluginYamlSpec extends PluginSpecification {
             paper-plugin-loader: custom.plugin.Loader
             paper-skip-libraries: false
             """.stripIndent()
-        pluginYamlFile << content
+        pluginYamlFile.text = content
 
         when:
         run(RESOURCE_FACTORY)
