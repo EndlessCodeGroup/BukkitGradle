@@ -5,10 +5,7 @@ import org.gradle.api.DefaultTask
 import org.gradle.api.GradleException
 import org.gradle.api.file.RegularFileProperty
 import org.gradle.api.provider.Property
-import org.gradle.api.tasks.InputFile
-import org.gradle.api.tasks.Internal
-import org.gradle.api.tasks.SkipWhenEmpty
-import org.gradle.api.tasks.TaskAction
+import org.gradle.api.tasks.*
 import ru.endlesscode.bukkitgradle.TASKS_GROUP_BUKKIT
 import ru.endlesscode.bukkitgradle.plugin.BukkitPluginYamlDefaults
 import xyz.jpenilla.resourcefactory.bukkit.BukkitPluginYaml
@@ -31,6 +28,7 @@ internal abstract class ParsePluginYaml : DefaultTask() {
 
     @get:SkipWhenEmpty
     @get:InputFile
+    @get:PathSensitive(PathSensitivity.NONE)
     abstract val pluginYamlFile: RegularFileProperty
 
     init {
