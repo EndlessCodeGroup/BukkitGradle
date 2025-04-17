@@ -250,21 +250,29 @@ bukkit {
 
 ## Migration Guide
 
-### Upgrade from 0.8.x
+### Upgrade from 0.10.x
 
-1. Update gradle to 6.6 or newer:
-   ```shell
-   $ ./gradlew wrapper --gradle-version 6.7.1
-   ```
-1. Use syntax `.set` in `bukkit.meta` instead of `=`:
+1. Update Gradle to 8.0 or newer (the latest version is recommended):
+```shell
+./gradlew wrapper --gradle-version 8.13
+```
+
+2. Replace deprecated and removed APIs:
    ```diff
    bukkit {
-       meta {
-   -        desctiption = "My plugin's description"
-   +        description.set("My plugin's description")
+   -   meta {
+   +   plugin {
+           name = "MyPlugin"
+   -       url = "https://example.com/"
+   +       website = "https://example.com/"
        }
    }
-   ```
+   ``` 
+
+3. If you have `plugin.yml`, move it's content to `bukkit.plugin { ... }` block
+
+### Upgrade from 0.8.x
+
 1. Use `bukkit.apiVersion` instead of `bukkit.version`:
    ```diff
    bukkit {
@@ -272,7 +280,7 @@ bukkit {
    +   apiVersion = "1.16.4"
    }
    ```
-1. Use `build.server` block instead of `build.run`:
+2. Use `build.server` block instead of `build.run`:
    ```diff
    bukkit {
    -   run {
@@ -281,7 +289,7 @@ bukkit {
        }
    }
    ```
-1. Update arguments assignment syntax:
+3. Update arguments assignment syntax:
    ```diff
    bukkit {
        server {
@@ -291,7 +299,7 @@ bukkit {
        }
    }
    ```
-1. Replace removed APIs:
+4. Replace removed APIs:
    ```diff
    repositories {
    -   destroystokyo()
@@ -306,8 +314,8 @@ bukkit {
    +   compileOnly(spigot())
    }
    ```
-1. Remove `q` and `qq` functions calls in `meta { ... }`
-1. Check generated plugin.yml contents after build.
+5. Remove `q` and `qq` functions calls in `meta { ... }`
+6. Check generated plugin.yml contents after build.
    
 If there are any problems, [create an issue][issue].
 
