@@ -8,6 +8,7 @@ import org.gradle.api.tasks.SourceSet
 import org.gradle.kotlin.dsl.*
 import ru.endlesscode.bukkitgradle.Bukkit
 import ru.endlesscode.bukkitgradle.BukkitExtension
+import ru.endlesscode.bukkitgradle.extensions.finalizeAndGet
 import ru.endlesscode.bukkitgradle.extensions.mapNotNull
 import ru.endlesscode.bukkitgradle.extensions.resourceFactory
 import ru.endlesscode.bukkitgradle.extensions.sourceSets
@@ -40,11 +41,11 @@ internal fun Project.configurePluginYamlFeature(bukkit: BukkitExtension) {
         pluginYaml.set(bukkitPluginYaml)
         pluginYamlFile.set(findPluginYaml(mainSourceSet))
 
-        onlyIf { bukkit.generatePluginYaml.get() }
+        onlyIf { bukkit.generatePluginYaml.finalizeAndGet() }
     }
 
     tasks.named<ExecuteResourceFactories>("${SOURCE_SET_NAME}ResourceFactory") {
-        val generatePluginYaml = bukkit.generatePluginYaml.get()
+        val generatePluginYaml = bukkit.generatePluginYaml.finalizeAndGet()
         onlyIf("Flag generatePluginYaml is enabled") { generatePluginYaml }
         if (!generatePluginYaml) return@named
 
