@@ -7,11 +7,20 @@ class BukkitGradlePluginSpec extends PluginSpecification {
         project.apply(plugin: BukkitGradlePlugin)
     }
 
+    def "when initialized - and apiVersion is not set - should show an error"() {
+        when: "use some API requiring apiVersion to be set"
+        project.java.toolchain.languageVersion.get()
+
+        then:
+        def exception = thrown(RuntimeException)
+        exception.cause.message == "Please, set 'bukkit.apiVersion' property."
+    }
+
     def "when initialized - should set default JVM toolchain"(String apiVersion, int jvmVersion) {
-        when: "apiVersion is set"
+        given: "apiVersion is set"
         project.bukkit.apiVersion = apiVersion
 
-        then: "JVM toolchain version should be"
+        expect: "JVM toolchain version should be"
         project.java.toolchain.languageVersion.get().asInt() == jvmVersion
 
         where:

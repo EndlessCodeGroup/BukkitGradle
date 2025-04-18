@@ -8,7 +8,6 @@ import org.gradle.kotlin.dsl.property
 import ru.endlesscode.bukkitgradle.extensions.finalizeAndGet
 import ru.endlesscode.bukkitgradle.plugin.plugin
 import ru.endlesscode.bukkitgradle.plugin.util.MinecraftVersion
-import ru.endlesscode.bukkitgradle.server.ServerConstants
 import ru.endlesscode.bukkitgradle.server.extension.ServerConfigurationImpl
 import xyz.jpenilla.resourcefactory.bukkit.BukkitPluginYaml
 
@@ -22,9 +21,11 @@ public open class BukkitExtension internal constructor(
         .convention(true)
 
     public final override val apiVersion: Property<String> = objects.property<String>()
-        .convention(ServerConstants.DEFAULT_VERSION)
 
-    internal val finalApiVersion = providers.provider { apiVersion.finalizeAndGet() }
+    internal val finalApiVersion = providers.provider {
+        check(apiVersion.isPresent) { "Please, set 'bukkit.apiVersion' property." }
+        apiVersion.finalizeAndGet()
+    }
     internal val parsedApiVersion = finalApiVersion.map(MinecraftVersion::parse)
 
     public fun server(body: Action<ServerConfigurationImpl>) {

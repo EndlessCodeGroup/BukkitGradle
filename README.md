@@ -88,12 +88,13 @@ description = "My first Bukkit plugin built by Gradle"
 version = "0.1"
 
 bukkit {
-    apiVersion = "1.16.5"
+    // Target API version. Will be used both for plugin.yml and for dependencies
+    apiVersion = "1.21.5"
 }
 
 // Add the necessary API to the project
 dependencies {
-    compileOnly(paperApi())
+    compileOnly(paperApi)
     // See the 'Dependencies' section for more info
 }
 
@@ -106,7 +107,7 @@ That's it!
 During the plugin compilation `plugin.yml` will be generated with the following content:
 
 ```yaml
-api-version: '1.16'
+api-version: 1.21.5
 name: MyPlugin
 version: '0.1'
 main: com.example.myplugin.MyPlugin
@@ -124,10 +125,6 @@ The `plugin.yml` content can be configured using `bukkit.plugin { ... }` block.
 
 ```kotlin
 bukkit {
-    // Version of API. By default, 1.16.5 is used
-    apiVersion = "1.15.2"
-
-    // Configure plugin.yml content
     plugin {
         name = "MyPlugin"
         description = "My amazing plugin"
@@ -234,7 +231,7 @@ bukkit {
     // INFO: Default values are used here
     server {
         // Server version
-        version = "1.16.4" // If not specified, bukkit.apiVersion will be used
+        version = "1.21.5" // If not specified, bukkit.apiVersion will be used
         // Accept EULA
         eula = false
         // Set online-mode flag
@@ -275,13 +272,20 @@ bukkit {
        }
    }
    ``` 
+   
+3. Specify `bukkit.apiVersion` explicitly. Previously it was implicitly set to `1.16.4`:
+   ```kotlin
+   bukkit {
+       apiVersion = "1.21.5"
+   }
+   ```
 
-3. Remove server core selection: `bukkit.server.coreType` and `bukkit.server.setCore(...)`.
+4. Remove server core selection: `bukkit.server.coreType` and `bukkit.server.setCore(...)`.
    Paper is the only supported server core now.
 
-4. If you have `plugin.yml`, move it's content to `bukkit.plugin { ... }` block and delete the file.
+5. If you have `plugin.yml`, move it's content to `bukkit.plugin { ... }` block and delete the file.
 
-5. Explicitly add `mavenCentral()` to the repositories if you're using dependencies from it:
+6. Explicitly add `mavenCentral()` to the repositories if you're using dependencies from it:
    ```kotlin
    repositories {
        mavenCentral()

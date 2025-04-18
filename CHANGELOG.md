@@ -41,6 +41,15 @@
       papermc()
   }
   ```
+- **Breaking change!**
+  Don't set default `bukkit.apiVersion`.
+  It was implicitly set to `1.16.4` for the sake of simplicity, but in fact it was unobvious behavior.
+  Now, `bukkit.apiVersion` should be set explicitly:
+  ```kotlin
+  bukkit {
+      apiVersion = "1.20.5"
+  }
+  ```
 - Set the default [JVM toolchain](https://docs.gradle.org/current/userguide/toolchains.html) version
   instead of setting JVM target and source compatibility to 1.8.
   By default, the minimal supported JVM version compatible with the specified `bukkit.server.version` is used.
