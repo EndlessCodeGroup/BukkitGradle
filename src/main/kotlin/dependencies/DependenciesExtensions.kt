@@ -46,13 +46,13 @@ public fun RepositoryHandler.codemc(configure: MavenArtifactRepository.() -> Uni
     addRepo("codemc", URL_CODEMC, configure)
 
 public val DependencyHandler.spigot: String
-    get() = api("org.spigotmc", "spigot", "mavenLocal")
+    get() = api("org.spigotmc", "spigot")
 
 public val DependencyHandler.spigotApi: String
-    get() = api("org.spigotmc", "spigot-api", "spigot")
+    get() = api("org.spigotmc", "spigot-api")
 
 public val DependencyHandler.bukkitApi: String
-    get() = api("org.bukkit", "bukkit", "spigot")
+    get() = api("org.bukkit", "bukkit")
 
 public val DependencyHandler.paperApi: String
-    get() = api(resolvePaperGroupId(), "paper-api", "papermc")
+    get() = api(resolvePaperGroupId(), "paper-api")

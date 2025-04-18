@@ -21,10 +21,19 @@
   - Task `:parsePluginMetaFile` -> `:parsePluginYaml`
   - Task `:mergePluginMeta` has been dropped. Use `:mainResourceFactory` instead
   - Package `ru.endlesscode.bukkitgradle.meta` -> `ru.endlesscode.bukkitgradle.plugin`
-- Change API for disabling `plugin.yml` generation:
+- - **Breaking change!** Change API for disabling `plugin.yml` generation:
   ```diff
   -bukkit.disableMetaGeneration()
   +bukkit.generatePluginYaml.set(false)
+  ```
+- **Breaking change!** Don't add repositories implicitly.
+  It was impossible to opt out from automatic repositories adding. 
+  From now, repositories should be added manually. For example:
+  ```kotlin
+  repositories {
+      mavenCentral()
+      papermc()
+  }
   ```
 - Set the default [JVM toolchain](https://docs.gradle.org/current/userguide/toolchains.html) version
   instead of setting JVM target and source compatibility to 1.8.

@@ -15,12 +15,14 @@ Gradle utilities to simplify Bukkit/Spigot plugins writing and debugging.
 - [Running Dev server](#running-dev-server)
   - [Dev server configuration](#dev-server-configuration)
 - [Migration Guide](#migration-guide)
+  - [Upgrade from 0.10.x](#upgrade-from-010x)
   - [Upgrade from 0.8.x](#upgrade-from-08x)
 - [License](#license)
 
 <!-- END doctoc generated TOC please keep comment here to allow auto update -->
 
 #### Features:
+
 - Sets up compiler encoding to UTF-8
 - Sets archivesBaseName to plugin name
 - Supports APIs: Bukkit, CraftBukkit, Spigot, Paper
@@ -29,17 +31,14 @@ Gradle utilities to simplify Bukkit/Spigot plugins writing and debugging.
 - Allows running dev server from IDE
 - Runs server using [jpenilla/run-task]
 
-#### TODO:
-- Add smart dependency system
-
 ## Installation
 
-> [!NOTE] 
+> [!NOTE]
 > BukkitGradle requires Gradle 8.0+ to run
 
 ```kotlin
 plugins {
-  id("ru.endlesscode.bukkitgradle") version "0.10.1"
+    id("ru.endlesscode.bukkitgradle") version "0.10.1"
 }
 ```
 
@@ -50,6 +49,7 @@ plugins {
 <summary>Using snapshots</summary>
 
 To use snapshots, add jitpack repository to the `settings.gradle.kts` and specify version `develop-SNAPSHOT`:
+
 ```kotlin
 // settings.gradle
 
@@ -62,6 +62,7 @@ pluginManagement {
 
 rootProject.name = "<your project name>"
 ```
+
 ```kotlin
 // build.gradle
 
@@ -92,8 +93,12 @@ bukkit {
 
 // Add the necessary API to the project
 dependencies {
-    compileOnly(bukkitApi())
+    compileOnly(paperApi())
     // See the 'Dependencies' section for more info
+}
+
+repositories {
+    papermc()
 }
 ```
 
@@ -121,7 +126,7 @@ The `plugin.yml` content can be configured using `bukkit.plugin { ... }` block.
 bukkit {
     // Version of API. By default, 1.16.5 is used
     apiVersion = "1.15.2"
- 
+
     // Configure plugin.yml content
     plugin {
         name = "MyPlugin"
@@ -140,42 +145,43 @@ BukkitGradle provides shortcuts to add common repositories and dependencies:
 
 ```kotlin
 repositories {
-    spigot()
+    papermc()
 }
 
 dependencies {
-    compileOnly(paperApi())
+    compileOnly(paperApi)
 }
 ```
 
 #### Repositories
 
- Name           | Url
-----------------|-------------------------------------------------------------------
- spigot         | https://hub.spigotmc.org/nexus/content/repositories/snapshots/
- sk98q          | https://maven.sk89q.com/repo/
- papermc        | https://repo.papermc.io/repository/maven-public/
- dmulloy2       | https://repo.dmulloy2.net/nexus/repository/public/
- md5            | https://repo.md-5.net/content/groups/public/
- jitpack        | https://jitpack.io/
- placeholderapi | https://repo.extendedclip.com/content/repositories/placeholderapi/
- aikar          | https://repo.aikar.co/content/groups/aikar/
- codemc         | https://repo.codemc.org/repository/maven-public/
+| Name             | Url                                                                |
+|------------------|--------------------------------------------------------------------|
+| `spigot`         | https://hub.spigotmc.org/nexus/content/repositories/snapshots/     |
+| `sk98q`          | https://maven.sk89q.com/repo/                                      |
+| `papermc`        | https://repo.papermc.io/repository/maven-public/                   |
+| `dmulloy2`       | https://repo.dmulloy2.net/nexus/repository/public/                 |
+| `md5`            | https://repo.md-5.net/content/groups/public/                       |
+| `jitpack`        | https://jitpack.io/                                                |
+| `placeholderapi` | https://repo.extendedclip.com/content/repositories/placeholderapi/ |
+| `aikar`          | https://repo.aikar.co/content/groups/aikar/                        |
+| `codemc`         | https://repo.codemc.org/repository/maven-public/                   |
 
 #### Dependencies
 
-Some dependencies also add a repository needed for them.
+When adding dependencies, make sure you've added the corresponding repository.
 
- Name        | Signature                              | Adds repository
--------------|----------------------------------------|-----------------
- spigot      | org.spigotmc:spigot:$apiVersion        | mavenLocal
- spigotApi   | org.spigotmc:spigot-api:$apiVersion    | spigot
- bukkitApi   | org.bukkit:bukkit:$apiVersion          | spigot
- paperApi    | io.papermc.paper:paper-api:$apiVersion | papermc
- 
- **Note:** `$apiVersion` - is `${version}-R0.1-SNAPSHOT` (where `$version` is `bukkit.version`)
+| Name        | Signature                                | Official repository |
+|-------------|------------------------------------------|---------------------|
+| `spigot`    | `org.spigotmc:spigot:$apiVersion`        | `mavenLocal()`*     |
+| `spigotApi` | `org.spigotmc:spigot-api:$apiVersion`    | `spigot()`          |
+| `bukkitApi` | `org.bukkit:bukkit:$apiVersion`          | `spigot()`          |
+| `paperApi`  | `io.papermc.paper:paper-api:$apiVersion` | `papermc()`         |
 
-If you need more extension-functions, [file an issue][issue].
+\* Spigot is available in `mavenLocal()` only if you've built it locally using [Spigot BuildTools][buildtools]. \
+\*\* `$apiVersion` - is `${version}-R0.1-SNAPSHOT` (where `$version` is `bukkit.apiVersion`)
+
+If you need more shortcuts, [file an issue][issue].
 
 ## Running Dev server
 
@@ -212,9 +218,9 @@ tasks.runServer {
 ```
 
 > [!TIP]
-> It is possible to configure server directory shared between multiple projects.
+> It is possible to configure a server directory shared between multiple projects.
 > Set the `bukkitgradle.server.dir` property in `$HOME/.gradle/gradle.properties`.
-> 
+>
 > This file contains local configurations to be used for all Gradle projects.
 > The value specified in project's `gradle.properties` takes precedence over the global one.
 
@@ -274,6 +280,14 @@ bukkit {
 
 4. If you have `plugin.yml`, move it's content to `bukkit.plugin { ... }` block and delete the file.
 
+5. Explicitly add `mavenCentral()` to the repositories if you're using dependencies from it:
+   ```kotlin
+   repositories {
+       mavenCentral()
+   } 
+   ```
+   Add repositories for Bukkit/Spigot/Paper according to the [dependency table](#dependencies).
+
 ### Upgrade from 0.8.x
 
 1. Use `bukkit.apiVersion` instead of `bukkit.version`:
@@ -319,7 +333,7 @@ bukkit {
    ```
 5. Remove `q` and `qq` functions calls in `meta { ... }`
 6. Check generated plugin.yml contents after build.
-   
+
 If there are any problems, [create an issue][issue].
 
 ## License
@@ -327,4 +341,5 @@ If there are any problems, [create an issue][issue].
 [MIT](LICENSE) (c) 2020 EndlessCode Group
 
 [jpenilla/run-task]: https://github.com/jpenilla/run-task/
+[buildtools]: https://www.spigotmc.org/wiki/buildtools/
 [issue]: https://github.com/EndlessCodeGroup/BukkitGradle/issues/new

@@ -66,23 +66,4 @@ class BukkitGradlePluginSpec extends PluginSpecification {
         then: "returned bukkit dependency with the specified version"
         dependency == 'org.bukkit:bukkit:1.7.10-R0.1-SNAPSHOT'
     }
-
-    def "when use bukkit extension - should add required repo"() {
-        when: "use bukkit dependency"
-        project.dependencies.bukkitApi()
-
-        then: "required repository is applied"
-        project.repositories.findByName("Spigot") != null
-    }
-
-    def "when use spigot extension - should add repo mavenLocal"() {
-        given: "mavenLocal is not applied"
-        project.repositories.findByName("MavenLocal") == null
-
-        when: "use spigot extension"
-        project.dependencies.spigot()
-
-        then: "mavenLocal applied"
-        project.repositories.findByName("MavenLocal") != null
-    }
 }

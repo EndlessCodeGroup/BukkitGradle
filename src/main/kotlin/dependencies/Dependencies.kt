@@ -61,10 +61,10 @@ internal object Dependencies {
         repoExtra["codemc"] = repoHandler.repositoryClosure("codemc", URL_CODEMC)
 
         val depExtra = depHandler.extra
-        depExtra["spigot"] = depClosureOf { depHandler.api("org.spigotmc", "spigot", "mavenLocal") }
-        depExtra["spigotApi"] = depClosureOf { depHandler.api("org.spigotmc", "spigot-api", "spigot") }
-        depExtra["bukkitApi"] = depClosureOf { depHandler.api("org.bukkit", "bukkit", "spigot") }
-        depExtra["paperApi"] = depClosureOf { depHandler.api(resolvePaperGroupId(), "paper-api", "papermc") }
+        depExtra["spigot"] = depClosureOf { depHandler.api("org.spigotmc", "spigot") }
+        depExtra["spigotApi"] = depClosureOf { depHandler.api("org.spigotmc", "spigot-api") }
+        depExtra["bukkitApi"] = depClosureOf { depHandler.api("org.bukkit", "bukkit") }
+        depExtra["paperApi"] = depClosureOf { depHandler.api(resolvePaperGroupId(), "paper-api") }
     }
 
     private fun RepositoryHandler.repositoryClosure(name: String, url: String): RepositoryClosure =
@@ -85,21 +85,12 @@ internal object Dependencies {
     }
 
     @Suppress("unused") // Receiver required for scope
-    fun DependencyHandler.api(groupId: String, artifactId: String, vararg requiredRepos: String): String {
+    fun DependencyHandler.api(groupId: String, artifactId: String): String {
         val version = "${apiVersion.get()}-R0.1-SNAPSHOT"
-        return dep(groupId, artifactId, version, *requiredRepos)
+        return dep(groupId, artifactId, version)
     }
 
-    private fun dep(groupId: String, artifactId: String, version: String, vararg requiredRepos: String): String {
-        for (repo in requiredRepos) {
-            if (repo == "mavenLocal") {
-                repoHandler.mavenLocal()
-            } else {
-                @Suppress("UNCHECKED_CAST")
-                (repoHandler.extra[repo] as RepositoryClosure).call()
-            }
-        }
-
+    private fun dep(groupId: String, artifactId: String, version: String): String {
         return "$groupId:$artifactId:$version"
     }
 
