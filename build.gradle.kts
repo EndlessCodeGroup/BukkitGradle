@@ -52,7 +52,7 @@ publishing {
 
 gradlePlugin {
     website = "https://github.com/EndlessCodeGroup/BukkitGradle"
-    vcsUrl = "$website.git"
+    vcsUrl = website
 
     plugins {
         create("bukkitGradle") {
@@ -60,7 +60,7 @@ gradlePlugin {
             displayName = "BukkitGradle Plugin"
             description = "Gradle plugin providing integration for easier Bukkit plugins development."
             implementationClass = "ru.endlesscode.bukkitgradle.BukkitGradlePlugin"
-            tags = listOf("minecraft", "bukkit", "plugin", "spigot", "paper")
+            tags = listOf("minecraft", "bukkit", "spigot", "paper")
         }
     }
 }
