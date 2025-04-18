@@ -7,13 +7,10 @@ import org.gradle.api.artifacts.dsl.DependencyHandler
 import org.gradle.api.artifacts.dsl.RepositoryHandler
 import org.gradle.api.artifacts.repositories.MavenArtifactRepository
 import org.gradle.api.plugins.ExtraPropertiesExtension
-import org.gradle.api.provider.Provider
-import org.gradle.kotlin.dsl.KotlinClosure0
 import org.gradle.kotlin.dsl.extra
 import org.gradle.kotlin.dsl.maven
-import ru.endlesscode.bukkitgradle.Bukkit
+import ru.endlesscode.bukkitgradle.BukkitExtension
 import ru.endlesscode.bukkitgradle.plugin.util.MinecraftVersion
-import ru.endlesscode.bukkitgradle.plugin.util.parsedApiVersion
 
 private typealias RepositoryClosure = Closure<MavenArtifactRepository>
 
@@ -29,42 +26,40 @@ internal object Dependencies {
     const val URL_AIKAR = "https://repo.aikar.co/content/groups/aikar/"
     const val URL_CODEMC = "https://repo.codemc.org/repository/maven-public/"
 
-    private lateinit var apiVersion: Provider<String>
-    private lateinit var parsedApiVersion: Provider<MinecraftVersion>
+    const val BUKKIT_VERSION_PLACEHOLDER = "{bukkit.apiVersion}"
+    const val BUKKIT_VERSION_SUFFIX = "-R0.1-SNAPSHOT"
 
-    private lateinit var repoHandler: RepositoryHandler
-    private lateinit var depHandler: DependencyHandler
+    const val PAPER_GROUP = "io.papermc.paper"
+    const val PAPER_OLD_GROUP = "com.destroystokyo.paper"
 
     private val RepositoryHandler.extra: ExtraPropertiesExtension
         get() = InvokerHelper.getProperty(this, "ext") as ExtraPropertiesExtension
 
     @JvmStatic
-    fun Project.configureDependencyExtensions(bukkit: Bukkit) {
-        apiVersion = bukkit.apiVersion
-        parsedApiVersion = bukkit.parsedApiVersion
+    fun Project.configureDependencyExtensions(bukkit: BukkitExtension) {
+        repositories.addGroovyExtensions()
+        dependencies.addGroovyExtensions()
 
-        repoHandler = repositories
-        depHandler = dependencies
-        addGroovyExtensions()
+        configureResolutionStrategy(bukkit)
     }
 
-    private fun addGroovyExtensions() {
-        val repoExtra = repoHandler.extra
-        repoExtra["spigot"] = repoHandler.repositoryClosure("Spigot", URL_SPIGOT)
-        repoExtra["sk89q"] = repoHandler.repositoryClosure("sk89q", URL_SK89Q)
-        repoExtra["papermc"] = repoHandler.repositoryClosure("PaperMC", URL_PAPERMC)
-        repoExtra["dmulloy2"] = repoHandler.repositoryClosure("dmulloy2", URL_DMULLOY2)
-        repoExtra["md5"] = repoHandler.repositoryClosure("md5", URL_MD5)
-        repoExtra["jitpack"] = repoHandler.repositoryClosure("jitpack", URL_JITPACK)
-        repoExtra["placeholderapi"] = repoHandler.repositoryClosure("PlaceholderAPI", URL_PLACEHOLDERAPI)
-        repoExtra["aikar"] = repoHandler.repositoryClosure("aikar", URL_AIKAR)
-        repoExtra["codemc"] = repoHandler.repositoryClosure("codemc", URL_CODEMC)
+    private fun RepositoryHandler.addGroovyExtensions() {
+        extra["spigot"] = repositoryClosure("Spigot", URL_SPIGOT)
+        extra["sk89q"] = repositoryClosure("sk89q", URL_SK89Q)
+        extra["papermc"] = repositoryClosure("PaperMC", URL_PAPERMC)
+        extra["dmulloy2"] = repositoryClosure("dmulloy2", URL_DMULLOY2)
+        extra["md5"] = repositoryClosure("md5", URL_MD5)
+        extra["jitpack"] = repositoryClosure("jitpack", URL_JITPACK)
+        extra["placeholderapi"] = repositoryClosure("PlaceholderAPI", URL_PLACEHOLDERAPI)
+        extra["aikar"] = repositoryClosure("aikar", URL_AIKAR)
+        extra["codemc"] = repositoryClosure("codemc", URL_CODEMC)
+    }
 
-        val depExtra = depHandler.extra
-        depExtra["spigot"] = depClosureOf { depHandler.api("org.spigotmc", "spigot") }
-        depExtra["spigotApi"] = depClosureOf { depHandler.api("org.spigotmc", "spigot-api") }
-        depExtra["bukkitApi"] = depClosureOf { depHandler.api("org.bukkit", "bukkit") }
-        depExtra["paperApi"] = depClosureOf { depHandler.api(resolvePaperGroupId(), "paper-api") }
+    private fun DependencyHandler.addGroovyExtensions() {
+        extra["spigot"] = withBukkitVersion("org.spigotmc", "spigot")
+        extra["spigotApi"] = withBukkitVersion("org.spigotmc", "spigot-api")
+        extra["bukkitApi"] = withBukkitVersion("org.bukkit", "bukkit")
+        extra["paperApi"] = withBukkitVersion(PAPER_GROUP, "paper-api")
     }
 
     private fun RepositoryHandler.repositoryClosure(name: String, url: String): RepositoryClosure =
@@ -84,20 +79,39 @@ internal object Dependencies {
         }
     }
 
-    @Suppress("unused") // Receiver required for scope
-    fun DependencyHandler.api(groupId: String, artifactId: String): String {
-        val version = "${apiVersion.get()}-R0.1-SNAPSHOT"
-        return dep(groupId, artifactId, version)
+    fun withBukkitVersion(groupId: String, artifactId: String): String {
+        return "$groupId:$artifactId:$BUKKIT_VERSION_PLACEHOLDER"
     }
 
-    private fun dep(groupId: String, artifactId: String, version: String): String {
-        return "$groupId:$artifactId:$version"
-    }
+    private fun Project.configureResolutionStrategy(bukkit: BukkitExtension) {
+        val bukkitVersion = bukkit.finalApiVersion
+            .map { "$it$BUKKIT_VERSION_SUFFIX" }
 
-    internal fun resolvePaperGroupId(): String {
-        val useNewGroup = parsedApiVersion.get() >= MinecraftVersion.V1_17_0
-        return if (useNewGroup) "io.papermc.paper" else "com.destroystokyo.paper"
-    }
+        configurations.configureEach {
+            resolutionStrategy.eachDependency {
+                val version = if (requested.version == BUKKIT_VERSION_PLACEHOLDER) {
+                    bukkitVersion.get()
+                } else {
+                    requested.version
+                }
 
-    private fun depClosureOf(body: () -> String) = KotlinClosure0(body)
+                val shouldUseOldPaperGroup by lazy {
+                    version != null && MinecraftVersion.parse(version) < MinecraftVersion.V1_17_0
+                }
+                val group = when (requested.group) {
+                    PAPER_GROUP -> if (shouldUseOldPaperGroup) PAPER_OLD_GROUP else requested.group
+                    PAPER_OLD_GROUP -> if (!shouldUseOldPaperGroup) PAPER_GROUP else requested.group
+                    else -> requested.group
+                }
+
+                if (requested.group != group) {
+                    useTarget("$group:${requested.name}:$version")
+                    because("Fix paper group as it was changed in 1.17")
+                } else if (requested.version != version && version != null) {
+                    useVersion(version)
+                    because("Substitute bukkit version")
+                }
+            }
+        }
+    }
 }

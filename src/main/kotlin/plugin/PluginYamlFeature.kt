@@ -15,7 +15,6 @@ import ru.endlesscode.bukkitgradle.extensions.sourceSets
 import ru.endlesscode.bukkitgradle.plugin.task.ParsePluginYaml
 import ru.endlesscode.bukkitgradle.plugin.util.MinecraftVersion
 import ru.endlesscode.bukkitgradle.plugin.util.StringUtils
-import ru.endlesscode.bukkitgradle.plugin.util.parsedApiVersion
 import xyz.jpenilla.resourcefactory.ExecuteResourceFactories
 import xyz.jpenilla.resourcefactory.ResourceFactoryPlugin
 import xyz.jpenilla.resourcefactory.bukkit.BukkitPluginYaml

@@ -32,38 +32,73 @@ class BukkitGradlePluginSpec extends PluginSpecification {
         project.repositories.findByName("sk89q") != null
     }
 
-    def "when use bukkit extension - and bukkit version not set - should return bukkit dependency with default version"() {
-        when: "use bukkit extension"
-        String dependency = project.dependencies.bukkitApi()
+    def "when use bukkit extension - should return bukkit dependency with version placeholder"() {
+        when:
+        String dependency = project.dependencies.bukkitApi
 
-        then: "returned bukkit dependency with default version"
-        dependency == 'org.bukkit:bukkit:1.16.4-R0.1-SNAPSHOT'
+        then:
+        dependency == 'org.bukkit:bukkit:{bukkit.apiVersion}'
     }
 
     def "when using paper extension - should add paper dependency"(String apiVersion, String groupId) {
-        when: "apiVersion is set"
+        given:
         project.bukkit.apiVersion = apiVersion
 
-        and: "use paperApi extension"
-        String dependency = project.dependencies.paperApi()
+        when: "use paperApi extension"
+        project.dependencies {
+            compileOnly(paperApi) { transitive = false }
+        }
 
-        then: "returns paper dependency with right groupId"
-        dependency == "$groupId:paper-api:$apiVersion-R0.1-SNAPSHOT"
+        project.repositories {
+            papermc()
+        }
+
+        then: "resolved paper dependency with correct groupId"
+        resolvedDependency().startsWith("$groupId:paper-api:$apiVersion-R0.1-SNAPSHOT")
 
         where:
         apiVersion | groupId
         "1.16.5"   | "com.destroystokyo.paper"
-        "1.17"     | "io.papermc.paper"
+        "1.18"     | "io.papermc.paper"
+    }
+
+    def "when using paper with old group and new version - should fix the group"() {
+        given:
+        project.bukkit.apiVersion = "1.18"
+
+        when:
+        project.dependencies {
+            compileOnly("com.destroystokyo.paper:paper-api:1.17-R0.1-SNAPSHOT")
+        }
+
+        project.repositories {
+            papermc()
+        }
+
+        then: "resolved paper dependency with correct groupId"
+        resolvedDependency().startsWith("io.papermc.paper:paper-api:1.17-R0.1-SNAPSHOT")
     }
 
     def "when use bukkit extension - and bukkit version set - should return bukkit with specified version"() {
         given: "api version specified"
-        project.bukkit.apiVersion = "1.7.10"
+        project.bukkit.apiVersion = "1.20.5"
 
         when: "use bukkit extension"
-        String dependency = project.dependencies.bukkitApi()
+        project.dependencies {
+            compileOnly(spigotApi) { transitive = false }
+        }
 
-        then: "returned bukkit dependency with the specified version"
-        dependency == 'org.bukkit:bukkit:1.7.10-R0.1-SNAPSHOT'
+        project.repositories {
+            spigot()
+        }
+
+        then: "resolved bukkit dependency with the specified version"
+        resolvedDependency().startsWith('org.spigotmc:spigot-api:1.20.5-R0.1-SNAPSHOT')
+    }
+
+    private String resolvedDependency() {
+        def compileClasspath = project.configurations.getByName("compileClasspath")
+        def artifacts = compileClasspath.incoming.artifacts.resolvedArtifacts.get()
+        return artifacts.first().id.componentIdentifier.displayName
     }
 }

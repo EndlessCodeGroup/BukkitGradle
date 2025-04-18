@@ -1,10 +1,11 @@
-@file:Suppress("SpellCheckingInspection")
+@file:Suppress("SpellCheckingInspection", "UnusedReceiverParameter")
 
 package ru.endlesscode.bukkitgradle.dependencies
 
 import org.gradle.api.artifacts.dsl.DependencyHandler
 import org.gradle.api.artifacts.dsl.RepositoryHandler
 import org.gradle.api.artifacts.repositories.MavenArtifactRepository
+import ru.endlesscode.bukkitgradle.dependencies.Dependencies.PAPER_GROUP
 import ru.endlesscode.bukkitgradle.dependencies.Dependencies.URL_AIKAR
 import ru.endlesscode.bukkitgradle.dependencies.Dependencies.URL_CODEMC
 import ru.endlesscode.bukkitgradle.dependencies.Dependencies.URL_DMULLOY2
@@ -15,8 +16,7 @@ import ru.endlesscode.bukkitgradle.dependencies.Dependencies.URL_PLACEHOLDERAPI
 import ru.endlesscode.bukkitgradle.dependencies.Dependencies.URL_SK89Q
 import ru.endlesscode.bukkitgradle.dependencies.Dependencies.URL_SPIGOT
 import ru.endlesscode.bukkitgradle.dependencies.Dependencies.addRepo
-import ru.endlesscode.bukkitgradle.dependencies.Dependencies.api
-import ru.endlesscode.bukkitgradle.dependencies.Dependencies.resolvePaperGroupId
+import ru.endlesscode.bukkitgradle.dependencies.Dependencies.withBukkitVersion
 
 public fun RepositoryHandler.spigot(configure: MavenArtifactRepository.() -> Unit = {}): MavenArtifactRepository =
     addRepo("Spigot", URL_SPIGOT, configure)
@@ -46,13 +46,13 @@ public fun RepositoryHandler.codemc(configure: MavenArtifactRepository.() -> Uni
     addRepo("codemc", URL_CODEMC, configure)
 
 public val DependencyHandler.spigot: String
-    get() = api("org.spigotmc", "spigot")
+    get() = withBukkitVersion("org.spigotmc", "spigot")
 
 public val DependencyHandler.spigotApi: String
-    get() = api("org.spigotmc", "spigot-api")
+    get() = withBukkitVersion("org.spigotmc", "spigot-api")
 
 public val DependencyHandler.bukkitApi: String
-    get() = api("org.bukkit", "bukkit")
+    get() = withBukkitVersion("org.bukkit", "bukkit")
 
 public val DependencyHandler.paperApi: String
-    get() = api(resolvePaperGroupId(), "paper-api")
+    get() = withBukkitVersion(PAPER_GROUP, "paper-api")

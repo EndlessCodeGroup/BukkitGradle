@@ -4,8 +4,6 @@ import org.gradle.api.provider.Property
 import org.gradle.api.provider.Provider
 import java.util.*
 
-internal fun <T> Property<T>.finalizedOnRead(): Property<T> = apply { finalizeValueOnRead() }
-
 internal fun <T> Property<T>.finalizeAndGet(): T {
     finalizeValue()
     return get()

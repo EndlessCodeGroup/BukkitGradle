@@ -12,7 +12,6 @@ import org.gradle.kotlin.dsl.withType
 import ru.endlesscode.bukkitgradle.dependencies.Dependencies.configureDependencyExtensions
 import ru.endlesscode.bukkitgradle.extensions.java
 import ru.endlesscode.bukkitgradle.plugin.configurePluginYamlFeature
-import ru.endlesscode.bukkitgradle.plugin.util.parsedApiVersion
 import ru.endlesscode.bukkitgradle.plugin.util.resolveMinimalJavaVersion
 import ru.endlesscode.bukkitgradle.server.configureDevServerFeature
 import ru.endlesscode.bukkitgradle.server.extension.ServerConfigurationImpl
@@ -37,7 +36,7 @@ public class BukkitGradlePlugin : Plugin<Project> {
         configureDependencyExtensions(bukkit)
     }
 
-    private fun Project.configureJavaCompilation(bukkit: Bukkit) {
+    private fun Project.configureJavaCompilation(bukkit: BukkitExtension) {
         java.toolchain {
             languageVersion.convention(bukkit.parsedApiVersion.map(::resolveMinimalJavaVersion))
         }

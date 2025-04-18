@@ -175,11 +175,12 @@ When adding dependencies, make sure you've added the corresponding repository.
 |-------------|------------------------------------------|---------------------|
 | `spigot`    | `org.spigotmc:spigot:$apiVersion`        | `mavenLocal()`*     |
 | `spigotApi` | `org.spigotmc:spigot-api:$apiVersion`    | `spigot()`          |
-| `bukkitApi` | `org.bukkit:bukkit:$apiVersion`          | `spigot()`          |
+| `bukkitApi` | `org.bukkit:bukkit:$apiVersion`          | `mavenLocal()`**    |
 | `paperApi`  | `io.papermc.paper:paper-api:$apiVersion` | `papermc()`         |
 
 \* Spigot is available in `mavenLocal()` only if you've built it locally using [Spigot BuildTools][buildtools]. \
-\*\* `$apiVersion` - is `${version}-R0.1-SNAPSHOT` (where `$version` is `bukkit.apiVersion`)
+\*\* Bukkit should be built locally. However, some versions are available in `spigot()` repository.  \
+\*\*\* `$apiVersion` - is `${version}-R0.1-SNAPSHOT` (where `$version` is `bukkit.apiVersion`).
 
 If you need more shortcuts, [file an issue][issue].
 

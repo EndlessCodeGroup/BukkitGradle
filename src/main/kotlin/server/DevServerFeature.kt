@@ -6,7 +6,7 @@ import org.gradle.api.provider.Provider
 import org.gradle.api.tasks.TaskProvider
 import org.gradle.jvm.toolchain.JavaToolchainService
 import org.gradle.kotlin.dsl.*
-import ru.endlesscode.bukkitgradle.Bukkit
+import ru.endlesscode.bukkitgradle.BukkitExtension
 import ru.endlesscode.bukkitgradle.extensions.java
 import ru.endlesscode.bukkitgradle.plugin.util.resolveMinimalJavaVersion
 import ru.endlesscode.bukkitgradle.server.extension.ServerConfiguration
@@ -15,13 +15,13 @@ import ru.endlesscode.bukkitgradle.server.task.PrepareServer
 import xyz.jpenilla.runpaper.RunPaperPlugin
 import xyz.jpenilla.runpaper.task.RunServer
 
-internal fun Project.configureDevServerFeature(bukkit: Bukkit) {
+internal fun Project.configureDevServerFeature(bukkit: BukkitExtension) {
     apply<RunPaperPlugin>()
     val configuredServerDir = resolveConfiguredServerDir()
 
     // Preconfigure the RunServer task
     val serverConfiguration = bukkit.server
-    val serverVersion = provider<String> { serverConfiguration.version }.orElse(bukkit.apiVersion)
+    val serverVersion = provider<String> { serverConfiguration.version }.orElse(bukkit.finalApiVersion)
     val runServer = tasks.named<RunServer>("runServer") {
         version.convention(serverVersion)
         if (configuredServerDir != null) runDirectory.convention(configuredServerDir)

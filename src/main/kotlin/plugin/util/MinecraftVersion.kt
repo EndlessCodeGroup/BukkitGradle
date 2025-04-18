@@ -1,7 +1,7 @@
 package ru.endlesscode.bukkitgradle.plugin.util
 
 import org.gradle.jvm.toolchain.JavaLanguageVersion
-import ru.endlesscode.bukkitgradle.Bukkit
+import ru.endlesscode.bukkitgradle.dependencies.Dependencies
 
 @JvmInline
 internal value class MinecraftVersion(private val value: Int) : Comparable<MinecraftVersion> {
@@ -16,7 +16,9 @@ internal value class MinecraftVersion(private val value: Int) : Comparable<Minec
 
     companion object {
         fun parse(version: String): MinecraftVersion {
-            val versionParts = version.split('.').mapNotNull { it.toIntOrNull() }
+            val versionParts = version
+                .removeSuffix(Dependencies.BUKKIT_VERSION_SUFFIX)
+                .split('.').mapNotNull { it.toIntOrNull() }
             require(versionParts.size in 2..3) { "Unable to parse API version '$version'." }
             val (major, minor, patch) = versionParts + 0
             return MinecraftVersion(major * 1_00_00 + minor * 1_00 + patch)
@@ -28,8 +30,6 @@ internal value class MinecraftVersion(private val value: Int) : Comparable<Minec
         val V1_20_5 = MinecraftVersion(1_20_05)
     }
 }
-
-internal val Bukkit.parsedApiVersion get() = apiVersion.map(MinecraftVersion::parse)
 
 internal fun resolveMinimalJavaVersion(version: String) = resolveMinimalJavaVersion(MinecraftVersion.parse(version))
 

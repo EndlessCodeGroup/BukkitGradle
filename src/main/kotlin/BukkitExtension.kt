@@ -3,9 +3,11 @@ package ru.endlesscode.bukkitgradle
 import org.gradle.api.Action
 import org.gradle.api.model.ObjectFactory
 import org.gradle.api.provider.Property
+import org.gradle.api.provider.ProviderFactory
 import org.gradle.kotlin.dsl.property
-import ru.endlesscode.bukkitgradle.extensions.finalizedOnRead
+import ru.endlesscode.bukkitgradle.extensions.finalizeAndGet
 import ru.endlesscode.bukkitgradle.plugin.plugin
+import ru.endlesscode.bukkitgradle.plugin.util.MinecraftVersion
 import ru.endlesscode.bukkitgradle.server.ServerConstants
 import ru.endlesscode.bukkitgradle.server.extension.ServerConfigurationImpl
 import xyz.jpenilla.resourcefactory.bukkit.BukkitPluginYaml
@@ -13,6 +15,7 @@ import xyz.jpenilla.resourcefactory.bukkit.BukkitPluginYaml
 public open class BukkitExtension internal constructor(
     public final override val server: ServerConfigurationImpl,
     objects: ObjectFactory,
+    providers: ProviderFactory,
 ) : Bukkit {
 
     override val generatePluginYaml: Property<Boolean> = objects.property<Boolean>()
@@ -20,7 +23,9 @@ public open class BukkitExtension internal constructor(
 
     public final override val apiVersion: Property<String> = objects.property<String>()
         .convention(ServerConstants.DEFAULT_VERSION)
-        .finalizedOnRead()
+
+    internal val finalApiVersion = providers.provider { apiVersion.finalizeAndGet() }
+    internal val parsedApiVersion = finalApiVersion.map(MinecraftVersion::parse)
 
     public fun server(body: Action<ServerConfigurationImpl>) {
         body.execute(server)

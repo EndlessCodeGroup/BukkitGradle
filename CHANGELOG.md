@@ -3,6 +3,12 @@
 ### Added
 
 - Support setting "api-version" containing a patch version for v1.20.5+
+- Add dependency substitution rules fixing paper groupId and substituting bukkit version.
+  In version catalogs placeholder value `{bukkit.version}` can be used, and it will be replaced with the actual version:
+  ```toml
+  [libraries]
+  paperApi = { module = "io.papermc.paper:paper-api", version = "{bukkit.apiVersion}" }
+  ```
 
 ### Changed
 
