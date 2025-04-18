@@ -21,11 +21,9 @@ Gradle utilities to simplify Bukkit/Spigot plugins writing and debugging.
 
 <!-- END doctoc generated TOC please keep comment here to allow auto update -->
 
-#### Features:
+#### Features
 
 - Sets up compiler encoding to UTF-8
-- Sets archivesBaseName to plugin name
-- Supports APIs: Bukkit, CraftBukkit, Spigot, Paper
 - Provides short extension functions to add common repositories and dependencies
 - Generates plugin.yml from Gradle project information
 - Allows running dev server from IDE
@@ -38,7 +36,7 @@ Gradle utilities to simplify Bukkit/Spigot plugins writing and debugging.
 
 ```kotlin
 plugins {
-    id("ru.endlesscode.bukkitgradle") version "0.10.1"
+    id("ru.endlesscode.bukkitgradle") version "1.0.0"
 }
 ```
 
@@ -80,11 +78,11 @@ These values will be used to generate the `plugin.yml` file:
 
 ```kotlin
 plugins {
-    id("ru.endlesscode.bukkitgradle") version "0.10.1"
+    id("ru.endlesscode.bukkitgradle") version "1.0.0"
 }
 
 group = "com.example.myplugin"
-description = "My first Bukkit plugin built by Gradle"
+description = "My first Bukkit plugin built with Gradle"
 version = "0.1"
 
 bukkit {
@@ -111,7 +109,7 @@ api-version: 1.21.5
 name: MyPlugin
 version: '0.1'
 main: com.example.myplugin.MyPlugin
-description: My first Bukkit plugin built by Gradle
+description: My first Bukkit plugin built with Gradle
 ```
 
 > [!NOTE]
