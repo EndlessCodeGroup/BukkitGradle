@@ -11,7 +11,7 @@ import org.gradle.api.provider.Provider
 import org.gradle.kotlin.dsl.KotlinClosure0
 import org.gradle.kotlin.dsl.extra
 import org.gradle.kotlin.dsl.maven
-import ru.endlesscode.bukkitgradle.bukkit
+import ru.endlesscode.bukkitgradle.Bukkit
 import ru.endlesscode.bukkitgradle.plugin.util.MinecraftVersion
 import ru.endlesscode.bukkitgradle.plugin.util.parsedApiVersion
 
@@ -39,13 +39,12 @@ internal object Dependencies {
         get() = InvokerHelper.getProperty(this, "ext") as ExtraPropertiesExtension
 
     @JvmStatic
-    fun configureProject(project: Project) {
-        val bukkit = project.bukkit
+    fun Project.configureDependencyExtensions(bukkit: Bukkit) {
         apiVersion = bukkit.apiVersion
         parsedApiVersion = bukkit.parsedApiVersion
 
-        repoHandler = project.repositories
-        depHandler = project.dependencies
+        repoHandler = repositories
+        depHandler = dependencies
         addGroovyExtensions()
     }
 

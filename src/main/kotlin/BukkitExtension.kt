@@ -1,10 +1,8 @@
 package ru.endlesscode.bukkitgradle
 
 import org.gradle.api.Action
-import org.gradle.api.Project
 import org.gradle.api.model.ObjectFactory
 import org.gradle.api.provider.Property
-import org.gradle.kotlin.dsl.getByType
 import org.gradle.kotlin.dsl.property
 import ru.endlesscode.bukkitgradle.extensions.finalizedOnRead
 import ru.endlesscode.bukkitgradle.plugin.plugin
@@ -46,5 +44,3 @@ public open class BukkitExtension internal constructor(
         public const val NAME: String = "bukkit"
     }
 }
-
-internal val Project.bukkit: Bukkit get() = extensions.getByType()
