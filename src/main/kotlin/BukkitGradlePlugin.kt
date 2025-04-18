@@ -11,7 +11,7 @@ import ru.endlesscode.bukkitgradle.extensions.java
 import ru.endlesscode.bukkitgradle.plugin.configurePluginYamlFeature
 import ru.endlesscode.bukkitgradle.plugin.util.parsedApiVersion
 import ru.endlesscode.bukkitgradle.plugin.util.resolveMinimalJavaVersion
-import ru.endlesscode.bukkitgradle.server.DevServerPlugin
+import ru.endlesscode.bukkitgradle.server.configureDevServerFeature
 import ru.endlesscode.bukkitgradle.server.extension.ServerConfigurationImpl
 
 public class BukkitGradlePlugin : Plugin<Project> {
@@ -39,7 +39,7 @@ public class BukkitGradlePlugin : Plugin<Project> {
         )
 
         configurePluginYamlFeature(bukkit)
-        apply<DevServerPlugin>()
+        configureDevServerFeature(bukkit)
 
         java.toolchain {
             languageVersion.convention(bukkit.parsedApiVersion.map(::resolveMinimalJavaVersion))

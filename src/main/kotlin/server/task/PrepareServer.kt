@@ -17,9 +17,6 @@ internal abstract class PrepareServer : DefaultTask() {
     abstract val serverDir: DirectoryProperty
 
     @get:Input
-    var eula: Boolean = false
-
-    @get:Input
     var onlineMode: Boolean = true
 
     @get:OutputFile
@@ -32,18 +29,18 @@ internal abstract class PrepareServer : DefaultTask() {
 
     @TaskAction
     fun prepareServer() {
-        resolveOnlineMode()
+        configureOnlineMode()
     }
 
-    private fun resolveOnlineMode() {
+    private fun configureOnlineMode() {
         val propsFile = propertiesFile.get().asFile
         if (!propsFile.exists()) {
             propsFile.createNewFile()
         }
 
         val properties = Properties()
-        properties.load(propsFile.reader())
+        propsFile.reader().use { properties.load(it) }
         properties.setProperty("online-mode", "$onlineMode")
-        properties.store(propsFile.writer(), "Minecraft server properties")
+        propsFile.writer().use { properties.store(it, "Minecraft server properties") }
     }
 }
