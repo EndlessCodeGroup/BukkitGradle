@@ -32,13 +32,24 @@ internal fun Project.configurePluginYamlFeature(bukkit: BukkitExtension) {
     }
     (bukkit as ExtensionAware).extensions.add(PLUGIN_EXTENSION_NAME, bukkitPluginYaml)
 
-    val mainSourceSet = sourceSets.named(SOURCE_SET_NAME) {
+    val mainSourceSet = sourceSets.named(SOURCE_SET_NAME)
+    val sourcePluginYaml = findPluginYaml(mainSourceSet)
+    mainSourceSet.configure {
         resourceFactory.factory(bukkitPluginYaml.resourceFactory())
+
+        // Package only one plugin.yml: the generated one, or the source one if the generation is disabled.
+        // The generated plugin.yml may be left from previous builds even if the generation is disabled.
+        val sourcePluginYamlFile by lazy { sourcePluginYaml.orNull?.asFile }
+        resources.exclude { element ->
+            if (element.path != PLUGIN_YML) return@exclude false
+            val isSource = element.file == sourcePluginYamlFile
+            if (bukkit.generatePluginYaml.get()) isSource else !isSource
+        }
     }
 
     val parsePluginYamlProvider = tasks.register<ParsePluginYaml>("parsePluginYaml") {
         pluginYaml.set(bukkitPluginYaml)
-        pluginYamlFile.set(findPluginYaml(mainSourceSet))
+        pluginYamlFile.set(sourcePluginYaml)
 
         onlyIf { bukkit.generatePluginYaml.finalizeAndGet() }
     }
@@ -49,24 +60,16 @@ internal fun Project.configurePluginYamlFeature(bukkit: BukkitExtension) {
         if (!generatePluginYaml) return@named
 
         val parsePluginYaml = parsePluginYamlProvider.get()
-
-        // Switch to in-place generation mode if the plugin.yml exists
-        if (parsePluginYaml.pluginYamlFile.isPresent) {
-            dependsOn(parsePluginYaml)
-
-            val pluginYamlFile = parsePluginYaml.pluginYamlFile.get().asFile
-            outputDir.set(pluginYamlFile.parentFile)
-            // Deduplicate resource dirs after changing outputDir
-            mainSourceSet.configure {
-                resources.setSrcDirs(resources.srcDirs.distinct())
-            }
-        }
+        if (parsePluginYaml.pluginYamlFile.isPresent) dependsOn(parsePluginYaml)
     }
 }
 
 private fun Project.findPluginYaml(sourceSetProvider: Provider<SourceSet>): Provider<RegularFile> {
+    val buildDirectory = layout.buildDirectory
     val fileProvider = sourceSetProvider.mapNotNull { sourceSet ->
         sourceSet.resources.sourceDirectories
+            // Skip generated resources, otherwise the previously generated plugin.yml would be used as defaults
+            .filterNot { it.startsWith(buildDirectory.get().asFile) }
             .map { it.resolve(PLUGIN_YML) }
             .find { it.isFile }
     }
