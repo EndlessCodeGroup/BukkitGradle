@@ -12,6 +12,11 @@
 
 - Run dev server with at least the Java version used to build the plugin.
   Previously, a plugin compiled with a newer Java than the server's minimal one failed to load.
+- Don't modify `plugin.yml` and other files in `src/main/resources`.
+  Previously, if `plugin.yml` existed in resources, it was overwritten by the generated one, and other resources were deleted.
+  Now `plugin.yml` from resources is used only as defaults for the generated `plugin.yml`.
+- Update the generated `plugin.yml` when the build configuration changes.
+  Previously, values from the earlier generated `plugin.yml` took precedence.
 
 ### Housekeeping
 

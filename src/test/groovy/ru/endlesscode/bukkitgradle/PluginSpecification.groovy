@@ -58,6 +58,11 @@ class PluginSpecification extends Specification {
         return file
     }
 
+    /** Returns a file in the project directory without creating it. */
+    File projectPath(String path) {
+        return new File(testProjectDir.root, path)
+    }
+
     Project getProject() {
         if (project == null) {
             project = ProjectBuilder.builder()
