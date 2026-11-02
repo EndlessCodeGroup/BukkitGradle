@@ -8,9 +8,11 @@ import org.gradle.api.tasks.Input
 import org.gradle.api.tasks.Internal
 import org.gradle.api.tasks.OutputFile
 import org.gradle.api.tasks.TaskAction
+import org.gradle.work.DisableCachingByDefault
 import ru.endlesscode.bukkitgradle.TASKS_GROUP_BUKKIT
 import java.util.*
 
+@DisableCachingByDefault(because = "Writes files to the local server directory")
 internal abstract class PrepareServer : DefaultTask() {
 
     @get:Internal

@@ -4,7 +4,7 @@ import org.gradle.api.provider.Property
 import org.gradle.api.provider.Provider
 import java.util.*
 
-internal fun <T> Property<T>.finalizeAndGet(): T {
+internal fun <T : Any> Property<T>.finalizeAndGet(): T {
     finalizeValue()
     return get()
 }

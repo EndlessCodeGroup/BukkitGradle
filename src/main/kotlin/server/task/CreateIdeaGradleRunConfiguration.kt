@@ -14,11 +14,13 @@ import org.gradle.api.tasks.OutputFile
 import org.gradle.api.tasks.TaskAction
 import org.gradle.kotlin.dsl.newInstance
 import org.gradle.kotlin.dsl.withGroovyBuilder
+import org.gradle.work.DisableCachingByDefault
 import ru.endlesscode.bukkitgradle.TASKS_GROUP_BUKKIT
 import ru.endlesscode.bukkitgradle.server.util.Idea
 import javax.inject.Inject
 
 /** Builds run configuration in IDEA .xml format and stores it to a file. */
+@DisableCachingByDefault(because = "Writes a small file to the local IDE configuration")
 @Suppress("LeakingThis")
 public abstract class CreateIdeaGradleRunConfiguration private constructor(
     idea: Idea,
