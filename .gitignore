@@ -13,3 +13,6 @@ build/
 
 # IntelliJ
 out/
+
+# Kotlin
+.kotlin/
