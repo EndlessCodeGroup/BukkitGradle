@@ -107,6 +107,8 @@ class GeneratePluginYamlSpec extends PluginSpecification {
         "1.20.4"   | "'1.20'"
         "1.20.5"   | "1.20.5"
         "1.21.1"   | "1.21.1"
+        "26.1"     | "'26.1'"
+        "26.1.2"   | "26.1.2"
     }
 
     def 'when generate plugin.yml - and generate it again - should skip second task run'() {

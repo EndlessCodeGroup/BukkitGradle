@@ -1,7 +1,6 @@
 package ru.endlesscode.bukkitgradle.plugin.util
 
 import org.gradle.jvm.toolchain.JavaLanguageVersion
-import ru.endlesscode.bukkitgradle.dependencies.Dependencies
 
 @JvmInline
 internal value class MinecraftVersion(private val value: Int) : Comparable<MinecraftVersion> {
@@ -15,25 +14,28 @@ internal value class MinecraftVersion(private val value: Int) : Comparable<Minec
     override fun compareTo(other: MinecraftVersion): Int = value.compareTo(other.value)
 
     companion object {
+        // Ignores any suffix: 1.21.11-R0.1-SNAPSHOT, 26.1.2.build.74-stable, 26.3-pre-2.build.0-alpha
+        private val versionRegex = Regex("""^(\d+)\.(\d+)(?:\.(\d+))?(?:\D|$)""")
+
         fun parse(version: String): MinecraftVersion {
-            val versionParts = version
-                .removeSuffix(Dependencies.BUKKIT_VERSION_SUFFIX)
-                .split('.').mapNotNull { it.toIntOrNull() }
-            require(versionParts.size in 2..3) { "Unable to parse API version '$version'." }
-            val (major, minor, patch) = versionParts + 0
-            return MinecraftVersion(major * 1_00_00 + minor * 1_00 + patch)
+            val match = requireNotNull(versionRegex.find(version)) { "Unable to parse API version '$version'." }
+            val (major, minor, patch) = match.destructured
+            return MinecraftVersion(major.toInt() * 1_00_00 + minor.toInt() * 1_00 + (patch.toIntOrNull() ?: 0))
         }
 
         val V1_13_0 = MinecraftVersion(1_13_00)
         val V1_17_0 = MinecraftVersion(1_17_00)
         val V1_18_0 = MinecraftVersion(1_18_00)
         val V1_20_5 = MinecraftVersion(1_20_05)
+        val V26_1_0 = MinecraftVersion(26_01_00)
     }
 }
 
 internal fun resolveMinimalJavaVersion(version: String) = resolveMinimalJavaVersion(MinecraftVersion.parse(version))
 
 internal fun resolveMinimalJavaVersion(version: MinecraftVersion): JavaLanguageVersion = when {
+    // https://minecraft.wiki/w/Java_Edition_26.1#General_2
+    version >= MinecraftVersion.V26_1_0 -> JavaLanguageVersion.of(25)
     // https://minecraft.wiki/w/Java_Edition_1.20.5#General_2
     version >= MinecraftVersion.V1_20_5 -> JavaLanguageVersion.of(21)
     // https://minecraft.wiki/w/Java_Edition_1.18#General_2
