@@ -84,13 +84,12 @@ internal object Dependencies {
     }
 
     private fun Project.configureResolutionStrategy(bukkit: BukkitExtension) {
-        val bukkitVersion = bukkit.finalApiVersion
-            .map { "$it$BUKKIT_VERSION_SUFFIX" }
+        val apiVersion = bukkit.finalApiVersion
 
         configurations.configureEach {
             resolutionStrategy.eachDependency {
                 val version = if (requested.version == BUKKIT_VERSION_PLACEHOLDER) {
-                    bukkitVersion.get()
+                    resolveBukkitVersion(requested.group, apiVersion.get())
                 } else {
                     requested.version
                 }
@@ -113,5 +112,12 @@ internal object Dependencies {
                 }
             }
         }
+    }
+
+    private fun resolveBukkitVersion(group: String, apiVersion: String): String {
+        // Since 26.1, paper-api is published as '<version>.build.<number>-<channel>', e.g. '26.1.2.build.74-stable'.
+        // Prefix match picks the latest build. Without a patch, it picks the latest patch: '26.1' -> '26.1.2.build.74-stable'
+        val usesPaperVersioning = group == PAPER_GROUP && MinecraftVersion.parse(apiVersion) >= MinecraftVersion.V26_1_0
+        return if (usesPaperVersioning) "$apiVersion.+" else "$apiVersion$BUKKIT_VERSION_SUFFIX"
     }
 }

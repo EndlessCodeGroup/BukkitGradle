@@ -101,6 +101,10 @@ repositories {
 }
 ```
 
+> [!NOTE]
+> `bukkit.apiVersion` should be a version published by Paper, for example `1.21`, `1.21.11` or `26.1.2`.
+> Paper skipped 26.1 and 26.1.1 has only alpha builds, so use `26.1.2` to target 26.1.
+
 That's it!
 During the plugin compilation `plugin.yml` will be generated with the following content:
 
@@ -175,7 +179,8 @@ When adding dependencies, make sure you've added the corresponding repository.
 
 \* Spigot is available in `mavenLocal()` only if you've built it locally using [Spigot BuildTools][buildtools]. \
 \*\* Bukkit should be built locally. However, some versions are available in `spigot()` repository.  \
-\*\*\* `$apiVersion` - is `${version}-R0.1-SNAPSHOT` (where `$version` is `bukkit.apiVersion`).
+\*\*\* `$apiVersion` - is `${version}-R0.1-SNAPSHOT` (where `$version` is `bukkit.apiVersion`). \
+Since 26.1, `paperApi` uses `${version}.+` instead to pick the latest Paper build, e.g. `26.1.2` -> `26.1.2.build.74-stable`.
 
 If you need more shortcuts, [file an issue][issue].
 
