@@ -6,11 +6,13 @@ import org.gradle.api.GradleException
 import org.gradle.api.file.RegularFileProperty
 import org.gradle.api.provider.Property
 import org.gradle.api.tasks.*
+import org.gradle.work.DisableCachingByDefault
 import ru.endlesscode.bukkitgradle.TASKS_GROUP_BUKKIT
 import ru.endlesscode.bukkitgradle.plugin.BukkitPluginYamlDefaults
 import xyz.jpenilla.resourcefactory.bukkit.BukkitPluginYaml
 import xyz.jpenilla.resourcefactory.bukkit.Permission
 
+@DisableCachingByDefault(because = "Parsing a small file is faster than caching")
 internal abstract class ParsePluginYaml : DefaultTask() {
 
     private val yaml by lazy {
