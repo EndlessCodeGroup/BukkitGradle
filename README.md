@@ -32,7 +32,7 @@ Gradle utilities to simplify Bukkit/Spigot plugins writing and debugging.
 ## Installation
 
 > [!NOTE]
-> BukkitGradle requires Gradle 8.0+ to run
+> BukkitGradle requires Gradle 9.7+ to run
 
 ```kotlin
 plugins {
@@ -259,9 +259,9 @@ bukkit {
 
 ### Upgrade from 0.10.x
 
-1. Update Gradle to 8.0 or newer (the latest version is recommended):
+1. Update Gradle to 9.7 or newer (the latest version is recommended):
    ```shell
-   ./gradlew wrapper --gradle-version 8.13
+   ./gradlew wrapper --gradle-version latest
    ```
 
 2. Replace deprecated and removed APIs:

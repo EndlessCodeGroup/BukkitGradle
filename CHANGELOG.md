@@ -1,6 +1,16 @@
 ## [Unreleased]
 
-*No changes yet*
+### Features
+
+- Support Paper 26.1+
+  - `paperApi` resolves the latest Paper build for `bukkit.apiVersion`, e.g. `26.1.2` -> `26.1.2.build.74-stable`
+  - Use Java 25 by default for 26.1+
+- Update [jpenilla/run-task](https://github.com/jpenilla/run-task/) to 3.1.0.
+  It downloads Paper using the new Fill v3 API, so 26.x servers can be downloaded.
+
+### Housekeeping
+
+- **Breaking change!** BukkitGradle requires Gradle 9.7+ now
 
 ## [1.0.0] - 2025-04-18
 
