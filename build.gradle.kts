@@ -33,9 +33,10 @@ dependencies {
     implementation("org.jetbrains.kotlinx:kotlinx-serialization-json:1.8.1")
     implementation("com.charleskorn.kaml:kaml:0.74.0")
     testImplementation("junit:junit:4.13.1")
-    testImplementation(platform("org.spockframework:spock-bom:2.3-groovy-3.0"))
+    testImplementation(platform("org.spockframework:spock-bom:2.3-groovy-4.0"))
     testImplementation("org.spockframework:spock-core")
     testImplementation("org.spockframework:spock-junit4")
+    testRuntimeOnly("org.junit.platform:junit-platform-launcher")
 }
 
 val runningOnCi = System.getenv("CI") == "true"
