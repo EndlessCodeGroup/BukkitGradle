@@ -8,6 +8,11 @@
 - Update [jpenilla/run-task](https://github.com/jpenilla/run-task/) to 3.1.0.
   It downloads Paper using the new Fill v3 API, so 26.x servers can be downloaded.
 
+### Fixed
+
+- Run dev server with at least the Java version used to build the plugin.
+  Previously, a plugin compiled with a newer Java than the server's minimal one failed to load.
+
 ### Housekeeping
 
 - **Breaking change!** BukkitGradle requires Gradle 9.7+ now
