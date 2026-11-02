@@ -52,7 +52,9 @@ private fun Project.configureDefaultJvmForServer() {
     tasks.withType<RunServer>().configureEach {
         javaLauncher.convention(
             toolchains.launcherFor {
-                languageVersion.convention(version.map(::resolveMinimalJavaVersion))
+                languageVersion.convention(version.map {
+                    resolveMinimalJavaVersion(it).coerceAtLeast(spec.languageVersion.get())
+                })
                 implementation.convention(spec.implementation)
                 vendor.convention(spec.vendor)
             }
