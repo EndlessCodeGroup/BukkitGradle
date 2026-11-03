@@ -259,9 +259,9 @@ bukkit {
 
 ### Upgrade from 0.10.x
 
-1. Update Gradle to 9.7 or newer (the latest version is recommended):
+1. Update Gradle to 8.0 or newer (the latest version is recommended):
    ```shell
-   ./gradlew wrapper --gradle-version latest
+   ./gradlew wrapper --gradle-version 8.13
    ```
 
 2. Replace deprecated and removed APIs:
