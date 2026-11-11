@@ -1,61 +1,35 @@
-package ru.endlesscode.bukkitgradle.plugin.task
+package ru.endlesscode.bukkitgradle.plugin
 
 import com.charleskorn.kaml.*
-import org.gradle.api.DefaultTask
+import kotlinx.serialization.decodeFromString
 import org.gradle.api.GradleException
-import org.gradle.api.file.RegularFileProperty
-import org.gradle.api.provider.Property
-import org.gradle.api.tasks.*
-import org.gradle.work.DisableCachingByDefault
-import ru.endlesscode.bukkitgradle.TASKS_GROUP_BUKKIT
-import ru.endlesscode.bukkitgradle.plugin.BukkitPluginYamlDefaults
 import xyz.jpenilla.resourcefactory.bukkit.BukkitPluginYaml
 import xyz.jpenilla.resourcefactory.bukkit.Permission
 
-@DisableCachingByDefault(because = "Parsing a small file is faster than caching")
-internal abstract class ParsePluginYaml : DefaultTask() {
-
-    private val yaml by lazy {
-        Yaml(
-            configuration = YamlConfiguration(
-                strictMode = false,
-                decodeEnumCaseInsensitive = true,
-                yamlNamingStrategy = YamlNamingStrategy.KebabCase,
-            )
+private val yaml by lazy {
+    Yaml(
+        configuration = YamlConfiguration(
+            strictMode = false,
+            decodeEnumCaseInsensitive = true,
+            yamlNamingStrategy = YamlNamingStrategy.KebabCase,
         )
-    }
+    )
+}
 
-    @get:Internal
-    abstract val pluginYaml: Property<BukkitPluginYaml>
+/** Parses the source plugin.yml [content] and uses its values as conventions. */
+internal fun BukkitPluginYaml.applyConventionsFromSource(content: String) {
+    val defaults = parseDefaults(content)
+    if (defaults != null) applyConventions(defaults)
+}
 
-    @get:SkipWhenEmpty
-    @get:InputFile
-    @get:PathSensitive(PathSensitivity.NONE)
-    abstract val pluginYamlFile: RegularFileProperty
-
-    init {
-        group = TASKS_GROUP_BUKKIT
-        description = "Parse plugin.yml file if it exists and add its content as defaults to generation"
-    }
-
-    @TaskAction
-    fun parseAndSetDefaults() {
-        val defaults = readFromFile()
-        if (defaults != null) pluginYaml.get().applyConventions(defaults)
-    }
-
-    private fun readFromFile(): BukkitPluginYamlDefaults? {
-        return try {
-            pluginYamlFile.get().asFile
-                .inputStream()
-                .use { yaml.decodeFromStream<BukkitPluginYamlDefaults>(it) }
-        } catch (cause: EmptyYamlDocumentException) {
-            logger.debug("plugin.yml is empty – skipping defaults setting", cause)
-            null
-        } catch (cause: Exception) {
-            throw GradleException("Failed to parse plugin.yml: ${cause.message}.\n" +
-                "Ensure the file is valid YAML that matches plugin.yml schema.", cause)
-        }
+private fun parseDefaults(content: String): BukkitPluginYamlDefaults? {
+    return try {
+        yaml.decodeFromString<BukkitPluginYamlDefaults>(content)
+    } catch (_: EmptyYamlDocumentException) {
+        null
+    } catch (cause: Exception) {
+        throw GradleException("Failed to parse plugin.yml: ${cause.message}.\n" +
+            "Ensure the file is valid YAML that matches plugin.yml schema.", cause)
     }
 }
 

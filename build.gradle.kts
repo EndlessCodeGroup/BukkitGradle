@@ -1,9 +1,11 @@
+import org.gradle.plugin.compatibility.compatibility
+
 plugins {
     `kotlin-dsl`
     `maven-publish`
     groovy
     kotlin("plugin.serialization") version embeddedKotlinVersion
-    id("com.gradle.plugin-publish") version "1.3.1"
+    id("com.gradle.plugin-publish") version "2.2.1"
     id("com.github.ben-manes.versions") version "0.52.0"
 }
 
@@ -62,6 +64,11 @@ gradlePlugin {
             description = "Gradle plugin providing integration for easier Bukkit plugins development."
             implementationClass = "ru.endlesscode.bukkitgradle.BukkitGradlePlugin"
             tags = listOf("minecraft", "bukkit", "spigot", "paper")
+            compatibility {
+                features {
+                    configurationCache = true
+                }
+            }
         }
     }
 }

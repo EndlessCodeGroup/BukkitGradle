@@ -9,7 +9,6 @@ import ru.endlesscode.bukkitgradle.util.CharsetUtils
 class GeneratePluginYamlSpec extends PluginSpecification {
 
     private final static RESOURCE_FACTORY = ':mainResourceFactory'
-    private final static PARSE_PLUGIN_YAML = ':parsePluginYaml'
 
     private File pluginYamlFile
     private File generatedPluginYamlFile
@@ -29,9 +28,6 @@ class GeneratePluginYamlSpec extends PluginSpecification {
 
         then:
         taskOutcome(RESOURCE_FACTORY) == TaskOutcome.SUCCESS
-
-        and:
-        taskOutcome(PARSE_PLUGIN_YAML) == TaskOutcome.SUCCESS
     }
 
     def 'when run processResources - and plugin.yml generation disabled - should not run resource factory'() {
@@ -43,9 +39,6 @@ class GeneratePluginYamlSpec extends PluginSpecification {
 
         then:
         taskOutcome(RESOURCE_FACTORY) == TaskOutcome.SKIPPED
-
-        and:
-        taskOutcome(PARSE_PLUGIN_YAML) == null
     }
 
     def 'when run processResources - and plugin.yml generation disabled - should use source plugin.yml'() {
@@ -64,7 +57,7 @@ class GeneratePluginYamlSpec extends PluginSpecification {
         projectPath("build/resources/main/$PluginYamlFeatureKt.PLUGIN_YML").text == sourceContent
     }
 
-    def 'when run processResources - and plugin.yml doesnt exist - should skip parsing'() {
+    def 'when run processResources - and plugin.yml doesnt exist - should run resource factory'() {
         given:
         pluginYamlFile.delete()
 
@@ -73,20 +66,6 @@ class GeneratePluginYamlSpec extends PluginSpecification {
 
         then:
         taskOutcome(RESOURCE_FACTORY) == TaskOutcome.SUCCESS
-
-        and:
-        taskOutcome(PARSE_PLUGIN_YAML) == null
-    }
-
-    def 'when run parsing - and plugin.yml doesnt exist - should show NO_SOURCE'() {
-        given:
-        pluginYamlFile.delete()
-
-        when:
-        run(PARSE_PLUGIN_YAML)
-
-        then:
-        taskOutcome(PARSE_PLUGIN_YAML) == TaskOutcome.NO_SOURCE
     }
 
     def 'when generate plugin.yml - should generate default plugin.yml successfully'() {
@@ -143,6 +122,20 @@ class GeneratePluginYamlSpec extends PluginSpecification {
         secondRunOutcome == TaskOutcome.UP_TO_DATE
     }
 
+    def 'when generate plugin.yml - and generate it again - should reuse configuration cache'() {
+        given:
+        pluginYamlFile.text = "depend: [Vault]\n"
+
+        when:
+        run(RESOURCE_FACTORY)
+
+        and: "run generation again"
+        run(RESOURCE_FACTORY)
+
+        then:
+        result.output.contains("Reusing configuration cache.")
+    }
+
     def 'when generate plugin.yml - and changed plugin configuration - should update plugin.yml'() {
         when:
         run(RESOURCE_FACTORY)
@@ -181,6 +174,36 @@ class GeneratePluginYamlSpec extends PluginSpecification {
 
         then:
         generatedPluginYamlFile.readLines().first() == "api-version: '1.20'"
+
+        where:
+        hasSourceFile << [true, false]
+    }
+
+    void 'when generate plugin.yml - and changed source plugin.yml - should update plugin.yml'(boolean hasSourceFile) {
+        given:
+        if (!hasSourceFile) pluginYamlFile.delete()
+
+        when:
+        run(RESOURCE_FACTORY)
+
+        and: "changed source plugin.yml"
+        pluginYamlFile.text = "depend: [Vault]\n"
+
+        and:
+        run(RESOURCE_FACTORY)
+
+        then:
+        taskOutcome(RESOURCE_FACTORY) == TaskOutcome.SUCCESS
+
+        and:
+        generatedPluginYamlFile.text == """\
+            api-version: '1.16'
+            name: test-plugin
+            version: '1.0'
+            main: com.example.testplugin.TestPlugin
+            depend:
+            - Vault
+            """.stripIndent()
 
         where:
         hasSourceFile << [true, false]

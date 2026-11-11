@@ -83,7 +83,7 @@ class PluginSpecification extends Specification {
     }
 
     protected def run(String... args) {
-        result = getRunner().withArguments(args.toList() + "--stacktrace").build()
+        result = getRunner().withArguments(args.toList() + "--stacktrace" + "--configuration-cache").build()
     }
 
     protected TaskOutcome taskOutcome(String task) {

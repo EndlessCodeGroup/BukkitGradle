@@ -12,7 +12,6 @@ import ru.endlesscode.bukkitgradle.extensions.finalizeAndGet
 import ru.endlesscode.bukkitgradle.extensions.mapNotNull
 import ru.endlesscode.bukkitgradle.extensions.resourceFactory
 import ru.endlesscode.bukkitgradle.extensions.sourceSets
-import ru.endlesscode.bukkitgradle.plugin.task.ParsePluginYaml
 import ru.endlesscode.bukkitgradle.plugin.util.MinecraftVersion
 import ru.endlesscode.bukkitgradle.plugin.util.StringUtils
 import xyz.jpenilla.resourcefactory.ExecuteResourceFactories
@@ -47,20 +46,15 @@ internal fun Project.configurePluginYamlFeature(bukkit: BukkitExtension) {
         }
     }
 
-    val parsePluginYamlProvider = tasks.register<ParsePluginYaml>("parsePluginYaml") {
-        pluginYaml.set(bukkitPluginYaml)
-        pluginYamlFile.set(sourcePluginYaml)
-
-        onlyIf { bukkit.generatePluginYaml.finalizeAndGet() }
-    }
-
     tasks.named<ExecuteResourceFactories>("${SOURCE_SET_NAME}ResourceFactory") {
         val generatePluginYaml = bukkit.generatePluginYaml.finalizeAndGet()
         onlyIf("Flag generatePluginYaml is enabled") { generatePluginYaml }
         if (!generatePluginYaml) return@named
 
-        val parsePluginYaml = parsePluginYamlProvider.get()
-        if (parsePluginYaml.pluginYamlFile.isPresent) dependsOn(parsePluginYaml)
+        val sourcePluginYamlFile = sourcePluginYaml.orNull ?: return@named
+        // Don't use asText as it uses the default charset, but plugin.yml is always in UTF-8
+        val content = providers.fileContents(sourcePluginYamlFile).asBytes.get()
+        bukkitPluginYaml.applyConventionsFromSource(content.decodeToString())
     }
 }
 

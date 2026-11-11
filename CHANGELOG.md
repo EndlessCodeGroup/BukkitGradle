@@ -1,5 +1,14 @@
 ## [Unreleased]
 
+### Features
+
+- Support [configuration cache](https://docs.gradle.org/current/userguide/configuration_cache.html)
+
+### Housekeeping
+
+- **Breaking change!** Remove task `:parsePluginYaml`.
+  `plugin.yml` from resources is parsed during configuration now.
+
 ## [1.1.0] - 2026-11-11
 
 ### Features
