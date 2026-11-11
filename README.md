@@ -36,7 +36,7 @@ Gradle utilities to simplify Bukkit/Spigot plugins writing and debugging.
 
 ```kotlin
 plugins {
-    id("ru.endlesscode.bukkitgradle") version "1.0.0"
+    id("ru.endlesscode.bukkitgradle") version "1.1.0"
 }
 ```
 
@@ -78,7 +78,7 @@ These values will be used to generate the `plugin.yml` file:
 
 ```kotlin
 plugins {
-    id("ru.endlesscode.bukkitgradle") version "1.0.0"
+    id("ru.endlesscode.bukkitgradle") version "1.1.0"
 }
 
 group = "com.example.myplugin"
